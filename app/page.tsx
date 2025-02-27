@@ -11,7 +11,7 @@ export default function Home() {
   }, []);
   
   return (
-    <div className="flex gap-16 mt-24">
+    <div className="flex gap-16 mt-20">
       <Image src="/images/bear.png" alt="bear" width={600} height={800} />
       <div className="flex flex-col gap-4 max-w-[628px] mx-auto pt-8">
         <span className="text-h1 font-display text-center">BeraFlowDao</span>

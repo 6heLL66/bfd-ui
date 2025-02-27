@@ -34,7 +34,7 @@ const SocialButton = ({
 
 export const Footer = () => {
   return (
-    <footer className="pt-24">
+    <footer className="pt-28">
       <div className="flex gap-24 justify-center items-center">
         <SocialButton
           icon={<XIcon />}
