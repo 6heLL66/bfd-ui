@@ -14,8 +14,59 @@
   }
 }
 
+header a:hover {
+  color: #5760D8;
+}
+
+a:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
 body {
   color: var(--foreground);
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.discord *, .gitbook *, .x * {
+  transition: all 0.3s;
+}
+
+.discord:hover div:first-child {
+  background-color: #8c9eff;
+}
+
+.discord:hover svg path {
+  fill: #ffffff;
+}
+
+.gitbook:hover div:first-child {
+  background-color: #ffffff;
+}
+
+.gitbook:hover svg path {
+  fill: #000000;
+}
+
+.x:hover div:first-child {
+  background-color: #1DA1F2;
+}
+
+.x:hover svg path {
+  fill: #ffffff;
+}
+
+#canvas-club {
+  position: absolute;
+  pointer-events: none;
+  max-width: 98vw;
+  max-height: 100vh;
+  overflow: hidden;
+  margin-left: auto;
+  top: 0;
+  left: 0;
+
+  background-color: tranparent;
+}
+
