@@ -15,12 +15,12 @@ export default {
         surface: "#181A1E",
         border: "#26292E",
         primary: {
-          default: "#6D77FF",
-          hover: "#5760D8",
+          default: "#E6BB4E",
+          hover: "#E6BB4E",
         },
         secondary: "#00D4A5",
         foreground: {
-          primary: "#E1E2E5",
+          primary: "#ffffff",
           secondary: "#A4A6AA",
         },
         danger: "#FF4F64",
