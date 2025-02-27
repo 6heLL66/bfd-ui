@@ -38,7 +38,7 @@ export default function RootLayout({
         className={`${inter.variable} ${spaceGrotesk.variable} ${jetBrainsMono.variable} antialiased min-h-screen bg-bg text-foreground-primary`}
       >
         <Providers>
-          <div className='max-w-[1440px] mx-auto'>
+          <div className='max-w-[1440px] mx-auto min-h-screen flex flex-col justify-between'>
             <Header />
             {children}
             <Footer />
