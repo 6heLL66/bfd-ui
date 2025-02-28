@@ -12,7 +12,8 @@ export const Providers = ({ children }: { children: React.ReactNode }) => {
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider locale='en-US' theme={darkTheme({
-            accentColor: "#6D77FF",
+            accentColor: "#FF9F5B",
+            accentColorForeground: "#000000",
         })}><HeroUIProvider>{children}</HeroUIProvider></RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>

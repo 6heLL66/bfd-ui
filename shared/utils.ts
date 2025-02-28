@@ -1,10 +1,16 @@
+var drops: any[] = [];
+
+var stopped = false;
+// @ts-ignore
+var timeouts = [];
+
 export const rain = () => {
     var c: any = document.getElementById("canvas-club");
 var ctx = c.getContext("2d");
 var w = c.width = window.innerWidth;
 var h = c.height = window.innerHeight;
-var max = 15;
-var drops: any[] = [];
+var max = 20;
+
 
 function random(min: number, max: number) {
     return Math.random() * (max - min) + min;
@@ -65,6 +71,7 @@ O.prototype = {
 					this.vh *= .98;
 				}
 			} else {
+				if (stopped) return;
 				this.init();
 			}
 		}
@@ -78,14 +85,16 @@ function resize(){
 }
 
 function setup(){
+	drops = [];
 	for(var i = 0; i < max; i++){
 		(function(j){
-			setTimeout(function(){
+			timeouts.push(setTimeout(function(){
+				if (stopped) return;
                 // @ts-ignore
 				var o = new O();
 				o.init();
 				drops.push(o);
-			}, j * 200)
+			}, j * 100))
 		}(i));
 	}
 }
@@ -99,9 +108,19 @@ function anim() {
 	requestAnimationFrame(anim);
 }
 
-
 window.addEventListener("resize", resize);
-
+stopped = false;
+let shouldAnim = !drops.length;
 setup();
-anim();
+if (shouldAnim) {
+	anim();
+}
+}
+
+export function stop() {
+	stopped = true;
+	// @ts-ignore
+	timeouts.forEach((timeout) => {
+		clearTimeout(timeout);
+	});
 }

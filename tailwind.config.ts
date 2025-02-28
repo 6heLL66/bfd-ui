@@ -6,26 +6,26 @@ export default {
     "./shared/**/*.{js,ts,jsx,tsx,mdx}",
     "./widgets/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
-    "./node_modules/@heroui/theme/dist/components/(button|ripple|spinner).js"
+    "./node_modules/@heroui/theme/dist/components/(alert|button|card|divider|input|link|ripple|spinner|form).js"
   ],
   theme: {
     extend: {
       colors: {
-        bg: "#0D0F12",
-        surface: "#181A1E",
-        border: "#26292E",
+        bg: "#030405",
+        surface: "#0A0C10",
+        border: "#1A1D25",  // Сделал немного светлее и мягче
         primary: {
-          default: "#E6BB4E",
-          hover: "#E6BB4E",
+          default: "#FF9F5B",  // Более мягкий оранжевый
+          hover: "#FFA573",    // Светлее при наведении
         },
-        secondary: "#00D4A5",
+        secondary: "#7EE7D2",  // Более мягкий бирюзовый
         foreground: {
-          primary: "#ffffff",
-          secondary: "#A4A6AA",
+          primary: "#F0F2F5",  // Чуть мягче чем чисто белый
+          secondary: "#9BA1AD", // Более тёплый серый
         },
-        danger: "#FF4F64",
-        warning: "#F0A500",
-        success: "#4CAF50",
+        danger: "#FF6B7D",     // Более мягкий красный
+        warning: "#FFB74D",    // Более мягкий оранжевый
+        success: "#66BB6A",    // Более мягкий зелёный
       },
       fontFamily: {
         sans: ["Inter", "sans-serif"],
