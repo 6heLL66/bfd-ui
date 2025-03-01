@@ -1,3 +1,5 @@
+import { Token } from "@berachain-foundation/berancer-sdk";
+
 var drops: any[] = [];
 
 var stopped = false;
@@ -123,4 +125,12 @@ export function stop() {
 	timeouts.forEach((timeout) => {
 		clearTimeout(timeout);
 	});
+}
+
+export const getTokenImageUrl = (token: Token) => {
+	if (token.symbol === 'USDC') {
+		return 'https://berascan.com/token/images/usdc_32.png';
+	}
+
+	return `https://berascan.com/token/images/honeybera_32.png`;
 }

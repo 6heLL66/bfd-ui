@@ -6,14 +6,14 @@ export default {
     "./shared/**/*.{js,ts,jsx,tsx,mdx}",
     "./widgets/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
-    "./node_modules/@heroui/theme/dist/components/(alert|button|card|divider|input|link|ripple|spinner|form).js"
+    "./node_modules/@heroui/theme/dist/components/(alert|button|card|divider|input|link|spinner|ripple|form).js"
   ],
   theme: {
     extend: {
       colors: {
         bg: "#030405",
         surface: "#0A0C10",
-        border: "#1A1D25",  // Сделал немного светлее и мягче
+        border: "#3A3D45",  // Made even lighter from #2A2D35
         primary: {
           default: "#FF9F5B",  // Более мягкий оранжевый
           hover: "#FFA573",    // Светлее при наведении
