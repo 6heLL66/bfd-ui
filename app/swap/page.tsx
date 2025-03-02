@@ -67,44 +67,39 @@ export default function SwapPage() {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="max-w-[650px] min-h-[650px] w-full mx-auto flex flex-col gap-10 justify-center py-12"
+      className="max-w-[520px] min-h-[520px] w-full mx-auto flex flex-col gap-8 mt-4 justify-center py-8"
     >
       <WalletGuard>
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.3 }}
-          className="bg-surface/80 backdrop-blur-xl rounded-3xl border-2 border-border/40 shadow-2xl shadow-primary-default/10 p-8 w-full hover:border-primary-default/40 transition-all duration-300"
+          className="bg-surface/80 backdrop-blur-xl rounded-2xl border border-border/40 shadow-xl p-6 w-full hover:border-primary-default/40 transition-all duration-300"
         >
-          <div className="flex flex-col gap-5 w-full">
-            <div className="flex items-center justify-between border-b-2 border-border/40 pb-6">
-              <div className="space-y-2">
-                <span className="text-3xl font-bold bg-gradient-to-r from-primary-default via-primary-hover to-secondary bg-clip-text text-transparent">
+          <div className="flex flex-col gap-4 w-full">
+            <div className="flex items-center justify-between border-b border-border/40 pb-4">
+              <div className="space-y-1">
+                <span className="text-2xl font-bold bg-gradient-to-r from-primary-default to-primary-hover bg-clip-text text-transparent">
                   Swap Tokens
                 </span>
-                <p className="text-base text-foreground-secondary">
+                <p className="text-sm text-foreground-secondary">
                   Exchange your tokens instantly
                 </p>
               </div>
-              <div className="flex items-center gap-4">
-                <SwapSettings
-                  onSlipageChange={setSlippage}
-                  onDeadlineChange={setDeadline}
-                  slippage={slippage}
-                  deadline={deadline}
-                />
-                <span className="text-sm font-medium px-4 py-1.5 rounded-full bg-primary-default/20 text-primary-default border border-primary-default/40">
-                  Best price
-                </span>
-              </div>
+              <SwapSettings
+                onSlipageChange={setSlippage}
+                onDeadlineChange={setDeadline}
+                slippage={slippage}
+                deadline={deadline}
+              />
             </div>
 
             {/* Input token */}
-            <div className="space-y-3">
-              <label className="text-sm font-medium text-foreground-secondary">
+            <div className="space-y-2">
+              <label className="text-xs font-medium text-foreground-secondary">
                 You pay
               </label>
-              <motion.div className="p-4 py-5 relative rounded-2xl flex  bg-gradient-to-br from-surface via-border/5 to-border/10 backdrop-blur-sm border-2 border-border/40 transition-all duration-300 hover:border-border hover:shadow-lg relative">
+              <motion.div className="p-4 py-5 relative rounded-xl flex bg-surface/50 border border-border/40 transition-all duration-300 hover:border-border">
                 <input
                   type="number"
                   autoFocus
@@ -143,7 +138,7 @@ export default function SwapPage() {
                   </span>
                 </div>
 
-                {inputAmount !== "0" && (
+                {inputAmount && (
                   <span className="text-[11px] font-regular font-mono font-bold absolute left-4 bottom-2 opacity-50">
                     ~ ${token1UsdValue}
                   </span>
@@ -215,27 +210,27 @@ export default function SwapPage() {
             {isInsufficientFunds && <Alert color='danger' className="bg-danger" title={<span className="text-white">Insufficient funds</span>} description={<span className="text-white">You don't have enough funds to swap</span>} />}
 
             {/* Price info */}
-            <motion.div className="p-4 rounded-2xl bg-gradient-to-br from-surface via-border/5 to-border/10 backdrop-blur-sm border-2 border-border/40 transition-all duration-300 hover:border-border/60 hover:shadow-lg">
+            <motion.div className="p-3 rounded-xl bg-surface/50 border border-border/40 transition-all duration-300 hover:border-border/60">
               <div className="flex items-center justify-between gap-2">
-                <span className="text-sm text-foreground-secondary">
+                <span className="text-xs text-foreground-secondary">
                   Price impact
                 </span>
-                <span className={`font-bold text-base text-foreground-primary font-mono ${(+priceImpact.priceImpact * 100) > 0.5 ? 'text-error' : 'text-success'}`}>
+                <span className={`font-bold text-sm font-mono ${(+priceImpact.priceImpact * 100) > 0.5 ? 'text-error' : 'text-success'}`}>
                 {(+priceImpact.priceImpact * 100).toFixed(4)}%
                 </span>
               </div>
               <div className="flex items-center justify-between gap-2 mt-1">
-                <span className="text-sm text-foreground-secondary">
+                <span className="text-xs text-foreground-secondary">
                   Slippage tolerance
                 </span>
-                <span className="font-bold text-base font-mono text-foreground-primary">
+                <span className="font-bold text-sm font-mono text-foreground-primary">
                   {(+slippage).toFixed(2)}%
                 </span>
               </div>
               <Divider className="my-3 bg-border/40" />
               <div className="flex items-center justify-between gap-2">
-                <span className="text-sm text-foreground-secondary">Route</span>
-                <span className="font-bold text-base text-foreground-primary flex gap-2">
+                <span className="text-xs text-foreground-secondary">Route</span>
+                <span className="font-bold text-sm font-mono text-foreground-primary flex gap-2">
                   <span className="text-text font-bold flex gap-3 items-center">
                     <Image
                       src={getTokenImageUrl(token1)}
@@ -261,9 +256,9 @@ export default function SwapPage() {
 
             {/* Swap button */}
             <Button
-              className="w-full font-bold cursor-pointer bg-gradient-to-r from-primary-default to-primary-hover hover:opacity-90 transition-all duration-300 h-14 text-base shadow-xl shadow-primary-default/20 border border-primary-default/40 rounded-xl"
+              className="w-full font-bold cursor-pointer bg-primary-default hover:bg-primary-hover transition-all duration-300 h-12 text-sm shadow-md border-none rounded-xl"
               onPress={handleSwap}
-              isDisabled={!inputAmount || isLoading || isInsufficientFunds}
+              isDisabled={!inputAmount || +inputAmount === 0 || isLoading || isInsufficientFunds}
             >
               {isLoading ? (
                 <motion.div
