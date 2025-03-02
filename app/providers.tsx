@@ -1,6 +1,6 @@
 'use client'
 
-import {HeroUIProvider} from '@heroui/react'
+import {HeroUIProvider, ToastProvider} from '@heroui/react'
 import { queryClient } from "@/config/queryClient";
 import { wagmiConfig } from "@/config/wagmi";
 import { darkTheme, RainbowKitProvider } from "@rainbow-me/rainbowkit";
@@ -14,7 +14,11 @@ export const Providers = ({ children }: { children: React.ReactNode }) => {
         <RainbowKitProvider locale='en-US' theme={darkTheme({
             accentColor: "#FF9F5B",
             accentColorForeground: "#000000",
-        })}><HeroUIProvider>{children}</HeroUIProvider></RainbowKitProvider>
+        })}><HeroUIProvider>
+            <ToastProvider />
+            {children}
+          </HeroUIProvider>
+        </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
   );

@@ -6,15 +6,23 @@ import { Divider } from "@heroui/divider";
 import { ArrowDownIcon, ArrowRightIcon } from "@radix-ui/react-icons";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { useSwap } from "../features/swap/useSwap";
+import { useSwap } from "../../features/swap/useSwap";
 import { Spinner } from "@heroui/spinner";
 import Image from "next/image";
 import { getTokenImageUrl } from "@/shared/utils";
 import { SwapSettings } from "./swap_settings";
+import { getBalance } from "wagmi/actions";
+import { useAccount } from "wagmi";
+import { wagmiConfig } from "@/config/wagmi";
+import { Alert } from "@heroui/alert";
 
 export default function SwapPage() {
+  const { address } = useAccount();
+
   const [inputAmount, setInputAmount] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  const [token1Balance, setToken1Balance] = useState(0);
 
   const {
     swap,
@@ -31,6 +39,7 @@ export default function SwapPage() {
     deadline,
     setSlippage,
     setDeadline,
+    priceImpact,
   } = useSwap();
 
   const handleSwap = async () => {
@@ -41,14 +50,18 @@ export default function SwapPage() {
     setIsLoading(false);
   };
 
-  useEffect(() => {
-    setInputAmount(swapAmount.toSignificant());
-  }, [swapAmount]);
-
   const token1UsdValue = +swapAmount.toSignificant() * token1Price;
   const token2UsdValue = +(swapObject?.queryOutput.expectedAmountOut.toSignificant() || 0) * token2Price;
 
-  const priceImpact = token2UsdValue ? ((token1UsdValue - token2UsdValue) / token1UsdValue) * 100 : 0;
+  useEffect(() => {
+    if (!address) return;
+
+    getBalance(wagmiConfig, {token: token1.address, address: address as `0x${string}`}).then((token1Balance) => {
+      setToken1Balance(+token1Balance.value.toString() / 10 ** token1.decimals);
+    });
+  }, [token1, address]);
+
+  const isInsufficientFunds = +swapAmount.toSignificant() > token1Balance;
 
   return (
     <motion.div
@@ -91,11 +104,11 @@ export default function SwapPage() {
               <label className="text-sm font-medium text-foreground-secondary">
                 You pay
               </label>
-              <motion.div className="p-4 py-5 rounded-2xl flex  bg-gradient-to-br from-surface via-border/5 to-border/10 backdrop-blur-sm border-2 border-border/40 transition-all duration-300 hover:border-border hover:shadow-lg">
+              <motion.div className="p-4 py-5 relative rounded-2xl flex  bg-gradient-to-br from-surface via-border/5 to-border/10 backdrop-blur-sm border-2 border-border/40 transition-all duration-300 hover:border-border hover:shadow-lg relative">
                 <input
                   type="number"
                   autoFocus
-                  value={inputAmount === "0" ? "" : inputAmount}
+                  value={inputAmount}
                   onChange={(e) => {
                     setSwapAmount(e.target.value as `${number}`);
                     setInputAmount(e.target.value);
@@ -105,7 +118,16 @@ export default function SwapPage() {
                   placeholder="Enter amount"
                 />
 
-                <div className="flex items-center">
+                <div className="flex items-center gap-2">
+                  <button
+                  onClick={() => {
+                    setSwapAmount(token1Balance.toString() as `${number}`);
+                    setInputAmount(token1Balance.toString());
+                  }}
+                    className="px-2 absolute right-0 -top-8 py-1 text-xs font-bold rounded-lg bg-primary-default/20 text-primary-default hover:bg-primary-default/30 transition-colors"
+                  >
+                    MAX {token1Balance}
+                  </button>
                   <Divider
                     className="h-8 mx-3 bg-border/40"
                     orientation="vertical"
@@ -189,14 +211,17 @@ export default function SwapPage() {
               </motion.div>
             </div>
 
+
+            {isInsufficientFunds && <Alert color='danger' className="bg-danger" title={<span className="text-white">Insufficient funds</span>} description={<span className="text-white">You don't have enough funds to swap</span>} />}
+
             {/* Price info */}
             <motion.div className="p-4 rounded-2xl bg-gradient-to-br from-surface via-border/5 to-border/10 backdrop-blur-sm border-2 border-border/40 transition-all duration-300 hover:border-border/60 hover:shadow-lg">
               <div className="flex items-center justify-between gap-2">
                 <span className="text-sm text-foreground-secondary">
                   Price impact
                 </span>
-                <span className="font-bold text-base text-foreground-primary font-mono text-success">
-                  {priceImpact > 0.01 ? priceImpact.toFixed(2) : '< 0.01'}%
+                <span className={`font-bold text-base text-foreground-primary font-mono ${(+priceImpact.priceImpact * 100) > 0.5 ? 'text-error' : 'text-success'}`}>
+                {(+priceImpact.priceImpact * 100).toFixed(4)}%
                 </span>
               </div>
               <div className="flex items-center justify-between gap-2 mt-1">
@@ -238,7 +263,7 @@ export default function SwapPage() {
             <Button
               className="w-full font-bold cursor-pointer bg-gradient-to-r from-primary-default to-primary-hover hover:opacity-90 transition-all duration-300 h-14 text-base shadow-xl shadow-primary-default/20 border border-primary-default/40 rounded-xl"
               onPress={handleSwap}
-              disabled={!inputAmount || isLoading}
+              isDisabled={!inputAmount || isLoading || isInsufficientFunds}
             >
               {isLoading ? (
                 <motion.div

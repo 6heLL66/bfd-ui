@@ -21,3 +21,41 @@ export const usdcToken = new Token(
   6,
   "USDC"
 );
+
+export const tokenAbi = [
+  {
+    name: "approve",
+    type: "function",
+    inputs: [
+      {
+        name: "spender",
+        type: "address",
+      },
+      {
+        name: "amount",
+        type: "uint256",
+      },
+    ],
+    outputs: [
+      {
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "nonpayable",
+  },
+  {
+    name: "allowance",
+    type: "function",
+    inputs: [
+      { name: "owner", type: "address" },
+      { name: "spender", type: "address" }
+    ],
+    outputs: [
+      {
+        name: "remaining",
+        type: "uint256",
+      },
+    ],
+  }
+];

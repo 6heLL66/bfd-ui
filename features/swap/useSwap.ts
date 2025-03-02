@@ -1,5 +1,5 @@
 
-import { honeyToken } from "@/config/berachain";
+import { honeyToken, tokenAbi } from "@/config/berachain";
 import { balancerApi, CHAIN_ID, RPC_URL, usdcToken } from "@/config/berachain";
 import {
   ExactInQueryOutput,
@@ -9,13 +9,15 @@ import {
   Token,
   TokenAmount,
 } from "@berachain-foundation/berancer-sdk";
-import { useState, useCallback } from "react";
-import { useAccount, useSendTransaction, useWriteContract } from "wagmi";
+import { useState, useCallback, useEffect } from "react";
+import { useAccount, useReadContract, useSendTransaction, useWriteContract } from "wagmi";
 import { debounce } from "lodash";
 import { useSwapSettings } from "./store/swapSettings";
+import { getTokensPrice } from "@/shared/api/berachain";
+import { readContract } from "wagmi/actions";
+import { wagmiConfig } from "@/config/wagmi";
 
 export const slippageOptions = ["0.1", "1.0", "2.5"];
-
 
 export const useSwap = () => {
   const [token1, setToken1] = useState<Token>(usdcToken);
@@ -25,6 +27,13 @@ export const useSwap = () => {
 
   const [token1Price, setToken1Price] = useState<number>(0);
   const [token2Price, setToken2Price] = useState<number>(0);
+  const [priceImpact, setPriceImpact] = useState<{
+    error: string | null;
+    priceImpact: string;
+  }>({
+    error: null,
+    priceImpact: "0",
+  });
   const [swapAmount, setSwapAmount] = useState<TokenAmount>(
     TokenAmount.fromHumanAmount(usdcToken, "0")
   );
@@ -39,11 +48,19 @@ export const useSwap = () => {
     queryOutput: ExactInQueryOutput;
   } | null>(null);
 
+  useEffect(() => {
+    getTokensPrice([token1.address, token2.address]).then((prices) => {
+      if (!prices) return;
+      setToken1Price(prices[0].price);
+      setToken2Price(prices[1].price);
+    });
+  }, [token1, token2])
+
   const preview = useCallback(async (swapAmount: TokenAmount, token1: Token, token2: Token) => {
     if (!isConnected || !address) return;
 
     try {
-      const { paths: sorPaths } =
+      const { paths: sorPaths, priceImpact } =
         await balancerApi.sorSwapPaths.fetchSorSwapPaths({
           chainId: CHAIN_ID,
           tokenIn: token1.address,
@@ -51,6 +68,8 @@ export const useSwap = () => {
           swapKind: SwapKind.GivenIn,
           swapAmount,
         });
+
+      setPriceImpact(priceImpact);
 
       const swap = new Swap({
         chainId: CHAIN_ID,
@@ -86,36 +105,21 @@ export const useSwap = () => {
         wethIsEth: false,
       });
 
-      const tokenAbi = [
-        {
-          name: "approve",
-          type: "function",
-          inputs: [
-            {
-              name: "spender",
-              type: "address",
-            },
-            {
-              name: "amount",
-              type: "uint256",
-            },
-          ],
-          outputs: [
-            {
-              name: "",
-              type: "bool",
-            },
-          ],
-          stateMutability: "nonpayable",
-        },
-      ];
-
-      await writeContractAsync({
+      const allowance = await readContract(wagmiConfig, {
         abi: tokenAbi,
-        functionName: "approve",
+        functionName: "allowance",
         address: token1.address,
-        args: [callData.to, swapAmount.amount],
-      });
+        args: [address,callData.to],
+      }) as bigint;
+
+      if (!allowance || allowance < swapAmount.amount) {
+        await writeContractAsync({
+          abi: tokenAbi,
+          functionName: "approve",
+          address: token1.address,
+          args: [callData.to, swapAmount.amount],
+        });
+      }
 
       await sendTransactionAsync({
         to: callData.to,
@@ -127,28 +131,18 @@ export const useSwap = () => {
     }
   };
 
-  const price = useCallback(async (token: Token) => {
-    const url = `https://api.dexscreener.com/latest/dex/tokens/${token.address}?dexId=beraswap`;
-    const response = await fetch(url);
-    const data = await response.json();
-    const sorted = data.pairs
-      .filter((pair: any) => pair.dexId === "beraswap")
-      .sort((a: any, b: any) => b.liquidity.usd - a.liquidity.usd);
-
-    return sorted[0].priceUsd;
-  }, []);
-
   const reverseSwap = async () => {
     if (loadingPreview) return;
 
     setToken1(token2);
     setToken2(token1);
-    const amount = TokenAmount.fromHumanAmount(token2, swapObject?.queryOutput.expectedAmountOut.toSignificant() as `${number}` ?? "0" as `${number}`)
-    setSwapAmount(amount);
+    
+    setToken1Price(token2Price);
+    setToken2Price(token1Price);
 
     setLoadingPreview(true);
 
-    await preview(amount, token1, token2);
+    await preview(swapAmount, token1, token2);
 
     setLoadingPreview(false);
   };
@@ -165,15 +159,9 @@ export const useSwap = () => {
       setSwapAmount(TokenAmount.fromHumanAmount(token1, amount));
 
       await preview(TokenAmount.fromHumanAmount(token1, amount), token1, token2);
-
-      const price1 = await price(token1);
-      const price2 = await price(token2);
-
-      setToken1Price(price1);
-      setToken2Price(price2);
       setLoadingPreview(false);
     }, 300),
-    [token1, preview, price]
+    [token1, preview]
   );
 
 
@@ -183,6 +171,7 @@ export const useSwap = () => {
     token1Price,
     token2Price,
     reverseSwap,
+    priceImpact,
     swapObject,
     swapAmount,
     loadingPreview,

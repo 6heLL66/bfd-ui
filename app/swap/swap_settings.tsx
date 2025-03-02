@@ -1,6 +1,6 @@
 import { Popover, PopoverContent, PopoverTrigger } from "@heroui/react";
 import { GearIcon } from "@radix-ui/react-icons";
-import { slippageOptions } from "../features/swap/useSwap";
+import { slippageOptions } from "../../features/swap/useSwap";
 
 export const SwapSettings = ({ onSlipageChange, onDeadlineChange, slippage, deadline }: { onSlipageChange: (slippage: string) => void, onDeadlineChange: (deadline: string) => void, slippage: string, deadline: string }) => {
     return (

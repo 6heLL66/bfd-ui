@@ -23,7 +23,7 @@ const Sale = () => {
       >
         <Alert
           color="default"
-          className="h-auto backdrop-blur-sm bg-surface border-2 border-border/40 shadow-xl"
+          className="dark h-auto backdrop-blur-sm bg-surface border-2 border-border/40 shadow-xl"
           title={
             <span className="text-body font-bold text-foreground-primary">
               There is no active sale now.
