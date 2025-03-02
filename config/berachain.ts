@@ -3,6 +3,7 @@ import { BalancerApi, Token } from "@berachain-foundation/berancer-sdk";
 export const RPC_URL = "https://rpc.berachain.com/";
 
 export const CHAIN_ID = 80094;
+export const U256_MAX = BigInt('0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff');
 
 export const balancerApi = new BalancerApi(
   "https://api.berachain.com/",

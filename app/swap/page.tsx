@@ -5,7 +5,7 @@ import { Button } from "@heroui/button";
 import { Divider } from "@heroui/divider";
 import { ArrowDownIcon, ArrowRightIcon } from "@radix-ui/react-icons";
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSwap } from "../../features/swap/useSwap";
 import { Spinner } from "@heroui/spinner";
 import Image from "next/image";
@@ -15,12 +15,17 @@ import { getBalance } from "wagmi/actions";
 import { useAccount } from "wagmi";
 import { wagmiConfig } from "@/config/wagmi";
 import { Alert } from "@heroui/alert";
+import { useApprove } from "@/shared/hooks/useApprove";
+import { U256_MAX } from "@/config/berachain";
+import { createApproveToast, createSwapToast } from "./toasts";
 
 export default function SwapPage() {
   const { address } = useAccount();
 
   const [inputAmount, setInputAmount] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  const [isApproving, setIsApproving] = useState(false);
 
   const [token1Balance, setToken1Balance] = useState(0);
 
@@ -40,28 +45,95 @@ export default function SwapPage() {
     setSlippage,
     setDeadline,
     priceImpact,
+    isAllowanceNeeded,
+    setIsAllowanceNeeded,
   } = useSwap();
+
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleSwap = async () => {
     setIsLoading(true);
+    const promise = swap().then(() => {
+      return getBalance(wagmiConfig, {
+        token: token1.address,
+        address: address as `0x${string}`,
+      }).then((token1Balance) => {
+        setToken1Balance(
+          +token1Balance.value.toString() / 10 ** token1.decimals
+        );
+      });
+    });
 
-    await swap();
+    createSwapToast(
+      promise,
+      swapAmount.toSignificant(),
+      token1.symbol ?? "",
+      token2.symbol ?? "",
+      swapObject?.queryOutput.expectedAmountOut.toSignificant() ?? "0"
+    );
 
-    setIsLoading(false);
+    promise
+      .then(() => {
+        setSwapAmount(`0`);
+        setInputAmount("");
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   const token1UsdValue = +swapAmount.toSignificant() * token1Price;
-  const token2UsdValue = +(swapObject?.queryOutput.expectedAmountOut.toSignificant() || 0) * token2Price;
+  const token2UsdValue =
+    +(swapObject?.queryOutput.expectedAmountOut.toSignificant() || 0) *
+    token2Price;
 
   useEffect(() => {
     if (!address) return;
 
-    getBalance(wagmiConfig, {token: token1.address, address: address as `0x${string}`}).then((token1Balance) => {
-      setToken1Balance(+token1Balance.value.toString() / 10 ** token1.decimals);
+    getBalance(wagmiConfig, {
+      token: token1.address,
+      address: address as `0x${string}`,
+    }).then((token1Balance) => {
+      const balance = +token1Balance.value.toString() / 10 ** token1.decimals;
+      setToken1Balance(+token1Balance.value.toString() > 1e2 ? balance : 0);
     });
   }, [token1, address]);
 
-  const isInsufficientFunds = +swapAmount.toSignificant() > token1Balance;
+  useEffect(() => {
+    if (!loadingPreview) {
+      inputRef.current?.focus();
+    }
+  }, [loadingPreview]);
+
+  const { approve } = useApprove();
+
+  const handleApprove = async (infinite?: boolean) => {
+    setIsApproving(true);
+    const promise = approve(
+      swapObject?.queryOutput.to as `0x${string}`,
+      infinite ? U256_MAX : swapAmount.amount,
+      token1
+    );
+
+    createApproveToast(
+      promise,
+      token1.symbol ?? "",
+      swapAmount.toSignificant(),
+      infinite ?? false
+    );
+
+    await promise
+      .then(() => {
+        setIsAllowanceNeeded(false);
+      })
+      .finally(() => {
+        setIsApproving(false);
+      });
+  };
+  console.log(token1Balance)
+  const isInsufficientFunds = +inputAmount > token1Balance;
+
+  const showApprove = isAllowanceNeeded && !isInsufficientFunds;
 
   return (
     <motion.div
@@ -104,6 +176,7 @@ export default function SwapPage() {
                   type="number"
                   autoFocus
                   value={inputAmount}
+                  ref={inputRef}
                   onChange={(e) => {
                     setSwapAmount(e.target.value as `${number}`);
                     setInputAmount(e.target.value);
@@ -115,10 +188,10 @@ export default function SwapPage() {
 
                 <div className="flex items-center gap-2">
                   <button
-                  onClick={() => {
-                    setSwapAmount(token1Balance.toString() as `${number}`);
-                    setInputAmount(token1Balance.toString());
-                  }}
+                    onClick={() => {
+                      setSwapAmount(token1Balance.toString() as `${number}`);
+                      setInputAmount(token1Balance.toString());
+                    }}
                     className="px-2 absolute right-0 -top-8 py-1 text-xs font-bold rounded-lg bg-primary-default/20 text-primary-default hover:bg-primary-default/30 transition-colors"
                   >
                     MAX {token1Balance}
@@ -199,15 +272,24 @@ export default function SwapPage() {
 
                 {swapObject?.queryOutput.expectedAmountOut.toSignificant() && (
                   <span className="text-[11px] font-regular font-mono font-bold absolute left-4 bottom-1 opacity-50">
-                    ~ $
-                    {token2UsdValue}
+                    ~ ${token2UsdValue}
                   </span>
                 )}
               </motion.div>
             </div>
 
-
-            {isInsufficientFunds && <Alert color='danger' className="bg-danger" title={<span className="text-white">Insufficient funds</span>} description={<span className="text-white">You don't have enough funds to swap</span>} />}
+            {isInsufficientFunds && (
+              <Alert
+                color="danger"
+                className="bg-danger"
+                title={<span className="text-white">Insufficient funds</span>}
+                description={
+                  <span className="text-white">
+                    You don't have enough funds to swap
+                  </span>
+                }
+              />
+            )}
 
             {/* Price info */}
             <motion.div className="p-3 rounded-xl bg-surface/50 border border-border/40 transition-all duration-300 hover:border-border/60">
@@ -215,8 +297,14 @@ export default function SwapPage() {
                 <span className="text-xs text-foreground-secondary">
                   Price impact
                 </span>
-                <span className={`font-bold text-sm font-mono ${(+priceImpact.priceImpact * 100) > 0.5 ? 'text-error' : 'text-success'}`}>
-                {(+priceImpact.priceImpact * 100).toFixed(4)}%
+                <span
+                  className={`font-bold text-sm font-mono ${
+                    +priceImpact.priceImpact * 100 > 0.5
+                      ? "text-error"
+                      : "text-success"
+                  }`}
+                >
+                  {(+priceImpact.priceImpact * 100).toFixed(4)}%
                 </span>
               </div>
               <div className="flex items-center justify-between gap-2 mt-1">
@@ -255,23 +343,54 @@ export default function SwapPage() {
             </motion.div>
 
             {/* Swap button */}
-            <Button
-              className="w-full font-bold cursor-pointer bg-primary-default hover:bg-primary-hover transition-all duration-300 h-12 text-sm shadow-md border-none rounded-xl"
-              onPress={handleSwap}
-              isDisabled={!inputAmount || +inputAmount === 0 || isLoading || isInsufficientFunds}
-            >
-              {isLoading ? (
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                  className="text-xl"
+            {showApprove && (
+              <div className="flex flex-col gap-2">
+                <Button
+                  variant="solid"
+                  isLoading={isApproving}
+                  onPress={() => handleApprove()}
+                  className="w-full font-bold bg-primary-default hover:bg-primary-hover transition-all duration-300 h-12 text-sm shadow-md border-none rounded-xl"
                 >
-                  ⭐
-                </motion.div>
-              ) : (
-                "Swap"
-              )}
-            </Button>
+                  Approve {token1.symbol}
+                </Button>
+                <Button
+                  variant="bordered"
+                  isLoading={isApproving}
+                  onPress={() => handleApprove(true)}
+                  className="w-full font-bold transition-all duration-300 h-12 text-sm shadow-md rounded-xl"
+                >
+                  Approve Infinite
+                </Button>
+              </div>
+            )}
+            {!showApprove && (
+              <Button
+                className="w-full font-bold cursor-pointer bg-primary-default hover:bg-primary-hover transition-all duration-300 h-12 text-sm shadow-md border-none rounded-xl"
+                onPress={handleSwap}
+                isDisabled={
+                  !inputAmount ||
+                  +inputAmount === 0 ||
+                  isLoading ||
+                  isInsufficientFunds
+                }
+              >
+                {isLoading ? (
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{
+                      duration: 1,
+                      repeat: Infinity,
+                      ease: "linear",
+                    }}
+                    className="text-xl"
+                  >
+                    ⭐
+                  </motion.div>
+                ) : (
+                  "Swap"
+                )}
+              </Button>
+            )}
           </div>
         </motion.div>
       </WalletGuard>

@@ -1,5 +1,5 @@
 
-import { honeyToken, tokenAbi } from "@/config/berachain";
+import { honeyToken } from "@/config/berachain";
 import { balancerApi, CHAIN_ID, RPC_URL, usdcToken } from "@/config/berachain";
 import {
   ExactInQueryOutput,
@@ -10,11 +10,12 @@ import {
   TokenAmount,
 } from "@berachain-foundation/berancer-sdk";
 import { useState, useCallback, useEffect } from "react";
-import { useAccount, useReadContract, useSendTransaction, useWriteContract } from "wagmi";
+import { useAccount, useSendTransaction } from "wagmi";
 import { debounce } from "lodash";
 import { useSwapSettings } from "./store/swapSettings";
 import { getTokensPrice } from "@/shared/api/berachain";
-import { readContract } from "wagmi/actions";
+import { useApprove } from "@/shared/hooks/useApprove";
+import { waitForTransactionReceipt } from "wagmi/actions";
 import { wagmiConfig } from "@/config/wagmi";
 
 export const slippageOptions = ["0.1", "1.0", "2.5"];
@@ -38,10 +39,12 @@ export const useSwap = () => {
     TokenAmount.fromHumanAmount(usdcToken, "0")
   );
   const { address, isConnected } = useAccount();
-  const { writeContractAsync } = useWriteContract();
   const { sendTransactionAsync } = useSendTransaction();
 
   const [loadingPreview, setLoadingPreview] = useState<boolean>(false);
+  const [isAllowanceNeeded, setIsAllowanceNeeded] = useState<boolean>(false);
+
+  const { checkAllowance } = useApprove();
 
   const [swapObject, setSwapObject] = useState<{
     swap: Swap;
@@ -80,6 +83,9 @@ export const useSwap = () => {
 
       const queryOutput = await swap.query(RPC_URL);
 
+      const isAllowanceNeeded = await checkAllowance(queryOutput.to as `0x${string}`, swapAmount.amount, token1);
+
+      setIsAllowanceNeeded(isAllowanceNeeded);
       setSwapObject({ swap, queryOutput: queryOutput as ExactInQueryOutput });
 
       return { swap, queryOutput };
@@ -105,26 +111,14 @@ export const useSwap = () => {
         wethIsEth: false,
       });
 
-      const allowance = await readContract(wagmiConfig, {
-        abi: tokenAbi,
-        functionName: "allowance",
-        address: token1.address,
-        args: [address,callData.to],
-      }) as bigint;
-
-      if (!allowance || allowance < swapAmount.amount) {
-        await writeContractAsync({
-          abi: tokenAbi,
-          functionName: "approve",
-          address: token1.address,
-          args: [callData.to, swapAmount.amount],
-        });
-      }
-
-      await sendTransactionAsync({
+      const hash = await sendTransactionAsync({
         to: callData.to,
         data: callData.callData,
         value: callData.value,
+      });
+
+      return waitForTransactionReceipt(wagmiConfig, {
+        hash,
       });
     } catch (error) {
       console.error(error);
@@ -149,8 +143,12 @@ export const useSwap = () => {
 
   const debouncedSetSwapAmount = useCallback(
     debounce(async (amount: `${number}`) => {
-      if (Number(amount) === 0) {
+      if (!amount || Number(amount) === 0) {
         setSwapAmount(TokenAmount.fromHumanAmount(token1, "0"));
+        setPriceImpact({
+          error: null,
+          priceImpact: "0",
+        });
         setSwapObject(null);
         return;
       };
@@ -181,5 +179,7 @@ export const useSwap = () => {
     deadline,
     setSlippage,
     setDeadline,
+    isAllowanceNeeded,
+    setIsAllowanceNeeded
   };
 };
