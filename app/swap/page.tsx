@@ -113,7 +113,7 @@ export default function SwapPage() {
       swapObject?.queryOutput.to as `0x${string}`,
       infinite ? U256_MAX : swapAmount.amount,
       token1
-    );
+    ) as Promise<void>;
 
     createApproveToast(
       promise,
@@ -285,7 +285,7 @@ export default function SwapPage() {
                 title={<span className="text-white">Insufficient funds</span>}
                 description={
                   <span className="text-white">
-                    You don't have enough funds to swap
+                    You don`t have enough funds to swap
                   </span>
                 }
               />

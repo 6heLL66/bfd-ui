@@ -53,7 +53,7 @@ export const ErrorToast = () => (
   </div>
 );
 
-export const createSwapToast = (promise: Promise<any>, token1Amount: string, token1Symbol: string, token2Symbol: string, token2Amount: string) => {
+export const createSwapToast = (promise: Promise<void>, token1Amount: string, token1Symbol: string, token2Symbol: string, token2Amount: string) => {
   return toast.promise(promise, {
     pending: { render: () => <PendingToast token1Amount={token1Amount} token1Symbol={token1Symbol} token2Symbol={token2Symbol} />, icon: false },
     success: { render: () => <SuccessToast token2Amount={token2Amount} token2Symbol={token2Symbol} />, icon: false },
@@ -61,7 +61,7 @@ export const createSwapToast = (promise: Promise<any>, token1Amount: string, tok
   });
 };
 
-export const createApproveToast = (promise: Promise<any>, token1Symbol: string, amount: string, infinite: boolean) => {
+export const createApproveToast = (promise: Promise<void>, token1Symbol: string, amount: string, infinite: boolean) => {
     return toast.promise(promise, {
         pending: {
           render() {

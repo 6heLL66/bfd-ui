@@ -5,7 +5,6 @@ import { Header } from "@/widgets/header/ui";
 import "@rainbow-me/rainbowkit/styles.css";
 import { Providers } from "./providers";
 import { Footer } from "@/widgets/footer/ui";
-import { ToastProvider } from "@heroui/react";
 
 export const metadata: Metadata = {
   title: "BeraFlowDao",
