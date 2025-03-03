@@ -23,7 +23,7 @@ export const Header = () => {
 
         <nav className="hidden md:flex items-center gap-8">
           <NavLink href="/sale">Sale</NavLink>
-          <NavLink href="/#">Staking</NavLink>
+          <NavLink href="/staking">Staking</NavLink>
           <NavLink href="/swap">Swap</NavLink>
           <NavLink href="/treasury">Treasury</NavLink>
           <NavLink href="https://beraflowdao.gitbook.io/beraflowdao" external>

@@ -5,6 +5,8 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  --primary-default: #FF9F5B;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -15,7 +17,7 @@
 }
 
 header a:hover {
-  color: #FFA573;
+  color: var(--primary-default);
 }
 
 
