@@ -1,44 +1,118 @@
 "use client";
 
-import { usdcToken } from "@/config/berachain";
+import { SALE_CA, usdcToken } from "@/config/berachain";
 import { WalletGuard } from "@/shared/components/WalletGuard";
 import { getTokenImageUrl } from "@/shared/utils";
 import { Alert } from "@heroui/alert";
 import { Button } from "@heroui/button";
 import { Card, CardBody, CardHeader, CardFooter } from "@heroui/card";
 import { Divider } from "@heroui/divider";
-import { Input } from "@heroui/input";
 import { Link } from "@heroui/link";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { useSaleContract } from "@/features/sale/useSaleContract";
+import { useEffect, useState, useMemo } from "react";
+import { getBalance } from "wagmi/actions";
+import { wagmiConfig } from "@/config/wagmi";
+import { useAccount } from "wagmi";
+import { TokenAmount } from "@berachain-foundation/berancer-sdk";
+import { toast } from "react-toastify";
+import { useApprove } from "@/shared/hooks/useApprove";
+import { createApproveToast } from "../swap/toasts";
+import { InfoCard } from "./components/InfoCard";
+import { Tooltip } from "@heroui/tooltip";
+import { InfoCircledIcon } from "@radix-ui/react-icons";
 
 const Sale = () => {
+  const { address } = useAccount();
+  const { checkAllowance, approve} = useApprove();
+  const [isSupplying, setIsSupplying] = useState<boolean>(false);
+  const [supplyValue, setSupplyValue] = useState<string>();
+  const [usdcBalance, setUsdcBalance] = useState<number>();
+  const { isSaleActive, cap, isPublicSale, totalRaised, allocation, supply } =
+    useSaleContract();
+
+  const progress = useMemo(() => {
+    if (!cap || !totalRaised) return 0;
+    return (Number(totalRaised.toSignificant()) / Number(cap.toSignificant())) * 100;
+  }, [cap, totalRaised]);
+
+  const refreshBalance = async () => {
+    if (!address) return;
+
+    getBalance(wagmiConfig, {
+      token: usdcToken.address,
+      address: address as `0x${string}`,
+    }).then((token1Balance) => {
+      const balance =
+        +token1Balance.value.toString() / 10 ** usdcToken.decimals;
+      setUsdcBalance(+token1Balance.value.toString() > 1e2 ? balance : 0);
+    });
+  }
+
+  const handleSupply = async () => {
+    if (!supplyValue) return;
+    setIsSupplying(true);
+    const amount = TokenAmount.fromHumanAmount(usdcToken, supplyValue as `${number}`);
+
+    const needApprove = await checkAllowance(SALE_CA, amount.amount, usdcToken);
+
+    if (needApprove) {
+      const promise = approve(SALE_CA, amount.amount, usdcToken) as Promise<void>;
+
+      createApproveToast(promise, usdcToken.symbol ?? '', amount.toSignificant(), false);
+
+      await promise;
+    }
+
+    const promise = supply(amount.amount).then(() => {
+      setSupplyValue('');
+      refreshBalance()
+    }).finally(() => {
+      setIsSupplying(false);
+    });
+
+    toast.promise(promise, {
+      pending: "Supplying USDC...",
+      success: "USDC supplied successfully",
+      error: "Failed to supply USDC",
+    });
+  }
+
+  useEffect(() => {
+    if (!address) return;
+
+    refreshBalance()
+  }, [address]);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className="max-w-[800px] min-h-[600px] w-full mx-auto flex flex-col gap-8 justify-between py-8"
     >
-      <motion.div
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 0.2 }}
-      >
-        <Alert
-          color="default"
-          className="dark h-auto backdrop-blur-sm bg-surface border-2 border-border/40 shadow-xl"
-          title={
-            <span className="text-body font-bold text-foreground-primary">
-              There is no active sale now.
-            </span>
-          }
-          description={
-            <span className="text-text font-bold text-foreground-secondary">
-              Announcement will be made in discord when the next sale starts.
-            </span>
-          }
-        />
-      </motion.div>
+      {!isSaleActive && (
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.2 }}
+        >
+          <Alert
+            color="default"
+            className="dark h-auto backdrop-blur-sm bg-surface border-2 border-border/40 shadow-xl"
+            title={
+              <span className="text-body font-bold text-foreground-primary">
+                There is no active sale now.
+              </span>
+            }
+            description={
+              <span className="text-text font-bold text-foreground-secondary">
+                Announcement will be made in discord when the next sale starts.
+              </span>
+            }
+          />
+        </motion.div>
+      )}
 
       <WalletGuard>
         <motion.div
@@ -57,68 +131,78 @@ const Sale = () => {
                   Participate in the active sale round
                 </p>
               </div>
-              <span className="text-xs font-medium px-3 py-1 rounded-full bg-primary-default/20 text-primary-default border-2 border-primary-default/40">
-                Active sale
-              </span>
+              <div className="flex gap-2">
+                {isSaleActive && (
+                  <span className="text-xs font-medium px-3 py-1 rounded-full bg-primary-default/20 text-primary-default border-2 border-primary-default/40">
+                    Active sale
+                  </span>
+                )}
+                {isSaleActive && (
+                  <Tooltip
+                  className="dark max-w-[300px]"
+                  
+                    content={
+                      isPublicSale
+                        ? "Anyone can participate in the public sale round"
+                        : "Only users with allocation can participate in this stage. Public sale will be available soon"
+                    }
+                  >
+                    <span className="text-xs font-medium px-3 py-1 rounded-full bg-success/20 text-success border-2 border-success/40 cursor-help flex items-center gap-1">
+                      {isPublicSale ? "Public sale" : "Whitelist sale"}
+                      <InfoCircledIcon className="w-4 h-4" />
+                    </span>
+                  </Tooltip>
+                )}
+              </div>
             </div>
 
             <div className="grid grid-cols-2 gap-8">
               <div className="space-y-4">
-                <motion.div
-                  whileHover={{ scale: 1.02 }}
-                  className="p-5 rounded-xl bg-gradient-to-br from-surface via-border/5 to-border/10 backdrop-blur-sm border-2 border-border/40 transition-all duration-300 hover:border-border/60 hover:shadow-lg"
-                >
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="text-sm text-foreground-secondary">
-                      Price
-                    </span>
-                    <span className="font-bold text-lg text-foreground-primary">
-                      1.00 USDC
-                    </span>
-                  </div>
-                </motion.div>
+                <InfoCard
+                  title="Price"
+                  value="1.00 USDC"
+                  gradientFrom="purple-600"
+                  gradientVia="violet-600"
+                  gradientTo="fuchsia-600"
+                  isSaleActive={isSaleActive}
+                />
 
-                <motion.div
-                  whileHover={{ scale: 1.02 }}
-                  className="p-5 rounded-xl bg-gradient-to-br from-surface via-border/5 to-border/10 backdrop-blur-sm border-2 border-border/40 transition-all duration-300 hover:border-border/60 hover:shadow-lg"
-                >
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="text-sm text-foreground-secondary">
-                      Cap
-                    </span>
-                    <span className="font-bold text-lg text-foreground-primary">
-                      1,000,000 USDC
-                    </span>
-                  </div>
-                </motion.div>
+                <InfoCard
+                  title="Cap"
+                  value={isSaleActive && cap ? `${(+cap.toSignificant()).toLocaleString()} USDC` : "-"}
+                  gradientFrom="indigo-600"
+                  gradientVia="blue-600"
+                  gradientTo="sky-600"
+                  isSaleActive={isSaleActive}
+                  progressBar={{
+                    progress: progress,
+                    label: `${(100 - progress).toFixed(1)}% remaining`,
+                    color: "blue"
+                  }}
+                />
 
-                <motion.div
-                  whileHover={{ scale: 1.02 }}
-                  className="p-5 rounded-xl bg-gradient-to-br from-surface via-border/5 to-border/10 backdrop-blur-sm border-2 border-border/40 transition-all duration-300 hover:border-border/60 hover:shadow-lg"
-                >
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="text-sm text-foreground-secondary">
-                      Total raised
-                    </span>
-                    <span className="font-bold text-lg text-foreground-primary">
-                      0 USDC
-                    </span>
-                  </div>
-                </motion.div>
+                <InfoCard
+                  title="Total raised"
+                  value={isSaleActive && totalRaised ? `${(+totalRaised.toSignificant()).toLocaleString()} USDC` : "-"}
+                  gradientFrom="emerald-600"
+                  gradientVia="green-600"
+                  gradientTo="teal-600"
+                  isSaleActive={isSaleActive}
+                  progressBar={{
+                    progress: progress,
+                    label: `${progress.toFixed(1)}% filled`,
+                    color: "green"
+                  }}
+                />
 
-                <motion.div
-                  whileHover={{ scale: 1.02 }}
-                  className="p-5 rounded-xl bg-gradient-to-br from-surface via-border/5 to-border/10 backdrop-blur-sm border-2 border-border/40 transition-all duration-300 hover:border-border/60 hover:shadow-lg"
-                >
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="text-sm text-foreground-secondary">
-                      Your allocation
-                    </span>
-                    <span className="font-bold text-lg text-foreground-primary">
-                      1,000 USDC
-                    </span>
-                  </div>
-                </motion.div>
+                <InfoCard
+                  title="Your allocation"
+                  value={isSaleActive && allocation ? `${(+allocation.toSignificant()).toLocaleString()} USDC` : "-"}
+                  gradientFrom="amber-600"
+                  gradientVia="yellow-600"
+                  gradientTo="orange-600"
+                  isSaleActive={isSaleActive}
+                />
               </div>
 
               <div className="flex flex-col justify-center gap-5">
@@ -130,6 +214,8 @@ const Sale = () => {
                     <input
                       className="w-full bg-transparent border-none"
                       placeholder="Enter USDC amount"
+                      value={supplyValue}
+                      onChange={(e) => setSupplyValue(e.target.value)}
                       type="number"
                     />
 
@@ -150,11 +236,16 @@ const Sale = () => {
                     </div>
                   </motion.div>
 
-                  <p className="text-xs text-foreground-secondary">
-                    Available balance: 2,500 USDC
-                  </p>
+                  <Button className="text-xs text-foreground-secondary bg-transparent border-2 border-border/40">
+                    Available balance: {usdcBalance} USDC
+                  </Button>
                 </div>
-                <Button className="w-full font-bold bg-gradient-to-r from-primary-default to-primary-hover hover:opacity-90 transition-all duration-300 h-12 text-base shadow-xl shadow-primary-default/20 border-2 border-primary-default/40">
+                <Button
+                  isDisabled={usdcBalance === 0 || !isSaleActive}
+                  isLoading={isSupplying}
+                  onPress={handleSupply}
+                  className="w-full font-bold bg-gradient-to-r from-primary-default to-primary-hover hover:opacity-90 transition-all duration-300 h-12 text-base shadow-xl shadow-primary-default/20 border-2 border-primary-default/40"
+                >
                   Supply USDC
                 </Button>
               </div>

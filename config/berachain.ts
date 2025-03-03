@@ -5,6 +5,8 @@ export const RPC_URL = "https://rpc.berachain.com/";
 export const CHAIN_ID = 80094;
 export const U256_MAX = BigInt('0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff');
 
+export const SALE_CA = process.env.NEXT_PUBLIC_SALE_CA as `0x${string}`;
+
 export const balancerApi = new BalancerApi(
   "https://api.berachain.com/",
   CHAIN_ID
