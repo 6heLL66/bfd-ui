@@ -28,6 +28,12 @@ export const Header = () => {
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
+    // Prevent scrolling when menu is open
+    if (!isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
   };
 
   return (
@@ -151,11 +157,6 @@ export const Header = () => {
           {/* Navigation Links Container */}
           <div className="flex-1 container mx-auto px-3 flex flex-col justify-center items-center -mt-14">
             <nav className="flex flex-col items-center gap-6">
-              {/* Connect Button */}
-              <div className="mb-6 scale-105 md:hidden">
-                <ConnectButton />
-              </div>
-              
               <MobileNavLink href="/sale" onClick={toggleMobileMenu}>Sale</MobileNavLink>
               <MobileNavLink href="/staking" onClick={toggleMobileMenu}>Staking</MobileNavLink>
               <MobileNavLink href="/swap" onClick={toggleMobileMenu}>Swap</MobileNavLink>
