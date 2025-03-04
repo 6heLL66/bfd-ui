@@ -1,28 +1,28 @@
-"use client";
+'use client';
 
-import { WalletGuard } from "@/shared/components/WalletGuard";
-import { Button } from "@heroui/button";
-import { Divider } from "@heroui/divider";
-import { ArrowDownIcon, ArrowRightIcon } from "@radix-ui/react-icons";
-import { motion } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
-import { useSwap } from "../../features/swap/useSwap";
-import { Spinner } from "@heroui/spinner";
-import Image from "next/image";
-import { getTokenImageUrl } from "@/shared/utils";
-import { SwapSettings } from "./swap_settings";
-import { getBalance } from "wagmi/actions";
-import { useAccount } from "wagmi";
-import { wagmiConfig } from "@/config/wagmi";
-import { Alert } from "@heroui/alert";
-import { useApprove } from "@/shared/hooks/useApprove";
-import { U256_MAX } from "@/config/berachain";
-import { createApproveToast, createSwapToast } from "./toasts";
+import { WalletGuard } from '@/shared/components/WalletGuard';
+import { Button } from '@heroui/button';
+import { Divider } from '@heroui/divider';
+import { ArrowDownIcon, ArrowRightIcon } from '@radix-ui/react-icons';
+import { motion } from 'framer-motion';
+import { useEffect, useRef, useState } from 'react';
+import { useSwap } from '../../features/swap/useSwap';
+import { Spinner } from '@heroui/spinner';
+import Image from 'next/image';
+import { getTokenImageUrl } from '@/shared/utils';
+import { SwapSettings } from './swap_settings';
+import { getBalance } from 'wagmi/actions';
+import { useAccount } from 'wagmi';
+import { wagmiConfig } from '@/config/wagmi';
+import { Alert } from '@heroui/alert';
+import { useApprove } from '@/shared/hooks/useApprove';
+import { U256_MAX } from '@/config/berachain';
+import { createApproveToast, createSwapToast } from './toasts';
 
 export default function SwapPage() {
   const { address } = useAccount();
 
-  const [inputAmount, setInputAmount] = useState("");
+  const [inputAmount, setInputAmount] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const [isApproving, setIsApproving] = useState(false);
@@ -57,25 +57,17 @@ export default function SwapPage() {
       return getBalance(wagmiConfig, {
         token: token1.address,
         address: address as `0x${string}`,
-      }).then((token1Balance) => {
-        setToken1Balance(
-          +token1Balance.value.toString() / 10 ** token1.decimals
-        );
+      }).then(token1Balance => {
+        setToken1Balance(+token1Balance.value.toString() / 10 ** token1.decimals);
       });
     });
 
-    createSwapToast(
-      promise,
-      swapAmount.toSignificant(),
-      token1.symbol ?? "",
-      token2.symbol ?? "",
-      swapObject?.queryOutput.expectedAmountOut.toSignificant() ?? "0"
-    );
+    createSwapToast(promise, swapAmount.toSignificant(), token1.symbol ?? '', token2.symbol ?? '', swapObject?.queryOutput.expectedAmountOut.toSignificant() ?? '0');
 
     promise
       .then(() => {
         setSwapAmount(`0`);
-        setInputAmount("");
+        setInputAmount('');
       })
       .finally(() => {
         setIsLoading(false);
@@ -83,9 +75,7 @@ export default function SwapPage() {
   };
 
   const token1UsdValue = +swapAmount.toSignificant() * token1Price;
-  const token2UsdValue =
-    +(swapObject?.queryOutput.expectedAmountOut.toSignificant() || 0) *
-    token2Price;
+  const token2UsdValue = +(swapObject?.queryOutput.expectedAmountOut.toSignificant() || 0) * token2Price;
 
   useEffect(() => {
     if (!address) return;
@@ -93,7 +83,7 @@ export default function SwapPage() {
     getBalance(wagmiConfig, {
       token: token1.address,
       address: address as `0x${string}`,
-    }).then((token1Balance) => {
+    }).then(token1Balance => {
       const balance = +token1Balance.value.toString() / 10 ** token1.decimals;
       setToken1Balance(+token1Balance.value.toString() > 1e2 ? balance : 0);
     });
@@ -109,18 +99,9 @@ export default function SwapPage() {
 
   const handleApprove = async (infinite?: boolean) => {
     setIsApproving(true);
-    const promise = approve(
-      swapObject?.queryOutput.to as `0x${string}`,
-      infinite ? U256_MAX : swapAmount.amount,
-      token1
-    ) as Promise<void>;
+    const promise = approve(swapObject?.queryOutput.to as `0x${string}`, infinite ? U256_MAX : swapAmount.amount, token1) as Promise<void>;
 
-    createApproveToast(
-      promise,
-      token1.symbol ?? "",
-      swapAmount.toSignificant(),
-      infinite ?? false
-    );
+    createApproveToast(promise, token1.symbol ?? '', swapAmount.toSignificant(), infinite ?? false);
 
     await promise
       .then(() => {
@@ -130,17 +111,13 @@ export default function SwapPage() {
         setIsApproving(false);
       });
   };
-  console.log(token1Balance)
+  console.log(token1Balance);
   const isInsufficientFunds = +inputAmount > token1Balance;
 
   const showApprove = isAllowanceNeeded && !isInsufficientFunds;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="max-w-[520px] min-h-[520px] w-full mx-auto flex flex-col gap-8 mt-4 justify-center py-8"
-    >
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-[520px] min-h-[520px] w-full mx-auto flex flex-col gap-8 mt-4 justify-center py-8">
       <WalletGuard>
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
@@ -151,33 +128,22 @@ export default function SwapPage() {
           <div className="flex flex-col gap-4 w-full">
             <div className="flex items-center justify-between border-b border-border/40 pb-4">
               <div className="space-y-1">
-                <span className="text-2xl font-bold bg-gradient-to-r from-primary-default to-primary-hover bg-clip-text text-transparent">
-                  Swap Tokens
-                </span>
-                <p className="text-sm text-foreground-secondary">
-                  Exchange your tokens instantly
-                </p>
+                <span className="text-2xl font-bold bg-gradient-to-r from-primary-default to-primary-hover bg-clip-text text-transparent">Swap Tokens</span>
+                <p className="text-sm text-foreground-secondary">Exchange your tokens instantly</p>
               </div>
-              <SwapSettings
-                onSlipageChange={setSlippage}
-                onDeadlineChange={setDeadline}
-                slippage={slippage}
-                deadline={deadline}
-              />
+              <SwapSettings onSlipageChange={setSlippage} onDeadlineChange={setDeadline} slippage={slippage} deadline={deadline} />
             </div>
 
             {/* Input token */}
             <div className="space-y-2">
-              <label className="text-xs font-medium text-foreground-secondary">
-                You pay
-              </label>
+              <label className="text-xs font-medium text-foreground-secondary">You pay</label>
               <motion.div className="p-4 py-5 relative rounded-xl flex bg-surface/50 border border-border/40 transition-all duration-300 hover:border-border">
                 <input
                   type="number"
                   autoFocus
                   value={inputAmount}
                   ref={inputRef}
-                  onChange={(e) => {
+                  onChange={e => {
                     setSwapAmount(e.target.value as `${number}`);
                     setInputAmount(e.target.value);
                   }}
@@ -196,26 +162,13 @@ export default function SwapPage() {
                   >
                     MAX {token1Balance}
                   </button>
-                  <Divider
-                    className="h-8 mx-3 bg-border/40"
-                    orientation="vertical"
-                  />
+                  <Divider className="h-8 mx-3 bg-border/40" orientation="vertical" />
                   <span className="text-text font-bold flex gap-3 items-center">
-                    <Image
-                      src={getTokenImageUrl(token1)}
-                      width={28}
-                      height={28}
-                      alt="honey"
-                    />{" "}
-                    {token1.symbol}
+                    <Image src={getTokenImageUrl(token1)} width={28} height={28} alt="honey" /> {token1.symbol}
                   </span>
                 </div>
 
-                {inputAmount && (
-                  <span className="text-[11px] font-regular font-mono font-bold absolute left-4 bottom-2 opacity-50">
-                    ~ ${token1UsdValue}
-                  </span>
-                )}
+                {inputAmount && <span className="text-[11px] font-regular font-mono font-bold absolute left-4 bottom-2 opacity-50">~ ${token1UsdValue}</span>}
               </motion.div>
             </div>
 
@@ -233,33 +186,20 @@ export default function SwapPage() {
 
             {/* Output token */}
             <div className="space-y-3 -mt-8">
-              <label className="text-sm font-medium text-foreground-secondary">
-                You receive
-              </label>
+              <label className="text-sm font-medium text-foreground-secondary">You receive</label>
               <motion.div className="p-4 py-5 rounded-2xl flex bg-gradient-to-br from-surface via-border/5 to-border/10 backdrop-blur-sm border-2 border-border/40 transition-all duration-300 hover:border-border hover:shadow-lg">
                 <input
                   type="number"
                   disabled
-                  value={
-                    swapObject?.queryOutput.expectedAmountOut.toSignificant() ??
-                    ""
-                  }
+                  value={swapObject?.queryOutput.expectedAmountOut.toSignificant() ?? ''}
                   className="border-none bg-transparent text-lg grow font-mono"
                   placeholder="0.00"
                 />
 
                 <div className="flex items-center">
-                  <Divider
-                    className="h-8 mx-3 bg-border/40"
-                    orientation="vertical"
-                  />
+                  <Divider className="h-8 mx-3 bg-border/40" orientation="vertical" />
                   <span className="text-text font-bold flex gap-3 items-center">
-                    <Image
-                      src={getTokenImageUrl(token2)}
-                      width={28}
-                      height={28}
-                      alt="honey"
-                    />
+                    <Image src={getTokenImageUrl(token2)} width={28} height={28} alt="honey" />
                     {token2.symbol}
                   </span>
                 </div>
@@ -271,9 +211,7 @@ export default function SwapPage() {
                 )}
 
                 {swapObject?.queryOutput.expectedAmountOut.toSignificant() && (
-                  <span className="text-[11px] font-regular font-mono font-bold absolute left-4 bottom-1 opacity-50">
-                    ~ ${token2UsdValue}
-                  </span>
+                  <span className="text-[11px] font-regular font-mono font-bold absolute left-4 bottom-1 opacity-50">~ ${token2UsdValue}</span>
                 )}
               </motion.div>
             </div>
@@ -283,59 +221,33 @@ export default function SwapPage() {
                 color="danger"
                 className="bg-danger"
                 title={<span className="text-white">Insufficient funds</span>}
-                description={
-                  <span className="text-white">
-                    You don`t have enough funds to swap
-                  </span>
-                }
+                description={<span className="text-white">You don`t have enough funds to swap</span>}
               />
             )}
 
             {/* Price info */}
             <motion.div className="p-3 rounded-xl bg-surface/50 border border-border/40 transition-all duration-300 hover:border-border/60">
               <div className="flex items-center justify-between gap-2">
-                <span className="text-xs text-foreground-secondary">
-                  Price impact
-                </span>
-                <span
-                  className={`font-bold text-sm font-mono ${
-                    +priceImpact.priceImpact * 100 > 0.5
-                      ? "text-error"
-                      : "text-success"
-                  }`}
-                >
+                <span className="text-xs text-foreground-secondary">Price impact</span>
+                <span className={`font-bold text-sm font-mono ${+priceImpact.priceImpact * 100 > 0.5 ? 'text-error' : 'text-success'}`}>
                   {(+priceImpact.priceImpact * 100).toFixed(4)}%
                 </span>
               </div>
               <div className="flex items-center justify-between gap-2 mt-1">
-                <span className="text-xs text-foreground-secondary">
-                  Slippage tolerance
-                </span>
-                <span className="font-bold text-sm font-mono text-foreground-primary">
-                  {(+slippage).toFixed(2)}%
-                </span>
+                <span className="text-xs text-foreground-secondary">Slippage tolerance</span>
+                <span className="font-bold text-sm font-mono text-foreground-primary">{(+slippage).toFixed(2)}%</span>
               </div>
               <Divider className="my-3 bg-border/40" />
               <div className="flex items-center justify-between gap-2">
                 <span className="text-xs text-foreground-secondary">Route</span>
                 <span className="font-bold text-sm font-mono text-foreground-primary flex gap-2">
                   <span className="text-text font-bold flex gap-3 items-center">
-                    <Image
-                      src={getTokenImageUrl(token1)}
-                      width={28}
-                      height={28}
-                      alt="honey"
-                    />
+                    <Image src={getTokenImageUrl(token1)} width={28} height={28} alt="honey" />
                     {token1.symbol}
-                  </span>{" "}
+                  </span>{' '}
                   <ArrowRightIcon className="h-6 w-8 text-white" />
                   <span className="text-text font-bold flex gap-3 items-center">
-                    <Image
-                      src={getTokenImageUrl(token2)}
-                      width={28}
-                      height={28}
-                      alt="honey"
-                    />
+                    <Image src={getTokenImageUrl(token2)} width={28} height={28} alt="honey" />
                     {token2.symbol}
                   </span>
                 </span>
@@ -367,12 +279,7 @@ export default function SwapPage() {
               <Button
                 className="w-full font-bold cursor-pointer bg-primary-default hover:bg-primary-hover transition-all duration-300 h-12 text-sm shadow-md border-none rounded-xl"
                 onPress={handleSwap}
-                isDisabled={
-                  !inputAmount ||
-                  +inputAmount === 0 ||
-                  isLoading ||
-                  isInsufficientFunds
-                }
+                isDisabled={!inputAmount || +inputAmount === 0 || isLoading || isInsufficientFunds}
               >
                 {isLoading ? (
                   <motion.div
@@ -380,14 +287,14 @@ export default function SwapPage() {
                     transition={{
                       duration: 1,
                       repeat: Infinity,
-                      ease: "linear",
+                      ease: 'linear',
                     }}
                     className="text-xl"
                   >
                     ⭐
                   </motion.div>
                 ) : (
-                  "Swap"
+                  'Swap'
                 )}
               </Button>
             )}

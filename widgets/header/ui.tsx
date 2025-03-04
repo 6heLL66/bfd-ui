@@ -1,7 +1,7 @@
-import { ConnectButton } from "@rainbow-me/rainbowkit";
-import Link from "next/link";
-import Image from "next/image";
-import { DOCS_LINK } from "@/config/links";
+import { ConnectButton } from '@rainbow-me/rainbowkit';
+import Link from 'next/link';
+import Image from 'next/image';
+import { DOCS_LINK } from '@/config/links';
 
 export const Logo = () => {
   return (
@@ -9,12 +9,7 @@ export const Logo = () => {
       <div className="absolute -inset-[1px] bg-gradient-to-r from-primary-default to-primary-default rounded-lg blur-sm group-hover/link:blur-md transition-all duration-500" />
       <div className="relative bg-black rounded-lg border border-white/20 p-1 backdrop-blur-sm group-hover/link:border-primary-default/40 transition-all duration-500">
         <div className="relative w-9 h-9">
-          <Image
-            src="/images/logo_bear.png"
-            alt="BeraFlow Logo"
-            fill
-            className="object-contain transition-transform duration-300"
-          />
+          <Image src="/images/logo_bear.png" alt="BeraFlow Logo" fill className="object-contain transition-transform duration-300" />
         </div>
       </div>
       {/* Glow effect */}
@@ -28,10 +23,7 @@ export const Header = () => {
     <header className="backdrop-blur-md bg-black/30 border-b border-white/10">
       <div className="container mx-auto h-20 flex justify-between items-center px-4">
         <div className="flex items-center gap-2">
-          <Link
-            href="/"
-            className="group/link flex items-center gap-4 transition-all duration-300"
-          >
+          <Link href="/" className="group/link flex items-center gap-4 transition-all duration-300">
             <Logo />
 
             <span className="text-h3bold font-display">
@@ -60,26 +52,12 @@ export const Header = () => {
   );
 };
 
-const NavLink = ({
-  href,
-  children,
-  external,
-}: {
-  href: string;
-  children: React.ReactNode;
-  external?: boolean;
-}) => {
-  const baseStyles =
-    "relative font-display text-text text-white/80 hover:text-primary-default transition-colors py-2";
+const NavLink = ({ href, children, external }: { href: string; children: React.ReactNode; external?: boolean }) => {
+  const baseStyles = 'relative font-display text-text text-white/80 hover:text-primary-default transition-colors py-2';
 
   if (external) {
     return (
-      <Link
-        href={href}
-        rel="noopener noreferrer"
-        target="_blank"
-        className={`${baseStyles} flex items-center gap-1`}
-      >
+      <Link href={href} rel="noopener noreferrer" target="_blank" className={`${baseStyles} flex items-center gap-1`}>
         {children}
         <svg
           xmlns="http://www.w3.org/2000/svg"

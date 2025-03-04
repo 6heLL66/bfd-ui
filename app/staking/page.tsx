@@ -1,24 +1,16 @@
-"use client";
+'use client';
 
-import { motion } from "framer-motion";
-import { WalletGuard } from "@/shared/components/WalletGuard";
-import { Card } from "@heroui/react";
+import { motion } from 'framer-motion';
+import { WalletGuard } from '@/shared/components/WalletGuard';
+import { Card } from '@heroui/react';
 
 const StakingPage = () => {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="container mx-auto px-4 py-12 max-w-7xl"
-    >
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="container mx-auto px-4 py-12 max-w-7xl">
       {/* Header */}
       <div className="mb-12">
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-primary-default to-secondary bg-clip-text text-transparent">
-          Stake BGT
-        </h1>
-        <p className="text-foreground-secondary mt-2">
-          Stake your BGT tokens to earn rewards and participate in governance
-        </p>
+        <h1 className="text-4xl font-bold bg-gradient-to-r from-primary-default to-secondary bg-clip-text text-transparent">Stake BGT</h1>
+        <p className="text-foreground-secondary mt-2">Stake your BGT tokens to earn rewards and participate in governance</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -34,16 +26,10 @@ const StakingPage = () => {
               <div className="flex flex-col gap-8 w-full">
                 <div className="flex items-center justify-between border-b-2 border-border/40 pb-6">
                   <div className="space-y-1">
-                    <span className="text-h3 font-bold text-primary-default">
-                      Stake BGT
-                    </span>
-                    <p className="text-sm text-foreground-secondary">
-                      Lock your BGT to earn rewards
-                    </p>
+                    <span className="text-h3 font-bold text-primary-default">Stake BGT</span>
+                    <p className="text-sm text-foreground-secondary">Lock your BGT to earn rewards</p>
                   </div>
-                  <span className="text-xs font-medium px-3 py-1 rounded-full bg-primary-default/20 text-primary-default border-2 border-primary-default/40">
-                    Active Pool
-                  </span>
+                  <span className="text-xs font-medium px-3 py-1 rounded-full bg-primary-default/20 text-primary-default border-2 border-primary-default/40">Active Pool</span>
                 </div>
 
                 <div className="space-y-4">
@@ -52,12 +38,8 @@ const StakingPage = () => {
                     className="p-5 rounded-xl bg-gradient-to-br from-surface via-border/5 to-border/10 backdrop-blur-sm border-2 border-border/40 transition-all duration-300 hover:border-border/60 hover:shadow-lg"
                   >
                     <div className="flex items-center justify-between gap-2">
-                      <span className="text-sm text-foreground-secondary">
-                        APR
-                      </span>
-                      <span className="font-bold text-lg text-foreground-primary">
-                        12.5%
-                      </span>
+                      <span className="text-sm text-foreground-secondary">APR</span>
+                      <span className="font-bold text-lg text-foreground-primary">12.5%</span>
                     </div>
                   </motion.div>
 
@@ -66,12 +48,8 @@ const StakingPage = () => {
                     className="p-5 rounded-xl bg-gradient-to-br from-surface via-border/5 to-border/10 backdrop-blur-sm border-2 border-border/40 transition-all duration-300 hover:border-border/60 hover:shadow-lg"
                   >
                     <div className="flex items-center justify-between gap-2">
-                      <span className="text-sm text-foreground-secondary">
-                        Total Staked
-                      </span>
-                      <span className="font-bold text-lg text-foreground-primary">
-                        1,234,567 BGT
-                      </span>
+                      <span className="text-sm text-foreground-secondary">Total Staked</span>
+                      <span className="font-bold text-lg text-foreground-primary">1,234,567 BGT</span>
                     </div>
                   </motion.div>
 
@@ -80,12 +58,8 @@ const StakingPage = () => {
                     className="p-5 rounded-xl bg-gradient-to-br from-surface via-border/5 to-border/10 backdrop-blur-sm border-2 border-border/40 transition-all duration-300 hover:border-border/60 hover:shadow-lg"
                   >
                     <div className="flex items-center justify-between gap-2">
-                      <span className="text-sm text-foreground-secondary">
-                        Your Stake
-                      </span>
-                      <span className="font-bold text-lg text-foreground-primary">
-                        0 BGT
-                      </span>
+                      <span className="text-sm text-foreground-secondary">Your Stake</span>
+                      <span className="font-bold text-lg text-foreground-primary">0 BGT</span>
                     </div>
                   </motion.div>
 
@@ -94,12 +68,8 @@ const StakingPage = () => {
                     className="p-5 rounded-xl bg-gradient-to-br from-surface via-border/5 to-border/10 backdrop-blur-sm border-2 border-border/40 transition-all duration-300 hover:border-border/60 hover:shadow-lg"
                   >
                     <div className="flex items-center justify-between gap-2">
-                      <span className="text-sm text-foreground-secondary">
-                        Earned Rewards
-                      </span>
-                      <span className="font-bold text-lg text-foreground-primary">
-                        0 BGT
-                      </span>
+                      <span className="text-sm text-foreground-secondary">Earned Rewards</span>
+                      <span className="font-bold text-lg text-foreground-primary">0 BGT</span>
                     </div>
                   </motion.div>
                 </div>
@@ -130,25 +100,15 @@ const StakingPage = () => {
           <h3 className="text-xl font-bold text-foreground-primary">Staking Info</h3>
           <div className="space-y-4">
             <div>
-              <h4 className="text-sm font-medium text-foreground-secondary mb-2">
-                Lock Period
-              </h4>
-              <p className="text-foreground-primary">
-                7 days minimum lock period for staking BGT tokens
-              </p>
+              <h4 className="text-sm font-medium text-foreground-secondary mb-2">Lock Period</h4>
+              <p className="text-foreground-primary">7 days minimum lock period for staking BGT tokens</p>
             </div>
             <div>
-              <h4 className="text-sm font-medium text-foreground-secondary mb-2">
-                Rewards
-              </h4>
-              <p className="text-foreground-primary">
-                Earn BGT rewards daily based on your staked amount and the current APR
-              </p>
+              <h4 className="text-sm font-medium text-foreground-secondary mb-2">Rewards</h4>
+              <p className="text-foreground-primary">Earn BGT rewards daily based on your staked amount and the current APR</p>
             </div>
             <div>
-              <h4 className="text-sm font-medium text-foreground-secondary mb-2">
-                Benefits
-              </h4>
+              <h4 className="text-sm font-medium text-foreground-secondary mb-2">Benefits</h4>
               <ul className="list-disc list-inside text-foreground-primary space-y-2">
                 <li>Earn passive income through staking rewards</li>
                 <li>Participate in governance decisions</li>

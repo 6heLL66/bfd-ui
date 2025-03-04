@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { HeroUIProvider } from "@heroui/react";
+import { HeroUIProvider } from '@heroui/react';
 import { ToastContainer } from 'react-toastify';
-import { queryClient } from "@/config/queryClient";
-import { wagmiConfig } from "@/config/wagmi";
-import { darkTheme, RainbowKitProvider } from "@rainbow-me/rainbowkit";
-import { QueryClientProvider } from "@tanstack/react-query";
-import { WagmiProvider } from "wagmi";
+import { queryClient } from '@/config/queryClient';
+import { wagmiConfig } from '@/config/wagmi';
+import { darkTheme, RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { WagmiProvider } from 'wagmi';
 
 export const Providers = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -15,8 +15,8 @@ export const Providers = ({ children }: { children: React.ReactNode }) => {
         <RainbowKitProvider
           locale="en-US"
           theme={darkTheme({
-            accentColor: "#FF9F5B",
-            accentColorForeground: "#ffffff",
+            accentColor: '#FF9F5B',
+            accentColorForeground: '#ffffff',
           })}
         >
           <HeroUIProvider>

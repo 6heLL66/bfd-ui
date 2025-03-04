@@ -1,20 +1,8 @@
-import Link from "next/link";
-import { Logo } from "../header/ui";
-import { DISCORD_LINK, DOCS_LINK, TWITTER_LINK } from "@/config/links";
+import Link from 'next/link';
+import { Logo } from '../header/ui';
+import { DISCORD_LINK, DOCS_LINK, TWITTER_LINK } from '@/config/links';
 
-const SocialButton = ({
-  icon,
-  title,
-  className,
-  color,
-  href,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  color?: string;
-  className?: string;
-  href: string;
-}) => {
+const SocialButton = ({ icon, title, className, color, href }: { icon: React.ReactNode; title: string; color?: string; className?: string; href: string }) => {
   return (
     <Link
       href={href}
@@ -40,38 +28,18 @@ export const Footer = () => {
         <div className="flex flex-col md:flex-row gap-12 md:gap-24 justify-center items-center">
           <div className="flex flex-row gap-6 items-center justify-center">
             <Logo />
-            <span className="text-text/60 max-w-[300px] text-center md:text-left">
-              Empowering the future of DeFi on Berachain
-            </span>
+            <span className="text-text/60 max-w-[300px] text-center md:text-left">Empowering the future of DeFi on Berachain</span>
           </div>
-          
+
           <div className="flex gap-8 justify-center items-center">
-            <SocialButton
-              icon={<XIcon />}
-              href={TWITTER_LINK}
-              color="#1DA1F2"
-              className="x hover:scale-105 transition-transform"
-              title="Twitter"
-            />
-            <SocialButton
-              icon={<DiscordIcon />}
-              href={DISCORD_LINK}
-              title="Discord"
-              className="discord hover:scale-105 transition-transform"
-              color="#8c9eff"
-            />
-            <SocialButton
-              icon={<GitbookIcon />}
-              href={DOCS_LINK}
-              className="gitbook hover:scale-105 transition-transform"
-              title="Gitbook"
-            />
+            <SocialButton icon={<XIcon />} href={TWITTER_LINK} color="#1DA1F2" className="x hover:scale-105 transition-transform" title="Twitter" />
+            <SocialButton icon={<DiscordIcon />} href={DISCORD_LINK} title="Discord" className="discord hover:scale-105 transition-transform" color="#8c9eff" />
+            <SocialButton icon={<GitbookIcon />} href={DOCS_LINK} className="gitbook hover:scale-105 transition-transform" title="Gitbook" />
           </div>
         </div>
 
         <div className="border-t border-white/10 mt-16">
           <div className="flex justify-between items-center py-8 text-sm text-text/60">
-            
             <span>Copyright © BeraFlow DAO 2025</span>
             <div className="flex gap-8">
               <Link href="/privacy-notice" className="hover:text-white hover:underline transition-colors">
@@ -111,34 +79,20 @@ const XIcon = () => {
 
 const DiscordIcon = () => {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      x="0px"
-      y="0px"
-      width="32"
-      height="32"
-      viewBox="0 0 48 48"
-    >
+    <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="32" height="32" viewBox="0 0 48 48">
       <path
         fill="currentColor"
         d="M40.107,12.15c-0.065-0.102-0.139-0.182-0.236-0.255c-0.769-0.578-4.671-3.339-9.665-3.875	c-0.01-0.001-0.048-0.003-0.057-0.003c-0.098,0-0.183,0.057-0.224,0.14l-0.269,0.538c0,0-0.001,0-0.001,0	c-0.017,0.033-0.026,0.071-0.026,0.111c0,0.109,0.07,0.202,0.168,0.236c0.006,0.002,0.048,0.011,0.063,0.014	c4.267,1.028,6.863,2.89,9.149,4.945c-4.047-2.066-8.044-4.001-15.009-4.001s-10.961,1.936-15.009,4.001	c2.286-2.055,4.882-3.917,9.149-4.945c0.015-0.004,0.057-0.012,0.063-0.014c0.098-0.034,0.168-0.127,0.168-0.236	c0-0.04-0.009-0.078-0.026-0.111c0,0-0.001,0-0.001,0l-0.269-0.538c-0.041-0.083-0.125-0.14-0.224-0.14	c-0.009,0-0.048,0.002-0.057,0.003c-4.994,0.536-8.896,3.297-9.665,3.875c-0.097,0.073-0.17,0.153-0.236,0.255	c-0.708,1.107-5.049,8.388-5.892,21.632c-0.009,0.142,0.04,0.289,0.135,0.395c4.592,5.144,11.182,5.752,12.588,5.823	c0.167,0.008,0.327-0.065,0.427-0.199l1.282-1.709c0.1-0.134,0.046-0.322-0.111-0.379c-2.705-0.986-5.717-2.7-8.332-5.706	C11.231,34.457,16.12,37,24,37s12.769-2.543,16.009-4.993c-2.616,3.006-5.627,4.719-8.332,5.706	c-0.157,0.057-0.211,0.245-0.111,0.379l1.282,1.709c0.101,0.134,0.26,0.208,0.427,0.199c1.407-0.072,7.996-0.679,12.588-5.823	c0.095-0.106,0.144-0.253,0.135-0.395C45.156,20.538,40.815,13.257,40.107,12.15z"
       ></path>
-      <circle cx="17.5" cy="26" r="3" fill="#000000"/>
-      <circle cx="30.5" cy="26" r="3" fill="#000000"/>
+      <circle cx="17.5" cy="26" r="3" fill="#000000" />
+      <circle cx="30.5" cy="26" r="3" fill="#000000" />
     </svg>
   );
 };
 
 const GitbookIcon = () => {
   return (
-    <svg
-      fill="#ffffff"
-      width="32"
-      height="32"
-      viewBox="0 0 24 24"
-      role="img"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg fill="#ffffff" width="32" height="32" viewBox="0 0 24 24" role="img" xmlns="http://www.w3.org/2000/svg">
       <path d="M10.802 17.77a.703.703 0 1 1-.002 1.406.703.703 0 0 1 .002-1.406m11.024-4.347a.703.703 0 1 1 .001-1.406.703.703 0 0 1-.001 1.406m0-2.876a2.176 2.176 0 0 0-2.174 2.174c0 .233.039.465.115.691l-7.181 3.823a2.165 2.165 0 0 0-1.784-.937c-.829 0-1.584.475-1.95 1.216l-6.451-3.402c-.682-.358-1.192-1.48-1.138-2.502.028-.533.212-.947.493-1.107.178-.1.392-.092.62.027l.042.023c1.71.9 7.304 3.847 7.54 3.956.363.169.565.237 1.185-.057l11.564-6.014c.17-.064.368-.227.368-.474 0-.342-.354-.477-.355-.477-.658-.315-1.669-.788-2.655-1.25-2.108-.987-4.497-2.105-5.546-2.655-.906-.474-1.635-.074-1.765.006l-.252.125C7.78 6.048 1.46 9.178 1.1 9.397.457 9.789.058 10.57.006 11.539c-.08 1.537.703 3.14 1.824 3.727l6.822 3.518a2.175 2.175 0 0 0 2.15 1.862 2.177 2.177 0 0 0 2.173-2.14l7.514-4.073c.38.298.853.461 1.337.461A2.176 2.176 0 0 0 24 12.72a2.176 2.176 0 0 0-2.174-2.174" />
     </svg>
   );

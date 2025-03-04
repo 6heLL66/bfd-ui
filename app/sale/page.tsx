@@ -1,36 +1,35 @@
-"use client";
+'use client';
 
-import { SALE_CA, usdcToken } from "@/config/berachain";
-import { WalletGuard } from "@/shared/components/WalletGuard";
-import { getTokenImageUrl } from "@/shared/utils";
-import { Alert } from "@heroui/alert";
-import { Button } from "@heroui/button";
-import { Card, CardBody, CardHeader, CardFooter } from "@heroui/card";
-import { Divider } from "@heroui/divider";
-import { Link } from "@heroui/link";
-import { motion } from "framer-motion";
-import Image from "next/image";
-import { useSaleContract } from "@/features/sale/useSaleContract";
-import { useEffect, useState, useMemo } from "react";
-import { getBalance } from "wagmi/actions";
-import { wagmiConfig } from "@/config/wagmi";
-import { useAccount } from "wagmi";
-import { TokenAmount } from "@berachain-foundation/berancer-sdk";
-import { toast } from "react-toastify";
-import { useApprove } from "@/shared/hooks/useApprove";
-import { createApproveToast } from "../swap/toasts";
-import { InfoCard } from "./components/InfoCard";
-import { Tooltip } from "@heroui/tooltip";
-import { InfoCircledIcon } from "@radix-ui/react-icons";
+import { SALE_CA, usdcToken } from '@/config/berachain';
+import { WalletGuard } from '@/shared/components/WalletGuard';
+import { getTokenImageUrl } from '@/shared/utils';
+import { Alert } from '@heroui/alert';
+import { Button } from '@heroui/button';
+import { Card, CardBody, CardHeader, CardFooter } from '@heroui/card';
+import { Divider } from '@heroui/divider';
+import { Link } from '@heroui/link';
+import { motion } from 'framer-motion';
+import Image from 'next/image';
+import { useSaleContract } from '@/features/sale/useSaleContract';
+import { useEffect, useState, useMemo } from 'react';
+import { getBalance } from 'wagmi/actions';
+import { wagmiConfig } from '@/config/wagmi';
+import { useAccount } from 'wagmi';
+import { TokenAmount } from '@berachain-foundation/berancer-sdk';
+import { toast } from 'react-toastify';
+import { useApprove } from '@/shared/hooks/useApprove';
+import { createApproveToast } from '../swap/toasts';
+import { InfoCard } from './components/InfoCard';
+import { Tooltip } from '@heroui/tooltip';
+import { InfoCircledIcon } from '@radix-ui/react-icons';
 
 const Sale = () => {
   const { address } = useAccount();
-  const { checkAllowance, approve} = useApprove();
+  const { checkAllowance, approve } = useApprove();
   const [isSupplying, setIsSupplying] = useState<boolean>(false);
   const [supplyValue, setSupplyValue] = useState<string>();
   const [usdcBalance, setUsdcBalance] = useState<number>();
-  const { isSaleActive, cap, isPublicSale, totalRaised, allocation, supply } =
-    useSaleContract();
+  const { isSaleActive, cap, isPublicSale, totalRaised, allocation, supply } = useSaleContract();
 
   const progress = useMemo(() => {
     if (!cap || !totalRaised) return 0;
@@ -43,12 +42,11 @@ const Sale = () => {
     getBalance(wagmiConfig, {
       token: usdcToken.address,
       address: address as `0x${string}`,
-    }).then((token1Balance) => {
-      const balance =
-        +token1Balance.value.toString() / 10 ** usdcToken.decimals;
+    }).then(token1Balance => {
+      const balance = +token1Balance.value.toString() / 10 ** usdcToken.decimals;
       setUsdcBalance(+token1Balance.value.toString() > 1e2 ? balance : 0);
     });
-  }
+  };
 
   const handleSupply = async () => {
     if (!supplyValue) return;
@@ -65,51 +63,37 @@ const Sale = () => {
       await promise;
     }
 
-    const promise = supply(amount.amount).then(() => {
-      setSupplyValue('');
-      refreshBalance()
-    }).finally(() => {
-      setIsSupplying(false);
-    });
+    const promise = supply(amount.amount)
+      .then(() => {
+        setSupplyValue('');
+        refreshBalance();
+      })
+      .finally(() => {
+        setIsSupplying(false);
+      });
 
     toast.promise(promise, {
-      pending: "Supplying USDC...",
-      success: "USDC supplied successfully",
-      error: "Failed to supply USDC",
+      pending: 'Supplying USDC...',
+      success: 'USDC supplied successfully',
+      error: 'Failed to supply USDC',
     });
-  }
+  };
 
   useEffect(() => {
     if (!address) return;
 
-    refreshBalance()
+    refreshBalance();
   }, [address]);
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="max-w-[800px] min-h-[600px] w-full mx-auto flex flex-col gap-8 justify-between py-8"
-    >
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-[800px] min-h-[600px] w-full mx-auto flex flex-col gap-8 justify-between py-8">
       {!isSaleActive && (
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.2 }}
-        >
+        <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }}>
           <Alert
             color="default"
             className="dark h-auto backdrop-blur-sm bg-surface border-2 border-border/40 shadow-xl"
-            title={
-              <span className="text-body font-bold text-foreground-primary">
-                There is no active sale now.
-              </span>
-            }
-            description={
-              <span className="text-text font-bold text-foreground-secondary">
-                Announcement will be made in discord when the next sale starts.
-              </span>
-            }
+            title={<span className="text-body font-bold text-foreground-primary">There is no active sale now.</span>}
+            description={<span className="text-text font-bold text-foreground-secondary">Announcement will be made in discord when the next sale starts.</span>}
           />
         </motion.div>
       )}
@@ -124,31 +108,24 @@ const Sale = () => {
           <div className="flex flex-col gap-8 w-full">
             <div className="flex items-center justify-between border-b-2 border-border/40 pb-6">
               <div className="space-y-1">
-                <span className="text-h3 font-bold text-primary-default">
-                  Supply USDC
-                </span>
-                <p className="text-sm text-foreground-secondary">
-                  Participate in the active sale round
-                </p>
+                <span className="text-h3 font-bold text-primary-default">Supply USDC</span>
+                <p className="text-sm text-foreground-secondary">Participate in the active sale round</p>
               </div>
               <div className="flex gap-2">
                 {isSaleActive && (
-                  <span className="text-xs font-medium px-3 py-1 rounded-full bg-primary-default/20 text-primary-default border-2 border-primary-default/40">
-                    Active sale
-                  </span>
+                  <span className="text-xs font-medium px-3 py-1 rounded-full bg-primary-default/20 text-primary-default border-2 border-primary-default/40">Active sale</span>
                 )}
                 {isSaleActive && (
                   <Tooltip
-                  className="dark max-w-[300px]"
-                  
+                    className="dark max-w-[300px]"
                     content={
                       isPublicSale
-                        ? "Anyone can participate in the public sale round"
-                        : "Only users with allocation can participate in this stage. Public sale will be available soon"
+                        ? 'Anyone can participate in the public sale round'
+                        : 'Only users with allocation can participate in this stage. Public sale will be available soon'
                     }
                   >
                     <span className="text-xs font-medium px-3 py-1 rounded-full bg-success/20 text-success border-2 border-success/40 cursor-help flex items-center gap-1">
-                      {isPublicSale ? "Public sale" : "Whitelist sale"}
+                      {isPublicSale ? 'Public sale' : 'Whitelist sale'}
                       <InfoCircledIcon className="w-4 h-4" />
                     </span>
                   </Tooltip>
@@ -158,40 +135,35 @@ const Sale = () => {
 
             <div className="grid grid-cols-2 gap-8">
               <div className="space-y-4">
-                <InfoCard
-                  title="Price"
-                  value="1.00 USDC"
-                  gradientFrom="purple-600"
-                  isSaleActive={isSaleActive}
-                />
+                <InfoCard title="Price" value="1.00 USDC" gradientFrom="purple-600" isSaleActive={isSaleActive} />
 
                 <InfoCard
                   title="Cap"
-                  value={isSaleActive && cap ? `${(+cap.toSignificant()).toLocaleString()} USDC` : "-"}
+                  value={isSaleActive && cap ? `${(+cap.toSignificant()).toLocaleString()} USDC` : '-'}
                   gradientFrom="indigo-600"
                   isSaleActive={isSaleActive}
                   progressBar={{
                     progress: progress,
                     label: `${(100 - progress).toFixed(1)}% remaining`,
-                    color: "blue"
+                    color: 'blue',
                   }}
                 />
 
                 <InfoCard
                   title="Total raised"
-                  value={isSaleActive && totalRaised ? `${(+totalRaised.toSignificant()).toLocaleString()} USDC` : "-"}
+                  value={isSaleActive && totalRaised ? `${(+totalRaised.toSignificant()).toLocaleString()} USDC` : '-'}
                   gradientFrom="emerald-600"
                   isSaleActive={isSaleActive}
                   progressBar={{
                     progress: progress,
                     label: `${progress.toFixed(1)}% filled`,
-                    color: "green"
+                    color: 'green',
                   }}
                 />
 
                 <InfoCard
                   title="Your allocation"
-                  value={isSaleActive && allocation ? `${(+allocation.toSignificant()).toLocaleString()} USDC` : "-"}
+                  value={isSaleActive && allocation ? `${(+allocation.toSignificant()).toLocaleString()} USDC` : '-'}
                   gradientFrom="amber-600"
                   isSaleActive={isSaleActive}
                 />
@@ -199,38 +171,26 @@ const Sale = () => {
 
               <div className="flex flex-col justify-center gap-5">
                 <div className="space-y-3">
-                  <label className="text-sm font-medium text-foreground-secondary">
-                    Amount to supply
-                  </label>
+                  <label className="text-sm font-medium text-foreground-secondary">Amount to supply</label>
                   <motion.div className="p-3 py-3 relative rounded-xl flex bg-surface/50 border border-border/40 transition-all duration-300 hover:border-border">
                     <input
                       className="w-full bg-transparent border-none"
                       placeholder="Enter USDC amount"
                       value={supplyValue}
-                      onChange={(e) => setSupplyValue(e.target.value)}
+                      onChange={e => setSupplyValue(e.target.value)}
                       type="number"
                     />
 
                     <div className="flex items-center">
-                      <Divider
-                        className="h-8 mx-2 bg-border/40"
-                        orientation="vertical"
-                      />
+                      <Divider className="h-8 mx-2 bg-border/40" orientation="vertical" />
                       <span className="text-foreground-secondary font-medium flex gap-2 w-20 items-center">
-                        <Image
-                          src={getTokenImageUrl(usdcToken)}
-                          alt="usdc"
-                          width={24}
-                          height={24}
-                        />
+                        <Image src={getTokenImageUrl(usdcToken)} alt="usdc" width={24} height={24} />
                         USDC
                       </span>
                     </div>
                   </motion.div>
 
-                  <Button className="text-xs text-foreground-secondary bg-transparent border-2 border-border/40">
-                    Available balance: {usdcBalance} USDC
-                  </Button>
+                  <Button className="text-xs text-foreground-secondary bg-transparent border-2 border-border/40">Available balance: {usdcBalance} USDC</Button>
                 </div>
                 <Button
                   isDisabled={usdcBalance === 0 || !isSaleActive}
@@ -246,58 +206,34 @@ const Sale = () => {
         </motion.div>
       </WalletGuard>
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4 }}
-        className="flex flex-col gap-6 mt-4"
-      >
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="flex flex-col gap-6 mt-4">
         <div className="flex flex-col gap-4">
-          <span className="text-body font-bold text-foreground-primary">
-            Previous sales
-          </span>
+          <span className="text-body font-bold text-foreground-primary">Previous sales</span>
           <Card className="max-w-[300px] bg-surface backdrop-blur-xl border-2 border-border/40 font-display mt-2 p-1 hover:border-primary-default/40 transition-all duration-300 shadow-xl">
             <CardHeader className="flex gap-3">
               <div className="flex justify-between w-full">
-                <span className="text-foreground-primary font-medium">
-                  Sale Round #1
-                </span>
-                <span className="text-xs text-foreground-secondary border-2 border-border bg-border/40 px-2 py-1 rounded-full">
-                  Feb 23
-                </span>
+                <span className="text-foreground-primary font-medium">Sale Round #1</span>
+                <span className="text-xs text-foreground-secondary border-2 border-border bg-border/40 px-2 py-1 rounded-full">Feb 23</span>
               </div>
             </CardHeader>
             <Divider className="bg-border/40" />
             <CardBody className="flex flex-col gap-4">
               <div className="flex w-full justify-between">
                 <span className="text-sm text-foreground-secondary">Price</span>
-                <span className="text-foreground-primary font-bold">
-                  1.00 USDC
-                </span>
+                <span className="text-foreground-primary font-bold">1.00 USDC</span>
               </div>
               <div className="flex w-full justify-between">
                 <span className="text-sm text-foreground-secondary">Cap</span>
-                <span className="text-foreground-primary font-bold">
-                  1,000,000 USDC
-                </span>
+                <span className="text-foreground-primary font-bold">1,000,000 USDC</span>
               </div>
               <div className="flex w-full justify-between">
-                <span className="text-sm text-foreground-secondary">
-                  Total raised
-                </span>
-                <span className="text-foreground-primary font-bold">
-                  1,000,000 USDC
-                </span>
+                <span className="text-sm text-foreground-secondary">Total raised</span>
+                <span className="text-foreground-primary font-bold">1,000,000 USDC</span>
               </div>
             </CardBody>
             <Divider className="bg-border/40" />
             <CardFooter>
-              <Link
-                isExternal
-                showAnchorIcon
-                className="text-primary-default hover:text-primary-hover transition-colors duration-300"
-                href="https://github.com/heroui-inc/heroui"
-              >
+              <Link isExternal showAnchorIcon className="text-primary-default hover:text-primary-hover transition-colors duration-300" href="https://github.com/heroui-inc/heroui">
                 View sale report
               </Link>
             </CardFooter>
