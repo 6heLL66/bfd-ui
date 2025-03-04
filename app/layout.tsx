@@ -9,6 +9,22 @@ import { Footer } from '@/widgets/footer/ui';
 export const metadata: Metadata = {
   title: 'Bera flow DAO',
   description: 'Bera flow DAO is a DAO forged through the innovative Proof-of-Liquidity (POL) mechanism of Berachain.',
+  openGraph: {
+    title: 'Bera flow DAO',
+    description: 'Bera flow DAO is a DAO forged through the innovative Proof-of-Liquidity (POL) mechanism of Berachain.',
+    url: 'https://beraflowdao.com',
+    siteName: 'Bera flow DAO',
+    type: 'website',
+    locale: 'en_US',
+    images: [
+      {
+        url: '/images/og.png',
+        width: 1200,
+        height: 630,
+        alt: 'Bera flow DAO',
+      }
+    ]
+  }
 };
 
 const inter = Inter({
