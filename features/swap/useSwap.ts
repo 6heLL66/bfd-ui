@@ -97,14 +97,14 @@ export const useSwap = () => {
   const swap = async () => {
     if (!isConnected || !address || !swapObject) return;
     try {
-      const slippage = Slippage.fromPercentage("1");
-      const deadline = BigInt(Math.floor(Date.now() / 1000) + 60);
+      const _slippage = Slippage.fromPercentage(slippage as `${number}`);
+      const _deadline = BigInt(Math.floor(Date.now() / 1000) + deadline);
 
       const { swap, queryOutput } = swapObject;
 
       const callData = swap.buildCall({
-        slippage,
-        deadline,
+        slippage: _slippage,
+        deadline: _deadline,
         queryOutput,
         sender: address,
         recipient: address,
