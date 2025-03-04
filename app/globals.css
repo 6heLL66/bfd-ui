@@ -30,11 +30,6 @@ input::-webkit-inner-spin-button {
   -webkit-appearance: none;
 }
 
-a:hover {
-  text-decoration: underline;
-  text-underline-offset: 4px;
-}
-
 body {
   color: var(--foreground);
   background: var(--background);

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Logo } from "../header/ui";
 
 const SocialButton = ({
   icon,
@@ -36,14 +37,8 @@ export const Footer = () => {
     <footer className="mt-16 bg-gradient-to-b from-transparent to-[#0a0a0a]">
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row gap-12 md:gap-24 justify-center items-center">
-          <div className="flex flex-col items-center justify-center">
-            {/* <Image 
-              src="/logo.png" 
-              alt="BeraFlow Logo" 
-              width={120} 
-              height={40}
-              className="mb-6"
-            /> */}
+          <div className="flex flex-row gap-6 items-center justify-center">
+            <Logo />
             <span className="text-text/60 max-w-[300px] text-center md:text-left">
               Empowering the future of DeFi on Berachain
             </span>
@@ -75,6 +70,7 @@ export const Footer = () => {
 
         <div className="border-t border-white/10 mt-16">
           <div className="flex justify-between items-center py-8 text-sm text-text/60">
+            
             <span>Copyright © BeraFlow DAO 2024</span>
             <div className="flex gap-8">
               <Link href="/privacy" className="hover:text-white transition-colors">
