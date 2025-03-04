@@ -14,18 +14,82 @@ export default function Home() {
   }, []);
   
   return (
-    <main className="bg-gradient-to-b from-black via-black/95 to-primary/5 py-16">
+    <main className="py-16">
       <div className="container mx-auto">
         <section className="flex flex-col lg:flex-row items-center gap-8">
-          <div className="flex-1 relative">
-            <div className="absolute -z-10 w-full h-full blur-[120px] bg-primary/20 rounded-full" />
-            <Image 
-              src="/images/bear.png" 
-              alt="bear" 
-              width={600} 
-              height={800}
-              className="w-full max-w-[500px] mx-auto hover:scale-105 transition-transform duration-700"
-            />
+          <div className="flex-1 relative min-h-[600px] flex items-center justify-center overflow-hidden">
+            {/* Background glow */}
+            <div className="absolute w-[800px] h-[800px] bg-gradient-to-r from-primary/30 via-purple-500/20 to-primary-default/30 rounded-full animate-glow" />
+            
+            {/* Main animated composition */}
+            <div className="relative">
+              {/* Rotating rings */}
+              <div className="absolute -inset-32 border-[3px] border-primary/20 rounded-full animate-pulse-ring" 
+                   style={{ animationDuration: '8s', animationDelay: '-1s' }} />
+              <div className="absolute -inset-24 border-[3px] border-primary/30 rounded-full animate-pulse-ring" 
+                   style={{ animationDuration: '6s', animationDirection: 'reverse' }} />
+              <div className="absolute -inset-16 border-[3px] border-primary/40 rounded-full animate-pulse-ring" 
+                   style={{ animationDuration: '4s', animationDelay: '-0.5s' }} />
+              
+              {/* Central orb */}
+              <div className="relative w-[300px] h-[300px] animate-pulse-orb" style={{ animationDuration: '3s' }}>
+                <div className="absolute inset-0 bg-gradient-to-br from-primary-default via-primary to-purple-600 rounded-full blur-sm" />
+                <div className="absolute inset-[2px] bg-black/90 rounded-full backdrop-blur-sm" />
+                <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-primary/10 to-primary/30 rounded-full" />
+                
+                {/* Wave Symbol */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="relative w-48 h-48 animate-pulse-orb" style={{ animationDuration: '2s' }}>
+                    <div className="absolute inset-0 rounded-full bg-white/10 filter blur-lg" />
+                    <svg
+                      viewBox="0 0 100 100"
+                      className="w-full h-full filter drop-shadow-[0_0_15px_rgba(255,255,255,0.6)]"
+                    >
+                      <path
+                        d="M15,50 Q35,30 50,50 T85,50"
+                        className="stroke-white"
+                        fill="none"
+                        strokeWidth="5"
+                        strokeLinecap="round"
+                      />
+                      <path
+                        d="M15,70 Q35,50 50,70 T85,70"
+                        className="stroke-white/80"
+                        fill="none"
+                        strokeWidth="4"
+                        strokeLinecap="round"
+                      />
+                      <path
+                        d="M15,30 Q35,10 50,30 T85,30"
+                        className="stroke-white/80"
+                        fill="none"
+                        strokeWidth="4"
+                        strokeLinecap="round"
+                      />
+                    </svg>
+                    {/* Enhanced Glow effect */}
+                    <div className="absolute inset-0 bg-white/20 rounded-full filter blur-2xl animate-pulse" />
+                    <div className="absolute -inset-4 bg-white/5 rounded-full filter blur-xl animate-pulse" 
+                         style={{ animationDelay: '-1s' }} />
+                  </div>
+                </div>
+                
+                {/* Floating particles */}
+                <div className="absolute -inset-16">
+                  {[...Array(8)].map((_, i) => (
+                    <div key={i} 
+                         className="absolute w-3 h-3 bg-primary/80 rounded-full blur-sm animate-pulse-orb"
+                         style={{
+                           top: `${Math.random() * 100}%`,
+                           left: `${Math.random() * 100}%`,
+                           animation: `float ${3 + i}s infinite ease-in-out`,
+                           animationDelay: `${-i * 0.3}s`,
+                           scale: `${0.5 + Math.random() * 0.5}`
+                         }} />
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
 
           <div className="flex-1 flex flex-col gap-8 max-w-[628px] mx-auto">
