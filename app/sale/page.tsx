@@ -162,8 +162,6 @@ const Sale = () => {
                   title="Price"
                   value="1.00 USDC"
                   gradientFrom="purple-600"
-                  gradientVia="violet-600"
-                  gradientTo="fuchsia-600"
                   isSaleActive={isSaleActive}
                 />
 
@@ -171,8 +169,6 @@ const Sale = () => {
                   title="Cap"
                   value={isSaleActive && cap ? `${(+cap.toSignificant()).toLocaleString()} USDC` : "-"}
                   gradientFrom="indigo-600"
-                  gradientVia="blue-600"
-                  gradientTo="sky-600"
                   isSaleActive={isSaleActive}
                   progressBar={{
                     progress: progress,
@@ -185,8 +181,6 @@ const Sale = () => {
                   title="Total raised"
                   value={isSaleActive && totalRaised ? `${(+totalRaised.toSignificant()).toLocaleString()} USDC` : "-"}
                   gradientFrom="emerald-600"
-                  gradientVia="green-600"
-                  gradientTo="teal-600"
                   isSaleActive={isSaleActive}
                   progressBar={{
                     progress: progress,
@@ -199,8 +193,6 @@ const Sale = () => {
                   title="Your allocation"
                   value={isSaleActive && allocation ? `${(+allocation.toSignificant()).toLocaleString()} USDC` : "-"}
                   gradientFrom="amber-600"
-                  gradientVia="yellow-600"
-                  gradientTo="orange-600"
                   isSaleActive={isSaleActive}
                 />
               </div>

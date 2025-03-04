@@ -2,7 +2,6 @@
 
 import { rain, stop } from "@/shared/utils";
 import { Button } from "@heroui/button";
-import Image from "next/image";
 import { useEffect } from "react";
 
 export default function Home() {

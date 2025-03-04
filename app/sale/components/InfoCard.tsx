@@ -4,8 +4,6 @@ interface InfoCardProps {
   title: string;
   value: string;
   gradientFrom: string;
-  gradientVia: string;
-  gradientTo: string;
   isSaleActive: boolean;
   progressBar?: {
     progress: number;
@@ -14,7 +12,7 @@ interface InfoCardProps {
   };
 }
 
-const getGradientClasses = (from: string, via: string, to: string) => {
+const getGradientClasses = (from: string) => {
   const gradientMap = {
     'purple-600': 'from-purple-600/10 via-violet-600/10 to-fuchsia-600/10',
     'indigo-600': 'from-indigo-600/10 via-blue-600/10 to-sky-600/10',
@@ -55,12 +53,10 @@ export const InfoCard = ({
   title,
   value,
   gradientFrom,
-  gradientVia,
-  gradientTo,
   isSaleActive,
   progressBar
 }: InfoCardProps) => {
-  const { gradient, progressGradient, dotColor, titleGradient } = getGradientClasses(gradientFrom, gradientVia, gradientTo);
+  const { gradient, progressGradient, dotColor, titleGradient } = getGradientClasses(gradientFrom);
 
   return (
     <motion.div

@@ -2,11 +2,11 @@
 
 import { motion } from "framer-motion";
 import { Card, Title } from "@tremor/react";
-import { FileIcon, ArrowUpIcon, ArrowDownIcon } from "@radix-ui/react-icons";
+import { FileIcon } from "@radix-ui/react-icons";
 import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart } from 'recharts';
 
 interface MetricChartProps {
-  data: any[];
+  data: unknown[];
   title: string;
   dataKey: string;
   valueFormatter: (value: number) => string;
@@ -140,7 +140,7 @@ const TreasuryPage = () => {
           Treasury Overview
         </h1>
         <p className="text-foreground-secondary mt-2">
-          Real-time insights into BFD's treasury performance and metrics
+          Real-time insights into BFD`s treasury performance and metrics
         </p>
       </div>
 
@@ -149,31 +149,26 @@ const TreasuryPage = () => {
         <InfoCard
           title="Total Treasury Value"
           value="$1,500,000"
-          change={12.5}
           gradient="from-blue-500/20 to-blue-600/20"
         />
         <InfoCard
           title="Total Circulating BFD"
           value="1,000,000"
-          change={5.2}
           gradient="from-primary-default/20 to-secondary/20"
         />
         <InfoCard
           title="BFD Price"
           value="$1.80"
-          change={-2.1}
           gradient="from-purple-500/20 to-purple-600/20"
         />
         <InfoCard
           title="Treasury APR"
           value="12.5%"
-          change={0.5}
           gradient="from-green-500/20 to-green-600/20"
         />
         <InfoCard
           title="Expected Profit (monthly)"
           value="$45,000"
-          change={8.3}
           gradient="from-yellow-500/20 to-yellow-600/20"
         />
       </div>
@@ -240,14 +235,11 @@ const TreasuryPage = () => {
 interface InfoCardProps {
   title: string;
   value: string;
-  change: number;
   gradient: string;
 }
 
-const InfoCard = ({ title, value, change, gradient }: InfoCardProps) => {
-  const isPositive = change >= 0;
-  
-  return (
+const InfoCard = ({ title, value, gradient }: InfoCardProps) => {
+    return (
     <motion.div
       whileHover={{ scale: 1.02 }}
       transition={{ duration: 0.2 }}
