@@ -37,65 +37,67 @@ export const Header = () => {
   };
 
   return (
-    <header className="backdrop-blur-md bg-black/30 border-b border-white/10 relative z-50">
-      <div className="mx-auto h-14 md:h-20 flex justify-between items-center px-3 md:px-8 px-2">
-        <div className="flex items-center">
-          <Link href="/" className="group/link flex items-center gap-2 md:gap-4 transition-all duration-300">
-            <Logo />
+    <>
+      <header className="backdrop-blur-md bg-black/30 border-b border-white/10 relative z-50">
+        <div className="mx-auto h-14 md:h-20 flex justify-between items-center px-3 md:px-8 px-2">
+          <div className="flex items-center">
+            <Link href="/" className="group/link flex items-center gap-2 md:gap-4 transition-all duration-300">
+              <Logo />
 
-            <span className="text-xl md:text-h3bold font-display">
-              <span className="bg-gradient-to-r from-white via-primary-default to-primary-hover bg-clip-text text-transparent group-hover/link:from-primary-default group-hover/link:to-white transition-all duration-300">
-                BeraFlowDao
+              <span className="text-xl md:text-h3bold font-display">
+                <span className="bg-gradient-to-r from-white via-primary-default to-primary-hover bg-clip-text text-transparent group-hover/link:from-primary-default group-hover/link:to-white transition-all duration-300">
+                  BeraFlowDao
+                </span>
               </span>
-            </span>
-          </Link>
-        </div>
-
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-8">
-          <NavLink href="/sale">Sale</NavLink>
-          <NavLink href="/staking">Staking</NavLink>
-          <NavLink href="/swap">Swap</NavLink>
-          <NavLink href="/treasury">Treasury</NavLink>
-          <NavLink href={DOCS_LINK} external>
-            Docs
-          </NavLink>
-        </nav>
-
-        <div className="flex items-center gap-1.5 md:gap-4">
-          <div className={`scale-[0.85] md:scale-100 origin-right ${isConnected ? 'hidden md:block' : ''}`}>
-            <ConnectButton />
+            </Link>
           </div>
-          {/* Mobile Menu Button */}
-          <button
-            className="md:hidden p-1 -mr-1 text-white/80 hover:text-primary-default transition-colors"
-            onClick={toggleMobileMenu}
-            aria-label="Toggle mobile menu"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center gap-8">
+            <NavLink href="/sale">Sale</NavLink>
+            <NavLink href="/staking">Staking</NavLink>
+            <NavLink href="/swap">Swap</NavLink>
+            <NavLink href="/treasury">Treasury</NavLink>
+            <NavLink href={DOCS_LINK} external>
+              Docs
+            </NavLink>
+          </nav>
+
+          <div className="flex items-center gap-1.5 md:gap-4">
+            <div className={`scale-[0.85] md:scale-100 origin-right ${isConnected ? 'hidden md:block' : ''}`}>
+              <ConnectButton />
+            </div>
+            {/* Mobile Menu Button */}
+            <button
+              className="md:hidden p-1 -mr-1 text-white/80 hover:text-primary-default transition-colors"
+              onClick={toggleMobileMenu}
+              aria-label="Toggle mobile menu"
             >
-              <>
-                  <line x1="4" y1="12" x2="20" y2="12" />
-                  <line x1="4" y1="6" x2="20" y2="6" />
-                  <line x1="4" y1="18" x2="20" y2="18" />
-                </>
-            </svg>
-          </button>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <>
+                    <line x1="4" y1="12" x2="20" y2="12" />
+                    <line x1="4" y1="6" x2="20" y2="6" />
+                    <line x1="4" y1="18" x2="20" y2="18" />
+                  </>
+              </svg>
+            </button>
+          </div>
         </div>
-      </div>
+      </header>
 
       {/* Mobile Navigation Overlay */}
       <div
-        className={`fixed inset-0 min-h-[100dvh] transition-all duration-500 md:hidden ${
+        className={`fixed z-[9999] inset-0 min-h-[100dvh] transition-all duration-500 md:hidden ${
           isMobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
         }`}
         onClick={toggleMobileMenu}
@@ -168,7 +170,7 @@ export const Header = () => {
           </div>
         </div>
       </div>
-    </header>
+    </>
   );
 };
 
