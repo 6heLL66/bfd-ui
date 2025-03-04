@@ -92,7 +92,7 @@ export default function Home() {
           </div>
 
           <div className="flex-1 flex flex-col gap-8 max-w-[628px] mx-auto">
-            <h1 className="text-5xl md:text-2xl; font-sans text-center font-bold lg:text-left bg-gradient-to-r from-white via-primary to-primary-default bg-clip-text text-transparent">
+            <h1 className="text-5xl md:text-2xl; font-sans text-center font-bold lg:text-left bg-gradient-to-r from-white via-orange-400 to-orange-500 bg-clip-text text-transparent">
               BeraFlowDao
             </h1>
 

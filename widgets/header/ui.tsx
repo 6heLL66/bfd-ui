@@ -5,8 +5,8 @@ import Image from "next/image";
 export const Logo = () => {
   return (
     <div className="relative group-hover/link:scale-105 transition-transform duration-300">
-      <div className="absolute -inset-[1px] bg-gradient-to-r from-primary-default via-purple-500 to-primary-hover rounded-lg blur-sm group-hover/link:blur-md transition-all duration-500" />
-      <div className="relative bg-black rounded-lg border border-white/20 p-1 backdrop-blur-sm group-hover/link:border-white/40 transition-all duration-500">
+      <div className="absolute -inset-[1px] bg-gradient-to-r from-primary-default to-primary-default rounded-lg blur-sm group-hover/link:blur-md transition-all duration-500" />
+      <div className="relative bg-black rounded-lg border border-white/20 p-1 backdrop-blur-sm group-hover/link:border-primary-default/40 transition-all duration-500">
         <div className="relative w-9 h-9">
           <Image
             src="/images/logo_bear.png"
@@ -17,7 +17,7 @@ export const Logo = () => {
         </div>
       </div>
       {/* Glow effect */}
-      <div className="absolute -inset-2 bg-primary-default/20 rounded-xl blur-xl opacity-0 group-hover/link:opacity-100 transition-opacity duration-500" />
+      <div className="absolute -inset-2 bg-primary-default/30 rounded-xl blur-xl opacity-0 group-hover/link:opacity-100 transition-opacity duration-500" />
     </div>
   );
 };
