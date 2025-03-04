@@ -86,7 +86,7 @@ const Sale = () => {
   }, [address]);
 
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-[800px] min-h-[600px] w-full mx-auto flex flex-col gap-8 justify-between py-8">
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-[800px] min-h-[600px] w-full mx-auto flex flex-col gap-8 justify-between py-8 px-4 md:px-8">
       {!isSaleActive && (
         <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }}>
           <Alert
@@ -103,15 +103,15 @@ const Sale = () => {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.3 }}
-          className="bg-surface backdrop-blur-xl rounded-2xl border-2 border-border/40 shadow-2xl shadow-primary-default/10 p-8 py-12 w-full hover:border-primary-default/40 transition-all duration-300"
+          className="bg-surface backdrop-blur-xl rounded-2xl border-2 border-border/40 shadow-2xl shadow-primary-default/10 p-4 md:p-8 py-8 md:py-12 w-full hover:border-primary-default/40 transition-all duration-300"
         >
           <div className="flex flex-col gap-8 w-full">
-            <div className="flex items-center justify-between border-b-2 border-border/40 pb-6">
+            <div className="flex flex-col md:flex-row md:items-center justify-between border-b-2 border-border/40 pb-6 gap-4 md:gap-0">
               <div className="space-y-1">
                 <span className="text-h3 font-bold text-primary-default">Supply USDC</span>
                 <p className="text-sm text-foreground-secondary">Participate in the active sale round</p>
               </div>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 {isSaleActive && (
                   <span className="text-xs font-medium px-3 py-1 rounded-full bg-primary-default/20 text-primary-default border-2 border-primary-default/40">Active sale</span>
                 )}
@@ -133,7 +133,7 @@ const Sale = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-4">
                 <InfoCard title="Price" value="1.00 USDC" gradientFrom="purple-600" isSaleActive={isSaleActive} />
 

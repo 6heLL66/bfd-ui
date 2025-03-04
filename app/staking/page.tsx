@@ -29,7 +29,6 @@ const StakingPage = () => {
                     <span className="text-h3 font-bold text-primary-default">Stake BGT</span>
                     <p className="text-sm text-foreground-secondary">Lock your BGT to earn rewards</p>
                   </div>
-                  <span className="text-xs font-medium px-3 py-1 rounded-full bg-primary-default/20 text-primary-default border-2 border-primary-default/40">Active Pool</span>
                 </div>
 
                 <div className="space-y-4">

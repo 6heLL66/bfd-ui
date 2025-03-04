@@ -43,6 +43,10 @@ export default {
       fontWeight: {
         bold: '700',
       },
+      animation: {
+        'spin-slow': 'spin 20s linear infinite',
+        'spin-slow-reverse': 'spin 25s linear infinite reverse',
+      },
     },
   },
   plugins: [heroui()],
