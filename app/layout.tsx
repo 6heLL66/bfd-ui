@@ -7,8 +7,8 @@ import { Providers } from './providers';
 import { Footer } from '@/widgets/footer/ui';
 
 export const metadata: Metadata = {
-  title: 'BeraFlowDao',
-  description: 'BeraFlowDao is a DAO forged through the innovative Proof-of-Liquidity (POL) mechanism of Berachain.',
+  title: 'Bera flow DAO',
+  description: 'Bera flow DAO is a DAO forged through the innovative Proof-of-Liquidity (POL) mechanism of Berachain.',
 };
 
 const inter = Inter({
