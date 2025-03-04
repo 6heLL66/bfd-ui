@@ -16,7 +16,7 @@ export const Providers = ({ children }: { children: React.ReactNode }) => {
           locale="en-US"
           theme={darkTheme({
             accentColor: "#FF9F5B",
-            accentColorForeground: "#000000",
+            accentColorForeground: "#ffffff",
           })}
         >
           <HeroUIProvider>

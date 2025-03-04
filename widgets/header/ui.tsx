@@ -1,6 +1,7 @@
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import Link from "next/link";
 import Image from "next/image";
+import { DOCS_LINK } from "@/config/links";
 
 export const Logo = () => {
   return (
@@ -46,7 +47,7 @@ export const Header = () => {
           <NavLink href="/staking">Staking</NavLink>
           <NavLink href="/swap">Swap</NavLink>
           <NavLink href="/treasury">Treasury</NavLink>
-          <NavLink href="https://beraflowdao.gitbook.io/beraflowdao" external>
+          <NavLink href={DOCS_LINK} external>
             Docs
           </NavLink>
         </nav>

@@ -19,32 +19,70 @@ export const WalletGuard = ({
 
   return (
     <div className={'relative ' + className}>
-      <div className="opacity-30 pointer-events-none">
+      <div className="opacity-20 pointer-events-none blur-[1px] transition-all duration-300">
         {children}
       </div>
       <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className='absolute inset-0 backdrop-blur-[6px] bg-surface/50 flex flex-col rounded-lg items-center justify-center gap-4 z-50'
+        initial={{ opacity: 0, backdropFilter: "blur(0px)" }}
+        animate={{ opacity: 1, backdropFilter: "blur(8px)" }}
+        transition={{ duration: 0.4 }}
+        className='absolute inset-0 bg-surface/40 flex flex-col rounded-xl items-center justify-center gap-6 z-50 border border-white/10 shadow-lg'
       >
         <motion.div
-          initial={{ scale: 0.9, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          className="text-center space-y-3"
+          initial={{ scale: 0.9, opacity: 0, y: 20 }}
+          animate={{ scale: 1, opacity: 1, y: 0 }}
+          transition={{ 
+            delay: 0.2,
+            duration: 0.4,
+            type: "spring",
+            stiffness: 100 
+          }}
+          className="text-center relative"
         >
-          <h3 className="text-h3 font-bold bg-gradient-to-r from-primary-default to-primary-hover bg-clip-text text-transparent">
-            Connect Wallet
-          </h3>
-          <p className="text-sm text-foreground-secondary max-w-[280px] mx-auto">
-            Please connect your wallet to access this content
-          </p>
           <motion.div
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className="mt-4 flex justify-center"
+            className="relative space-y-4 px-8 py-6 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 shadow-md"
           >
-            <ConnectButton />
+            <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.3 }}
+            >
+              <h3 className="text-h3 font-bold text-white">
+                Connect Your Wallet
+              </h3>
+            </motion.div>
+            <motion.p 
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.4 }}
+              className="text-sm text-foreground-secondary/90 max-w-[300px] mx-auto leading-relaxed"
+            >
+              Connect your wallet to unlock exclusive features and access this content
+            </motion.p>
+            <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.5 }}
+              className="mt-6 flex justify-center"
+            >
+              <motion.div
+                className="relative"
+                whileHover={{ scale: 1.08 }}
+                whileTap={{ scale: 0.92 }}
+                animate={{
+                  scale: [1, 1.04, 1],
+                  rotate: [0, 1, -1, 0],
+                }}
+                transition={{
+                  repeat: Infinity,
+                  repeatType: "reverse",
+                  duration: 1.5,
+                  ease: "easeInOut"
+                }}
+              >
+                <ConnectButton />
+              </motion.div>
+            </motion.div>
           </motion.div>
         </motion.div>
       </motion.div>
