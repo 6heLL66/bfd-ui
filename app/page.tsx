@@ -78,16 +78,16 @@ export default function Home() {
 
           <div className="flex-1 flex flex-col gap-8 max-w-[628px] mx-auto px-4 lg:px-0">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-sans text-center lg:text-left bg-gradient-to-r from-white via-orange-400 to-orange-500 bg-clip-text text-transparent font-bold">
-              BeraFlowDao
+              Beraflow DAO
             </h1>
 
             <div className="space-y-4 md:space-y-6">
               <p className="text-sm md:text-base text-white/80 leading-relaxed text-center lg:text-left">
-                BeraFlowDao is a DAO forged through the innovative Proof-of-Liquidity (POL) mechanism of Berachain.
+                Beraflow DAO is a DAO forged through the innovative Proof-of-Liquidity (POL) mechanism of Berachain.
               </p>
 
               <p className="text-sm md:text-base text-white/80 leading-relaxed text-center lg:text-left">
-                BeraFlowDao is built on the foundation of Berachain because we recognize the immense potential DeFi and the future of cryptocurrency within it. We believe that
+                Beraflow DAO is built on the foundation of Berachain because we recognize the immense potential DeFi and the future of cryptocurrency within it. We believe that
                 projects with a robust foundation based on a strong treasury value are the key to the future of crypto. We also see the importance of markets becoming more
                 efficient and reaching their fair P/E ratios.
               </p>

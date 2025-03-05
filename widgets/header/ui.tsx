@@ -46,7 +46,7 @@ export const Header = () => {
 
               <span className="text-xl md:text-h3bold font-display">
                 <span className="bg-gradient-to-r from-white via-primary-default to-primary-hover bg-clip-text text-transparent group-hover/link:from-primary-default group-hover/link:to-white transition-all duration-300">
-                  BeraFlowDao
+                  Beraflow DAO
                 </span>
               </span>
             </Link>
