@@ -16,53 +16,69 @@ interface MetricChartProps {
 
 const MetricChart = ({ data, title, dataKey, valueFormatter, tooltipLabel, gradientId }: MetricChartProps) => {
   return (
-    <Card className="p-6 hover:shadow-xl transition-all duration-300">
-      <Title className="text-xl font-semibold mb-4">{title}</Title>
-      <div className="h-[400px]">
-        <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={data} margin={{ top: 10, right: 30, left: 10, bottom: 20 }}>
-            <defs>
-              <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="var(--primary-default)" stopOpacity={0.2} />
-                <stop offset="95%" stopColor="var(--primary-default)" stopOpacity={0} />
-              </linearGradient>
-            </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-            <XAxis
-              dataKey="date"
-              stroke="currentColor"
-              tick={{ fill: 'currentColor' }}
-              tickLine={{ stroke: 'currentColor' }}
-              dy={16}
-              axisLine={false}
-              height={50}
-              tickMargin={16}
-            />
-            <YAxis stroke="currentColor" tickFormatter={valueFormatter} tick={{ fill: 'currentColor' }} tickLine={{ stroke: 'currentColor' }} dx={-8} width={80} tickMargin={8} />
-            <Tooltip
-              contentStyle={{
-                backgroundColor: 'rgba(0,0,0,0.8)',
-                border: 'none',
-                borderRadius: '8px',
-                color: 'white',
-                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-              }}
-              formatter={value => [valueFormatter(value as number), tooltipLabel]}
-              cursor={{ stroke: 'var(--primary-default)', strokeWidth: 1 }}
-            />
-            <Area
-              type="monotone"
-              dataKey={dataKey}
-              stroke="var(--primary-default)"
-              strokeWidth={3}
-              fill={`url(#${gradientId})`}
-              dot={{ stroke: 'var(--primary-default)', fill: 'var(--surface)', strokeWidth: 2, r: 4 }}
-              activeDot={{ stroke: 'var(--primary-default)', fill: 'var(--primary-default)', strokeWidth: 2, r: 6 }}
-            />
-          </AreaChart>
-        </ResponsiveContainer>
-      </div>
-    </Card>
+    <motion.div className="relative group">
+      <div className="absolute inset-0 opacity-20 blur-xl bg-gradient-to-br from-primary-default/20 to-secondary/20 group-hover:opacity-30 transition-opacity duration-300" />
+      <Card className="relative overflow-hidden hover:shadow-xl border-2 border-border/40 rounded-xl transition-all duration-300 group-hover:border-border bg-surface/30 backdrop-blur-sm">
+        <div className="p-0">
+          <Title className="text-base sm:text-xl font-semibold mb-2 sm:mb-4 bg-gradient-to-br from-foreground-primary to-foreground-secondary bg-clip-text text-transparent">{title}</Title>
+          <div className="h-[250px] sm:h-[300px] md:h-[400px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={data} margin={{ top: 5, right: 5, left: 0, bottom: 5 }}>
+                <defs>
+                  <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="var(--primary-default)" stopOpacity={0.2} />
+                    <stop offset="95%" stopColor="var(--primary-default)" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+                <XAxis
+                  dataKey="date"
+                  stroke="currentColor"
+                  tick={{ fill: 'currentColor', fontSize: '0.75rem' }}
+                  tickLine={{ stroke: 'currentColor' }}
+                  dy={8}
+                  axisLine={false}
+                  height={35}
+                  tickMargin={8}
+                />
+                <YAxis 
+                  stroke="currentColor" 
+                  tickFormatter={valueFormatter} 
+                  tick={{ fill: 'currentColor', fontSize: '0.75rem' }} 
+                  tickLine={{ stroke: 'currentColor' }} 
+                  dx={-4} 
+                  width={60} 
+                  tickMargin={4}
+                />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: 'rgba(0,0,0,0.8)',
+                    border: 'none',
+                    borderRadius: '8px',
+                    color: 'white',
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                    fontSize: '0.875rem',
+                    padding: '0.5rem',
+                  }}
+                  formatter={value => [valueFormatter(value as number), tooltipLabel]}
+                  cursor={{ stroke: 'var(--primary-default)', strokeWidth: 1 }}
+                />
+                <Area
+                  type="monotone"
+                  dataKey={dataKey}
+                  stroke="var(--primary-default)"
+                  strokeWidth={2}
+                  fill={`url(#${gradientId})`}
+                  dot={{ stroke: 'var(--primary-default)', fill: 'var(--surface)', strokeWidth: 1.5, r: 3 }}
+                  activeDot={{ stroke: 'var(--primary-default)', fill: 'var(--primary-default)', strokeWidth: 1.5, r: 4 }}
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-border/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        </div>
+      </Card>
+    </motion.div>
   );
 };
 
@@ -111,69 +127,77 @@ const TreasuryPage = () => {
   ];
 
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="container mx-auto px-4 py-12 max-w-7xl">
-      {/* Header */}
-      <div className="mb-12">
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-primary-default to-secondary bg-clip-text text-transparent">Treasury Overview</h1>
-        <p className="text-foreground-secondary mt-2">Real-time insights into BFD`s treasury performance and metrics</p>
-      </div>
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="relative">
+      <div className="container mx-auto px-4 py-12 max-w-7xl">
+        {/* Header */}
+        <div className="mb-12">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-primary-default to-secondary bg-clip-text text-transparent">Treasury Overview</h1>
+          <p className="text-foreground-secondary mt-2">Real-time insights into BFD`s treasury performance and metrics</p>
+        </div>
 
-      {/* Info Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-        <InfoCard title="Total Treasury Value" value="$1,500,000" gradient="from-blue-500/20 to-blue-600/20" />
-        <InfoCard title="Total Circulating BFD" value="1,000,000" gradient="from-primary-default/20 to-secondary/20" />
-        <InfoCard title="BFD Price" value="$1.80" gradient="from-purple-500/20 to-purple-600/20" />
-        <InfoCard title="Treasury APR" value="12.5%" gradient="from-green-500/20 to-green-600/20" />
-        <InfoCard title="Expected Profit (monthly)" value="$45,000" gradient="from-yellow-500/20 to-yellow-600/20" />
+        {/* Info Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+          <InfoCard title="Total Treasury Value" value="$1,500,000" gradient="from-blue-500/20 to-blue-600/20" />
+          <InfoCard title="Total Circulating BFD" value="1,000,000" gradient="from-primary-default/20 to-secondary/20" />
+          <InfoCard title="BFD Price" value="$1.80" gradient="from-purple-500/20 to-purple-600/20" />
+          <InfoCard title="Treasury APR" value="12.5%" gradient="from-green-500/20 to-green-600/20" />
+          <InfoCard title="Expected Profit (monthly)" value="$45,000" gradient="from-yellow-500/20 to-yellow-600/20" />
+        </div>
       </div>
 
       {/* Charts Section */}
-      <div className="space-y-8 mb-12">
-        <MetricChart
-          data={treasuryData}
-          title="Treasury Value History"
-          dataKey="value"
-          valueFormatter={value => `$${(value / 1000000).toFixed(2)}M`}
-          tooltipLabel="Treasury Value"
-          gradientId="treasuryGradient"
-        />
+      <div className="mb-8 sm:mb-12 px-2 sm:-mx-4 md:-mx-8 lg:-mx-16">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-6 mb-3 sm:mb-6 px-2 sm:px-4">
+          <MetricChart
+            data={treasuryData}
+            title="Treasury Value History"
+            dataKey="value"
+            valueFormatter={value => `$${(value / 1000000).toFixed(2)}M`}
+            tooltipLabel="Treasury Value"
+            gradientId="treasuryGradient"
+          />
 
-        <MetricChart
-          data={bfdPriceData}
-          title="BFD Price History"
-          dataKey="price"
-          valueFormatter={value => `$${value.toFixed(2)}`}
-          tooltipLabel="BFD Price"
-          gradientId="priceGradient"
-        />
+          <MetricChart
+            data={bfdPriceData}
+            title="BFD Price History"
+            dataKey="price"
+            valueFormatter={value => `$${value.toFixed(2)}`}
+            tooltipLabel="BFD Price"
+            gradientId="priceGradient"
+          />
+        </div>
 
-        <MetricChart
-          data={bfdBackingData}
-          title="BFD Backing History"
-          dataKey="backing"
-          valueFormatter={value => `${value.toFixed(2)}x`}
-          tooltipLabel="BFD Backing"
-          gradientId="backingGradient"
-        />
+        <div className="px-4">
+          <MetricChart
+            data={bfdBackingData}
+            title="BFD Backing History"
+            dataKey="backing"
+            valueFormatter={value => `${value.toFixed(2)}x`}
+            tooltipLabel="BFD Backing"
+            gradientId="backingGradient"
+          />
+        </div>
       </div>
 
-      {/* Monthly Reports */}
-      <Card className="p-6 hover:shadow-lg transition-shadow duration-300">
-        <Title className="text-xl font-semibold mb-4">Monthly Treasury Reports</Title>
-        <div className="mt-4 divide-y divide-border/40">
-          {reports.map(report => (
-            <a key={report.month} href={report.url} className="flex items-center justify-between py-4 hover:bg-surface/40 px-4 rounded-lg transition-all duration-300 group">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-primary-default/10 group-hover:bg-primary-default/20 transition-colors">
-                  <FileIcon className="w-5 h-5 text-primary-default" />
+      <div className="container mx-auto px-4 max-w-7xl">
+        {/* Monthly Reports */}
+        <Card className="p-6 hover:shadow-lg transition-shadow duration-300">
+          <Title className="text-xl font-semibold mb-4">Monthly Treasury Reports</Title>
+          <div className="mt-4 divide-y divide-border/40">
+            {reports.map(report => (
+              <a key={report.month} href={report.url} className="flex items-center justify-between py-4 hover:bg-surface/40 px-4 rounded-lg transition-all duration-300 group">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-primary-default/10 group-hover:bg-primary-default/20 transition-colors">
+                    <FileIcon className="w-5 h-5 text-primary-default" />
+                  </div>
+                  <span className="font-medium group-hover:text-primary-default transition-colors">{report.month} Report</span>
                 </div>
-                <span className="font-medium group-hover:text-primary-default transition-colors">{report.month} Report</span>
-              </div>
-              <span className="text-sm text-foreground-secondary group-hover:text-primary-default transition-colors">View PDF →</span>
-            </a>
-          ))}
-        </div>
-      </Card>
+                <span className="text-sm text-foreground-secondary group-hover:text-primary-default transition-colors">View PDF →</span>
+              </a>
+            ))}
+          </div>
+        </Card>
+      </div>
     </motion.div>
   );
 };
