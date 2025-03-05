@@ -146,7 +146,7 @@ const TreasuryPage = () => {
       </div>
 
       {/* Charts Section */}
-      <div className="mb-8 sm:mb-12 px-2 sm:-mx-4 md:-mx-8 lg:-mx-16">
+      <div className="mb-8 sm:mb-12 px-2 sm:-mx-4 md:-mx-2">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-6 mb-3 sm:mb-6 px-2 sm:px-4">
           <MetricChart
             data={treasuryData}
