@@ -13,7 +13,7 @@ export default {
       colors: {
         bg: '#030405',
         surface: '#0A0C10',
-        border: '#3A3D45', // Made even lighter from #2A2D35
+        border: '#5A5D65', // Made even brighter from #4A4D55
         primary: {
           default: '#FF9F5B', // Более мягкий оранжевый
           hover: '#FFA573', // Светлее при наведении
@@ -44,7 +44,7 @@ export default {
         bold: '700',
       },
       animation: {
-        'spin-slow': 'spin 20s linear infinite',
+        'spin-slow': 'spin 15s linear infinite',
         'spin-slow-reverse': 'spin 25s linear infinite reverse',
       },
     },
