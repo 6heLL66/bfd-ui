@@ -7,13 +7,13 @@ import { Providers } from './providers';
 import { Footer } from '@/widgets/footer/ui';
 
 export const metadata: Metadata = {
-  title: 'Bera flow DAO',
-  description: 'Bera flow DAO is a DAO forged through the innovative Proof-of-Liquidity (POL) mechanism of Berachain.',
+  title: 'Beraflow DAO',
+  description: 'Beraflow DAO is a DAO forged through the innovative Proof-of-Liquidity (POL) mechanism of Berachain.',
   openGraph: {
-    title: 'Bera flow DAO',
-    description: 'Bera flow DAO is a DAO forged through the innovative Proof-of-Liquidity (POL) mechanism of Berachain.',
+    title: 'Beraflow DAO',
+    description: 'Beraflow DAO is a DAO forged through the innovative Proof-of-Liquidity (POL) mechanism of Berachain.',
     url: 'https://beraflowdao.com',
-    siteName: 'Bera flow DAO',
+    siteName: 'Beraflow DAO',
     type: 'website',
     locale: 'en_US',
     images: [
