@@ -167,7 +167,7 @@ const TreasuryPage = () => {
           />
         </div>
 
-        <div className="px-4">
+        <div className="px-2 sm:px-4">
           <MetricChart
             data={bfdBackingData}
             title="BFD Backing History"
