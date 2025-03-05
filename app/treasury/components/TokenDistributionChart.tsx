@@ -58,6 +58,7 @@ export const TokenDistributionChart = ({ data, lastUpdated }: TokenDistributionC
                       outerRadius="80%"
                       paddingAngle={5}
                       dataKey="value"
+                      isAnimationActive={true}
                     >
                       {data.map((entry, index) => (
                         <Cell 
