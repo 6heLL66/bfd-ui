@@ -127,7 +127,7 @@ export const Header = () => {
               <Logo />
               <span className="text-xl font-display">
                 <span className="bg-gradient-to-r from-white via-primary-default to-primary-hover bg-clip-text text-transparent">
-                  BeraFlowDao
+                  Beraflow DAO
                 </span>
               </span>
             </Link>
