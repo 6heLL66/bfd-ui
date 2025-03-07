@@ -9,15 +9,13 @@ import { useState } from 'react';
 
 export const Logo = () => {
   return (
-    <div className="relative group-hover/link:scale-105 transition-transform duration-300">
-      <div className="absolute -inset-[1px] bg-gradient-to-r from-primary-default to-primary-default rounded-lg blur-sm group-hover/link:blur-md transition-all duration-500" />
-      <div className="relative bg-black p-0.5 rounded-lg border border-white/20 backdrop-blur-sm group-hover/link:border-primary-default/40 transition-all duration-500">
-        <div className="relative w-6 h-6 md:w-9 md:h-9">
-          <Image src="/images/logo_bear.png" alt="BeraFlow Logo" fill className="object-contain transition-transform duration-300" />
+    <div className="relative group-hover/link:scale-[1.02] transition-all duration-300">
+      <div className="absolute -inset-[1px] bg-gradient-to-r from-primary-default/40 to-primary-default/40 rounded-lg opacity-0 group-hover/link:opacity-100 blur-sm transition-all duration-300" />
+      <div className="relative bg-black/50 p-0 rounded-[10px] backdrop-blur-sm group-hover/link:border-primary-default/30 transition-all duration-300">
+        <div className="relative w-6 h-6 md:w-10 md:h-10">
+          <Image src="/images/logo.jpg" alt="BeraFlow Logo" fill className="object-contain brightness-110 saturate-[0.9] transition-all duration-300" />
         </div>
       </div>
-      {/* Glow effect */}
-      <div className="absolute -inset-2 bg-primary-default/30 rounded-xl blur-xl opacity-0 group-hover/link:opacity-100 transition-opacity duration-500" />
     </div>
   );
 };
@@ -45,7 +43,7 @@ export const Header = () => {
               <Logo />
 
               <span className="text-xl md:text-h3bold font-display">
-                <span className="bg-gradient-to-r from-white via-primary-default to-primary-hover bg-clip-text text-transparent group-hover/link:from-primary-default group-hover/link:to-white transition-all duration-300">
+                <span className="">
                   Beraflow DAO
                 </span>
               </span>
