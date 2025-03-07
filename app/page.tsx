@@ -45,64 +45,50 @@ export default function Home() {
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="relative w-32 h-32 md:w-48 md:h-48">
                     <svg viewBox="0 0 24 24" className="w-full h-full filter drop-shadow-[0_0_10px_rgba(255,255,255,0.6)] md:drop-shadow-[0_0_15px_rgba(255,255,255,0.6)]">
-                      <path
-                        d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"
-                        className="stroke-white/90"
-                        fill="none"
-                        strokeWidth="1.75"
-                        strokeLinecap="round"
-                      >
+                      <circle cx="11" cy="4" r="2" className="stroke-white fill-none" strokeWidth="1.75">
                         <animate
-                          attributeName="d"
-                          dur="3s"
+                          attributeName="opacity"
+                          values="0.6;1;0.6"
+                          dur="2s"
                           repeatCount="indefinite"
-                          values="
-                            M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1;
-                            M2 7c.6.5 1.2 1 2.5 1C7 8 7 6 9.5 6c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1;
-                            M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1
-                          "
                         />
-                      </path>
-                      <path
-                        d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"
-                        className="stroke-white"
-                        fill="none"
-                        strokeWidth="1.75"
-                        strokeLinecap="round"
-                      >
+                      </circle>
+                      <circle cx="18" cy="8" r="2" className="stroke-white fill-none" strokeWidth="1.75">
                         <animate
-                          attributeName="d"
-                          dur="3s"
+                          attributeName="opacity"
+                          values="0.7;1;0.7"
+                          dur="2s"
                           repeatCount="indefinite"
-                          values="
-                            M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1;
-                            M2 13c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1;
-                            M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1
-                          "
+                          begin="0.3s"
                         />
-                      </path>
-                      <path
-                        d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"
-                        className="stroke-white/80"
-                        fill="none"
+                      </circle>
+                      <circle cx="20" cy="16" r="2" className="stroke-white fill-none" strokeWidth="1.75">
+                        <animate
+                          attributeName="opacity"
+                          values="0.8;1;0.8"
+                          dur="2s"
+                          repeatCount="indefinite"
+                          begin="0.6s"
+                        />
+                      </circle>
+                      <path 
+                        d="M9 10a5 5 0 0 1 5 5v3.5a3.5 3.5 0 0 1-6.84 1.045Q6.52 17.48 4.46 16.84A3.5 3.5 0 0 1 5.5 10Z" 
+                        className="stroke-white fill-none" 
                         strokeWidth="1.75"
-                        strokeLinecap="round"
                       >
                         <animate
-                          attributeName="d"
-                          dur="3s"
+                          attributeName="opacity"
+                          values="0.9;1;0.9"
+                          dur="2s"
                           repeatCount="indefinite"
-                          values="
-                            M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1;
-                            M2 19c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1;
-                            M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1
-                          "
+                          begin="0.9s"
                         />
                       </path>
                     </svg>
                     {/* Enhanced Glow effect */}
-                    <div className="absolute inset-0 bg-white/20 rounded-full filter blur-xl md:blur-2xl animate-pulse" />
-                    <div className="absolute -inset-4 bg-white/5 rounded-full filter blur-lg md:blur-xl animate-pulse" style={{ animationDelay: '-1s' }} />
+                    <div className="absolute inset-0 bg-white/20 rounded-full filter blur-xl md:blur-2xl animate-pulse" style={{ animationDuration: '3s' }} />
+                    <div className="absolute -inset-4 bg-white/5 rounded-full filter blur-lg md:blur-xl animate-pulse" style={{ animationDuration: '4s', animationDelay: '-1s' }} />
+                    <div className="absolute -inset-8 bg-primary/10 rounded-full filter blur-2xl animate-pulse" style={{ animationDuration: '5s', animationDelay: '-2s' }} />
                   </div>
                 </div>
 
