@@ -85,8 +85,6 @@ export const MetricChart = ({ data, title, dataKey, valueFormatter, tooltipLabel
                   stroke="var(--primary-default)"
                   strokeWidth={2}
                   fill={`url(#${gradientId})`}
-                  dot={{ stroke: 'var(--primary-default)', fill: 'var(--surface)', strokeWidth: 1.5, r: 3 }}
-                  activeDot={{ stroke: 'var(--primary-default)', fill: 'var(--primary-default)', strokeWidth: 1.5, r: 4 }}
                 />
               </AreaChart>
             </ResponsiveContainer>

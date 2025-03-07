@@ -36,11 +36,11 @@ export const TokenDistributionChart = ({ data, lastUpdated }: TokenDistributionC
             )}
           </div>
           <div className="h-[250px] sm:h-[300px] md:h-[400px] relative">
-            <div className="flex items-start h-full">
-              <div className="flex-1 h-full relative">
+            <div className="flex flex-col sm:flex-row items-center sm:items-start h-full">
+              <div className="w-full sm:flex-1 h-[200px] sm:h-full relative">
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
                   <div className="flex flex-col items-center">
-                    <div className="text-xl font-semibold text-foreground-primary">
+                    <div className="text-lg sm:text-xl font-semibold text-foreground-primary">
                       {formatCurrency(totalValue)}
                     </div>
                     <div className="text-xs text-foreground-secondary">
@@ -98,11 +98,11 @@ export const TokenDistributionChart = ({ data, lastUpdated }: TokenDistributionC
                   </PieChart>
                 </ResponsiveContainer>
               </div>
-              <div className="w-48 flex flex-col gap-3 pr-4 pt-8">
+              <div className="w-full sm:w-48 flex flex-col gap-2 sm:gap-3 px-4 sm:px-0 sm:pr-4 pt-4 sm:pt-8">
                 {data.map((entry, index) => (
                   <div key={`legend-${index}`} className="flex items-center gap-2">
                     <div className="w-3 h-3 rounded-full" style={{ backgroundColor: entry.color }} />
-                    <span className="text-sm text-foreground-secondary">
+                    <span className="text-xs sm:text-sm text-foreground-secondary">
                       {entry.name} ({entry.value.toFixed(2)}%)
                     </span>
                   </div>
