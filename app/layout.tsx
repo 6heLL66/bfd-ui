@@ -24,6 +24,14 @@ export const metadata: Metadata = {
         alt: 'Bera flow DAO',
       }
     ]
+  },
+  metadataBase: new URL('https://beraflowdao.com'),
+  alternates: {
+    canonical: '/',
+  },
+  robots: {
+    index: true,
+    follow: true,
   }
 };
 

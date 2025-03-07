@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
         <loc>https://beraflow.com/</loc>
-        <lastmod>2025-03-05</lastmod>
+        <lastmod>2024-03-05</lastmod>
         <changefreq>daily</changefreq>
         <priority>1.0</priority>
     </url>
@@ -29,5 +29,17 @@
         <lastmod>2025-03-05</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.6</priority>
+    </url>
+    <url>
+        <loc>https://beraflow.com/terms</loc>
+        <lastmod>2024-03-05</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://beraflow.com/privacy-notice</loc>
+        <lastmod>2024-03-05</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
     </url>
 </urlset>
