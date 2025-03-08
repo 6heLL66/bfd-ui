@@ -14,58 +14,8 @@ export default function Home() {
     };
   }, []);
 
-  // Define alternative names with typos and spaces
-  const alternativeNames = [
-    "BFD Protocol",
-    "Beraflow",
-    "BeraflowDAO",
-    "Bera flow",
-    "bera flow dao",
-    "beraflow dao",
-    "beraflow",
-    // Additional alternative names with typos and spaces
-    "Beraflw DAO", "BeraFlow DAO", "Bera Flow DAO", "BearaFlow DAO",
-    "BeraflowD AO", "Beraflow D A O", "BeraflowDOA", "Beraflow DOA",
-    "BearaflowDAO", "Baraflow DAO", "Beraflwo DAO", "Beraflo DAO",
-    "Beraflw", "Bera flo", "Bera-flow", "Bera-Flow-DAO",
-    "BFD Protocl", "BFD Protcol", "BFD Protool", "BFDProtocol",
-    "BFD-Protocol", "B F D Protocol", "B.F.D Protocol", "B.F.D. Protocol",
-    "Beraflow Dao", "BERAFLOW DAO", "beraFlowDAO", "BeraFlow dao",
-    "Bera Flow Dao", "BERA FLOW DAO", "Bera-flow-dao", "Bera.Flow.DAO",
-    "Beraflowdao", "BeraFlowdao", "Beraflow-DAO", "Beraflow_DAO",
-    "Berraflow DAO", "Berraflow", "Berafllow DAO", "Berafllow",
-    "Bareflow DAO", "Bareflow", "Berafflow DAO", "Berafflow",
-    "Berra Flow", "Berra Flow DAO", "BerraFlow", "BerraFlowDAO",
-    "Bera Flo DAO", "Bera Flo", "BeraFlo", "BeraFloDAO",
-    "Bera-Flo-DAO", "Bera.Flo.DAO", "B-Flow DAO", "B-Flow",
-    "BFlow DAO", "BFlow", "B Flow DAO", "B Flow",
-    "Bera Flw DAO", "Bera Flw", "BeraFlw", "BeraFlwDAO",
-    "Beraflow D A O", "Beraflow D.A.O", "Beraflow D-A-O", "Beraflow_D_A_O",
-    "Beraflow Decentralized Autonomous Organization", "BeraflowDAO Protocol",
-    "Bera Flow Protocol", "Bera Flow Decentralized Autonomous Organization",
-    "BFD DAO", "BFD", "BFDP", "BFD P", "B.F.D.P.",
-    "Beraflow DaO", "BeraFlow dAo", "BeraFlow dAO", "BeraFLOW dao",
-    "Beraflow daO", "BeraFlow DA0", "BeraFlow DA0", "BeraFlow D4O",
-    "Beraflow D40", "BeraFlow DAO Protocol", "Beraflow DAO Protocol",
-    "Bera Flow DAO Protocol", "Bera-Flow-DAO-Protocol", "Bera.Flow.DAO.Protocol"
-  ];
-
   return (
     <main className="py-8 md:py-16">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Organization",
-            "name": "Beraflow DAO",
-            "alternateName": alternativeNames,
-            "url": "https://beraflowdao.com",
-            "logo": "https://beraflowdao.com/images/logo.jpg",
-            "description": "Beraflow DAO is a DAO forged through the innovative Proof-of-Liquidity (POL) mechanism of Berachain."
-          })
-        }}
-      />
       <div className="container mx-auto px-4 md:px-6">
         <section className="flex flex-col lg:flex-row items-center gap-8">
           <div className="flex-1 relative min-h-[400px] md:min-h-[600px] w-full flex items-center justify-center overflow-hidden">
@@ -164,16 +114,16 @@ export default function Home() {
 
           <div className="flex-1 flex flex-col gap-8 max-w-[628px] mx-auto px-4 lg:px-0">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-sans text-center lg:text-left bg-gradient-to-r from-white via-orange-400 to-orange-500 bg-clip-text text-transparent font-bold">
-              Beraflow DAO
+              BeraFlow DAO
             </h1>
 
             <div className="space-y-4 md:space-y-6">
               <p className="text-sm md:text-base text-white/80 leading-relaxed text-center lg:text-left">
-                Beraflow DAO is a DAO forged through the innovative Proof-of-Liquidity (POL) mechanism of Berachain.
+                BeraFlow DAO is a DAO forged through the innovative Proof-of-Liquidity (POL) mechanism of Berachain.
               </p>
 
               <p className="text-sm md:text-base text-white/80 leading-relaxed text-center lg:text-left">
-                Beraflow DAO is built on the foundation of Berachain because we recognize the immense potential DeFi and the future of cryptocurrency within it. We believe that
+                BeraFlow DAO is built on the foundation of Berachain because we recognize the immense potential DeFi and the future of cryptocurrency within it. We believe that
                 projects with a robust foundation based on a strong treasury value are the key to the future of crypto. We also see the importance of markets becoming more
                 efficient and reaching their fair P/E ratios.
               </p>

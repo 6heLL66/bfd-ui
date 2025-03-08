@@ -65,7 +65,7 @@ export const Footer = () => {
         {/* Bottom Bar */}
         <div className="border-t border-white/10">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 py-6 md:py-8 text-sm text-text/60">
-            <span className="order-2 md:order-1">Copyright © Beraflow DAO 2025</span>
+            <span className="order-2 md:order-1">Copyright © BeraFlow DAO 2025</span>
             <div className="flex gap-4 md:gap-8 order-1 md:order-2">
               <Link href="/privacy-notice" className="hover:text-white hover:underline transition-colors">
                 Privacy Policy

@@ -44,7 +44,7 @@ export const Header = () => {
 
               <span className="text-xl md:text-h3bold font-display">
                 <span className="">
-                  Beraflow DAO
+                  BeraFlow DAO
                 </span>
               </span>
             </Link>
@@ -52,9 +52,28 @@ export const Header = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
-            <NavLink href="/sale">Sale</NavLink>
-            <NavLink href="/staking">Staking</NavLink>
-            <NavLink href="/swap">Swap</NavLink>
+            <NavLink href="/sale" disabled>
+              <span className="flex items-center gap-1">
+                Sale
+                <svg 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  width="14" 
+                  height="14" 
+                  viewBox="0 0 24 24" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  strokeWidth="2" 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round"
+                  className="opacity-70"
+                >
+                  <rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+              </span>
+            </NavLink>
+            {/* <NavLink href="/staking">Staking</NavLink> */}
+            {/* <NavLink href="/swap">Swap</NavLink> */}
             <NavLink href="/treasury">Treasury</NavLink>
             <NavLink href={DOCS_LINK} external>
               Docs
@@ -127,7 +146,7 @@ export const Header = () => {
               <Logo />
               <span className="text-xl font-display">
                 <span className="bg-gradient-to-r from-white via-primary-default to-primary-hover bg-clip-text text-transparent">
-                  Beraflow DAO
+                  BeraFlow DAO
                 </span>
               </span>
             </Link>
@@ -157,9 +176,28 @@ export const Header = () => {
           {/* Navigation Links Container */}
           <div className="flex-1 container mx-auto px-3 flex flex-col justify-center items-center -mt-14">
             <nav className="flex flex-col items-center gap-6">
-              <MobileNavLink href="/sale" onClick={toggleMobileMenu}>Sale</MobileNavLink>
-              <MobileNavLink href="/staking" onClick={toggleMobileMenu}>Staking</MobileNavLink>
-              <MobileNavLink href="/swap" onClick={toggleMobileMenu}>Swap</MobileNavLink>
+              <MobileNavLink href="/sale" onClick={toggleMobileMenu} disabled>
+                <span className="flex items-center gap-2">
+                  Sale
+                  <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    width="20" 
+                    height="20" 
+                    viewBox="0 0 24 24" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    strokeWidth="2" 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round"
+                    className="opacity-70"
+                  >
+                    <rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                  </svg>
+                </span>
+              </MobileNavLink>
+              {/* <MobileNavLink href="/staking" onClick={toggleMobileMenu}>Staking</MobileNavLink>
+              <MobileNavLink href="/swap" onClick={toggleMobileMenu}>Swap</MobileNavLink> */}
               <MobileNavLink href="/treasury" onClick={toggleMobileMenu}>Treasury</MobileNavLink>
               <MobileNavLink href={DOCS_LINK} external onClick={toggleMobileMenu}>
                 Docs
@@ -176,14 +214,25 @@ const NavLink = ({
   href, 
   children, 
   external,
-  onClick 
+  onClick,
+  disabled
 }: { 
   href: string; 
   children: React.ReactNode; 
   external?: boolean;
   onClick?: () => void;
+  disabled?: boolean;
 }) => {
   const baseStyles = 'relative font-display text-text text-white/80 hover:text-primary-default transition-colors py-2';
+  const disabledStyles = 'cursor-not-allowed opacity-70 hover:text-white/80';
+
+  if (disabled) {
+    return (
+      <span className={`${baseStyles} ${disabledStyles}`}>
+        {children}
+      </span>
+    );
+  }
 
   if (external) {
     return (
@@ -225,14 +274,27 @@ const MobileNavLink = ({
   href, 
   children, 
   external,
-  onClick 
+  onClick,
+  disabled
 }: { 
   href: string; 
   children: React.ReactNode; 
   external?: boolean;
   onClick?: () => void;
+  disabled?: boolean;
 }) => {
   const baseStyles = 'relative font-display text-[32px] text-white hover:text-primary-default transition-all duration-300 py-3 group';
+  const disabledStyles = 'cursor-not-allowed opacity-70 hover:text-white';
+
+  if (disabled) {
+    return (
+      <span className={`${baseStyles} ${disabledStyles}`}>
+        <span className="relative">
+          {children}
+        </span>
+      </span>
+    );
+  }
 
   if (external) {
     return (

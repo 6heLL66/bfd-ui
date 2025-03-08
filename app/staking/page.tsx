@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { StakingClient } from './components/StakingClient';
+import { redirect } from 'next/navigation';
 
 export const metadata: Metadata = {
   title: 'Staking | BFD Protocol',
@@ -18,5 +18,6 @@ export const metadata: Metadata = {
 };
 
 export default function Page() {
-  return <StakingClient />;
+  redirect('/');
+  // return <StakingClient />;
 }
