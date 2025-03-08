@@ -14,6 +14,10 @@ export const metadata: Metadata = {
     title: 'Staking | BFD Protocol',
     description: 'Stake your BGT tokens to earn rewards and participate in governance decisions. Earn passive income through staking rewards.',
     images: [],
+  },
+  robots: {
+    index: true,
+    follow: true,
   }
 };
 

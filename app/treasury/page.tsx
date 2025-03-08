@@ -13,6 +13,10 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Treasury | BFD Protocol',
     description: 'View and analyze the distribution of BFD Protocol treasury assets. Track token allocations and monitor treasury health in real-time.',
+  },
+  robots: {
+    index: true,
+    follow: true,
   }
 };
 

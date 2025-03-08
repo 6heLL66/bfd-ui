@@ -14,6 +14,10 @@ export const metadata: Metadata = {
     title: 'Token Sale | BFD Protocol',
     description: 'Participate in the BFD Protocol token sale. Purchase tokens securely and join our growing ecosystem.',
     images: [],
+  },
+  robots: {
+    index: true,
+    follow: true,
   }
 };
 
