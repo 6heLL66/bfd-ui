@@ -12,6 +12,7 @@ import Script from 'next/script';
     "BFD Protocol",
     "Beraflow",
     "BeraFlow",
+    "bera flow",
     "BeraflowDAO",
     "Bera flow",
     "bera flow dao",

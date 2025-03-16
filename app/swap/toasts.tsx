@@ -45,7 +45,7 @@ export const createSwapToast = (promise: Promise<void>, token1Amount: string, to
   });
 };
 
-export const createApproveToast = (promise: Promise<void>, token1Symbol: string, amount: string, infinite: boolean) => {
+export const createApproveToast = (promise: Promise<void>, token1Symbol: string, amount: string, infinite: boolean, operation: string = 'swap') => {
   return toast.promise(promise, {
     pending: {
       render() {
@@ -68,7 +68,7 @@ export const createApproveToast = (promise: Promise<void>, token1Symbol: string,
             <CheckCircledIcon className="w-5 h-5 text-success" />
             <div className="flex flex-col">
               <span className="font-medium">Approval successful</span>
-              <span className="text-sm text-foreground-secondary">You can now swap {token1Symbol}</span>
+              <span className="text-sm text-foreground-secondary">You can now {operation} {token1Symbol}</span>
             </div>
           </div>
         );

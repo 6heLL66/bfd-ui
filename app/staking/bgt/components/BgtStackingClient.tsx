@@ -4,14 +4,11 @@ import { motion } from 'framer-motion';
 import { WalletGuard } from '@/shared/components/WalletGuard';
 import { Card } from '@heroui/react';
 
-export const StakingClient = () => {
+export const BgtStackingClient = () => {
+
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="container mx-auto px-4 py-12 max-w-7xl">
       {/* Header */}
-      <div className="mb-12">
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-primary-default to-secondary bg-clip-text text-transparent">Staking</h1>
-        <p className="text-foreground-secondary mt-2">Stake your BGT tokens to earn rewards and participate in governance</p>
-      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Staking Card */}
