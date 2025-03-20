@@ -1,6 +1,6 @@
 'use client';
 
-import { SALE_CA, usdcToken } from '@/config/berachain';
+import { usdcToken, SALE_CA } from '@/config/berachain';
 import { WalletGuard } from '@/shared/components/WalletGuard';
 import { getTokenImageUrl } from '@/shared/utils';
 import { Alert } from '@heroui/alert';
@@ -139,31 +139,47 @@ export function SaleClient() {
 
                 <InfoCard
                   title="Cap"
-                  value={isSaleActive && cap ? `${(+cap.toSignificant()).toLocaleString()} USDC` : '-'}
+                  value={isSaleActive && cap ? 
+                    <span>
+                      {(+cap.toSignificant()).toLocaleString()} BFD 
+                      <span className="text-foreground-secondary text-sm ml-1 opacity-70">
+                        (${(+cap.toSignificant()).toLocaleString()} USDC)
+                      </span>
+                    </span> : '-'
+                  }
                   gradientFrom="indigo-600"
                   isSaleActive={isSaleActive}
-                  progressBar={{
-                    progress: progress,
-                    label: `${(100 - progress).toFixed(1)}% remaining`,
-                    color: 'blue',
-                  }}
                 />
 
                 <InfoCard
-                  title="Total raised"
-                  value={isSaleActive && totalRaised ? `${(+totalRaised.toSignificant()).toLocaleString()} USDC` : '-'}
+                  title="Remaining"
+                  value={isSaleActive && cap && totalRaised ? 
+                    <span>
+                      {(+cap.sub(totalRaised).toSignificant()).toLocaleString()} BFD 
+                      <span className="text-foreground-secondary text-sm ml-1 opacity-70">
+                        (${(+cap.sub(totalRaised).toSignificant()).toLocaleString()} USDC)
+                      </span>
+                    </span> : '-'
+                  }
                   gradientFrom="emerald-600"
                   isSaleActive={isSaleActive}
                   progressBar={{
-                    progress: progress,
-                    label: `${progress.toFixed(1)}% filled`,
+                    progress: 100 - progress,
+                    label: `${(100 - progress).toFixed(1)}% remaining`,
                     color: 'green',
                   }}
                 />
 
                 <InfoCard
                   title="Your allocation"
-                  value={isSaleActive && allocation ? `${(+allocation.toSignificant()).toLocaleString()} USDC` : '-'}
+                  value={isSaleActive && allocation ? 
+                    <span>
+                      {(+allocation.toSignificant()).toLocaleString()} BFD 
+                      <span className="text-foreground-secondary text-sm ml-1 opacity-70">
+                        (${(+allocation.toSignificant()).toLocaleString()} USDC)
+                      </span>
+                    </span> : '-'
+                  }
                   gradientFrom="amber-600"
                   isSaleActive={isSaleActive}
                 />
@@ -176,7 +192,7 @@ export function SaleClient() {
                     <input
                       className="w-full bg-transparent border-none"
                       placeholder="Enter USDC amount"
-                      value={supplyValue}
+                      value={supplyValue ?? ''}
                       onChange={e => setSupplyValue(e.target.value)}
                       type="number"
                     />
@@ -224,7 +240,7 @@ export function SaleClient() {
               </div>
               <div className="flex w-full justify-between">
                 <span className="text-sm text-foreground-secondary">Cap</span>
-                <span className="text-foreground-primary font-bold">1,000,000 USDC</span>
+                <span className="text-foreground-primary font-bold">1,000,000 BFD ($1,000,000)</span>
               </div>
               <div className="flex w-full justify-between">
                 <span className="text-sm text-foreground-secondary">Total raised</span>

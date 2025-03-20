@@ -1,8 +1,9 @@
 import { motion } from 'framer-motion';
+import React from 'react';
 
-interface InfoCardProps {
+type InfoCardProps = {
   title: string;
-  value: string;
+  value: React.ReactNode;
   gradientFrom: string;
   isSaleActive: boolean;
   progressBar?: {
@@ -10,7 +11,7 @@ interface InfoCardProps {
     label: string;
     color: string;
   };
-}
+};
 
 const getGradientClasses = (from: string) => {
   const gradientMap = {
