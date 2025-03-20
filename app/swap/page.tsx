@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { redirect } from 'next/navigation';
+import { SwapClient } from './components/SwapClient';
 
 export const metadata: Metadata = {
   title: 'Swap | BFD Protocol',
@@ -20,7 +20,5 @@ export const metadata: Metadata = {
 };
 
 export default function SwapPage() {
-
-  redirect('/');
-  // return <SwapClient />;
+  return <SwapClient />;
 }
