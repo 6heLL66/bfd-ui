@@ -20,4 +20,40 @@ interface TokensData {
     tokens: Token[];
 }
 
-export type { TreasuryHistory, TokensData };
+interface GqlToken {
+    address: string;
+    name: string;
+    symbol: string;
+    decimals: number;
+    __typename: string;
+}
+
+interface GqlRewardVaultDynamicData {
+    allTimeReceivedBGTAmount: string;
+    apr: string;
+    bgtCapturePercentage: string;
+    activeIncentivesValueUsd: string;
+    __typename: string;
+}
+
+interface GqlRewardVaultMetadata {
+    name: string;
+    logoURI: string;
+    url: string;
+    protocolName: string;
+    description: string;
+    __typename: string;
+}
+
+interface RewardVault {
+    id: string;
+    vaultAddress: string;
+    address: string;
+    isVaultWhitelisted: boolean;
+    dynamicData: GqlRewardVaultDynamicData;
+    stakingToken: GqlToken;
+    metadata: GqlRewardVaultMetadata;
+    activeIncentives: any[];
+}
+
+export type { TreasuryHistory, TokensData, RewardVault, GqlToken, GqlRewardVaultDynamicData, GqlRewardVaultMetadata };

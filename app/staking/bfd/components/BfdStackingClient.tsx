@@ -1,8 +1,8 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import { WalletGuard } from '@/shared/components/WalletGuard';
 import { Button, Card } from '@heroui/react';
+import { Spinner } from '@heroui/spinner';
 import { useEffect, useState } from 'react';
 import { useBFDStacking } from '@/features/stacking/useBFDStacking';
 import { useAccount } from 'wagmi';
@@ -25,7 +25,6 @@ export const BfdStackingClient = () => {
   const [unstaking, setUnstaking] = useState(false);
   const [claiming, setClaiming] = useState(false);
   const [cancellingUnstake, setCancellingUnstake] = useState<number>();
-
   const [isStaking, setIsStaking] = useState(false);
 
   const { totalStaked, staked, unstaked, availableForClaim, stake, unstake, cancelUnstake, claim } = useBFDStacking();
@@ -50,7 +49,7 @@ export const BfdStackingClient = () => {
     cancelUnstake(index).catch(() => {
       toast.error('Failed to cancel unstake');
     }).finally(() => {
-      setCancellingUnstake(index);
+      setCancellingUnstake(undefined);
     });
   };
 
@@ -187,44 +186,51 @@ export const BfdStackingClient = () => {
   };
 
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="container mx-auto px-4 py-12 max-w-7xl">
+    <div className="container mx-auto px-4 py-12 max-w-7xl">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
           <WalletGuard>
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.3 }}
-              className="bg-surface/30 backdrop-blur-xl rounded-2xl border-2 border-border/40 shadow-2xl p-8 py-12 w-full hover:border-border/60 transition-all duration-300"
-            >
+            <div className="bg-surface backdrop-blur-xl rounded-2xl border-2 border-border/40 shadow-2xl shadow-primary-default/10 p-8 py-12 w-full hover:border-primary-default/40 transition-all duration-300">
               <div className="flex flex-col gap-8 w-full">
                 <div className="flex items-center justify-between border-b-2 border-border/40 pb-6">
                   <div className="space-y-1">
                     <span className="text-h3 font-bold text-primary-default">Stake BFD</span>
-                    <p className="text-sm text-white/70">Lock your BFD to get gathering allocation</p>
+                    <p className="text-sm text-foreground-secondary">Lock your BFD to get gathering allocation</p>
                   </div>
                 </div>
 
                 <div className="space-y-4">
-                  <motion.div
-                    whileHover={{ scale: 1.02 }}
-                    className="p-5 rounded-xl bg-surface/30 backdrop-blur-sm border-2 border-border/40 transition-all duration-300 hover:border-border/60 hover:shadow-lg"
-                  >
+                  <div className="p-5 rounded-xl bg-gradient-to-br from-surface via-border/5 to-border/10 backdrop-blur-sm border-2 border-border/40 transition-all duration-300 hover:border-border/60 hover:shadow-lg">
                     <div className="flex items-center justify-between gap-2">
-                      <span className="text-sm text-white/70">Total Staked</span>
-                      <span className="font-bold text-lg text-white">{totalStaked.toSignificant()} BFD</span>
+                      <span className="text-sm text-foreground-secondary">Total Staked</span>
+                      <span className="font-bold text-lg text-foreground-primary">{totalStaked.toSignificant()} BFD</span>
                     </div>
-                  </motion.div>
+                  </div>
 
-                  <motion.div
-                    whileHover={{ scale: 1.02 }}
-                    className="p-5 rounded-xl bg-surface/30 backdrop-blur-sm border-2 border-border/40 transition-all duration-300 hover:border-border/60 hover:shadow-lg"
-                  >
+                  <div className="p-5 rounded-xl bg-gradient-to-br from-surface via-border/5 to-border/10 backdrop-blur-sm border-2 border-border/40 transition-all duration-300 hover:border-border/60 hover:shadow-lg">
                     <div className="flex items-center justify-between gap-2">
-                      <span className="text-sm text-white/70">Your Stake</span>
-                      <span className="font-bold text-lg text-white">{staked.toSignificant()} BFD</span>
+                      <span className="text-sm text-foreground-secondary">Your Stake</span>
+                      <span className="font-bold text-lg text-foreground-primary">{staked.toSignificant()} BFD</span>
                     </div>
-                  </motion.div>
+                  </div>
+                  
+                  <div className="p-5 rounded-xl bg-gradient-to-br from-surface via-border/5 to-border/10 backdrop-blur-sm border-2 border-border/40 transition-all duration-300 hover:border-border/60 hover:shadow-lg">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-sm text-foreground-secondary">Available to Claim</span>
+                      <div className="flex items-center gap-4">
+                        <span className="font-bold text-lg text-foreground-primary">{availableForClaim.toSignificant()} BFD</span>
+                        {availableForClaim.amount > 0 && (
+                          <Button
+                            onPress={handleClaim}
+                            isLoading={claiming}
+                            className="px-5 py-2 bg-gradient-to-r from-primary-default to-primary-hover text-black text-sm font-bold rounded-lg hover:opacity-90 transition-opacity flex items-center justify-center shadow-md"
+                          >
+                            {claiming ? <Spinner size="sm" color="default" /> : 'Claim'}
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="border-b border-border/60">
@@ -232,7 +238,7 @@ export const BfdStackingClient = () => {
                     <button
                       onClick={() => setActiveTab('stake')}
                       className={`py-2 font-medium transition-colors ${
-                        activeTab === 'stake' ? 'text-primary-default border-b-2 border-primary-default' : 'text-white/70 hover:text-white'
+                        activeTab === 'stake' ? 'text-primary-default border-b-2 border-primary-default' : 'text-foreground-secondary hover:text-foreground-primary'
                       }`}
                     >
                       Stake
@@ -240,7 +246,7 @@ export const BfdStackingClient = () => {
                     <button
                       onClick={() => setActiveTab('unstake')}
                       className={`py-2 font-medium transition-colors ${
-                        activeTab === 'unstake' ? 'text-primary-default border-b-2 border-primary-default' : 'text-white/70 hover:text-white'
+                        activeTab === 'unstake' ? 'text-primary-default border-b-2 border-primary-default' : 'text-foreground-secondary hover:text-foreground-primary'
                       }`}
                     >
                       Unstake
@@ -257,7 +263,7 @@ export const BfdStackingClient = () => {
                           placeholder="0.0"
                           value={stakeAmount}
                           onChange={e => setStakeAmount(e.target.value)}
-                          className="w-full bg-surface/50 border-2 border-border/40 rounded-xl px-4 py-3 text-lg font-mono focus:outline-none focus:border-primary-default/40 transition-colors text-white"
+                          className="w-full bg-surface/50 border-2 border-border/40 rounded-xl px-4 py-3 text-lg font-mono focus:outline-none focus:border-primary-default/40 transition-colors text-foreground-primary"
                         />
                         <button
                           className="absolute right-3 top-1/2 -translate-y-1/2 px-3 py-1 text-xs font-medium bg-primary-default/20 text-primary-default rounded-full hover:bg-primary-default/30 transition-colors"
@@ -266,14 +272,14 @@ export const BfdStackingClient = () => {
                           MAX
                         </button>
                       </div>
-                      <div className="flex justify-between text-sm text-white/70 px-1">
+                      <div className="flex justify-between text-sm text-foreground-secondary px-1">
                         <span>Available: {bfdBalance.toLocaleString()} BFD</span>
                       </div>
                       <Button
                         size="lg"
                         onPress={handleStake}
                         isLoading={isStaking}
-                        className="w-full bg-primary-default text-white font-bold py-4 rounded-xl hover:opacity-90 transition-opacity shadow-md"
+                        className="w-full bg-gradient-to-r from-primary-default to-primary-hover text-black font-bold py-4 rounded-xl hover:opacity-90 transition-opacity shadow-md"
                       >
                         Stake BFD
                       </Button>
@@ -286,7 +292,7 @@ export const BfdStackingClient = () => {
                           placeholder="0.0"
                           value={unstakeAmount}
                           onChange={e => setUnstakeAmount(e.target.value)}
-                          className={`w-full bg-surface/50 border-2 border-border/40 rounded-xl px-4 py-3 text-lg font-mono focus:outline-none focus:border-primary-default/40 transition-colors text-white`}
+                          className={`w-full bg-surface/50 border-2 border-border/40 rounded-xl px-4 py-3 text-lg font-mono focus:outline-none focus:border-primary-default/40 transition-colors text-foreground-primary`}
                         />
                         <button
                           className={`absolute right-3 top-1/2 -translate-y-1/2 px-3 py-1 text-xs font-medium bg-primary-default/20 text-primary-default rounded-full hover:bg-primary-default/30 transition-colors`}
@@ -295,14 +301,14 @@ export const BfdStackingClient = () => {
                           MAX
                         </button>
                       </div>
-                      <div className="flex justify-between text-sm text-white/70 px-1">
+                      <div className="flex justify-between text-sm text-foreground-secondary px-1">
                         <span>Staked: {staked.toSignificant()} BFD</span>
                         <span>Unstaking Period: 7 days</span>
                       </div>
                       <Button
                         onPress={handleUnstake}
                         isLoading={unstaking}
-                        className="w-full bg-primary-default text-white font-bold py-4 rounded-xl hover:opacity-90 transition-opacity shadow-md"
+                        className="w-full bg-gradient-to-r from-primary-default to-primary-hover text-black font-bold py-4 rounded-xl hover:opacity-90 transition-opacity shadow-md"
                         size="lg"
                       >
                         Unstake BFD
@@ -311,119 +317,102 @@ export const BfdStackingClient = () => {
                   )}
                 </div>
 
-                <div className="mt-8 border-t-2 border-border/40 pt-6">
-                  <h3 className="text-xl font-bold text-white mb-4">Your Unstaking Requests</h3>
+                {/* Unstaking Requests Section */}
+                {unstaked && unstaked.length > 0 && (
+                  <div className="mt-8 border-t-2 border-border/40 pt-6">
+                    <h3 className="text-xl font-bold text-foreground-primary mb-4">Your Unstaking Requests</h3>
+                    
+                    <div className="space-y-4">
+                      {unstaked.map((unstake, index) => {
+                        const isCompleted = unstake.unlockTime < new Date();
 
-                  <div className="mb-6">
-                    <div className="p-6 rounded-xl bg-surface/30 backdrop-blur-sm border-2 border-border/40 transition-all duration-300 hover:border-border/60 hover:shadow-lg mb-3">
-                      <div className="flex items-center justify-between gap-2 mb-4">
-                        <div>
-                          <h4 className="text-md font-medium text-white mb-1">Ready to Claim</h4>
-                        </div>
-                        <span className="font-bold text-2xl text-white">
-                          {availableForClaim.toSignificant()} <span className="text-primary-default">BFD</span>
-                        </span>
-                      </div>
-                      <Button
-                        isDisabled={availableForClaim.amount <= 0}
-                        onPress={handleClaim}
-                        isLoading={claiming}
-                        className="w-full bg-primary-default text-white font-bold py-3 rounded-xl hover:opacity-90 transition-opacity shadow-md flex items-center justify-center gap-2"
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                          <path
-                            fillRule="evenodd"
-                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                        Claim All
-                      </Button>
+                        return (
+                          <div
+                            key={unstake.unlockTime.valueOf()}
+                            className="p-6 rounded-xl bg-gradient-to-br from-surface via-border/5 to-border/10 backdrop-blur-sm border-2 border-border/40 transition-all duration-300 hover:border-border/60 hover:shadow-lg"
+                          >
+                            <div className="flex items-center justify-between mb-3">
+                              <span className="font-bold text-xl text-foreground-primary">
+                                {unstake.amount.toSignificant()} <span className="text-primary-default">BFD</span>
+                              </span>
+                              <span className="text-xs px-3 py-1.5 bg-primary-default/20 text-primary-default rounded-full font-medium">
+                                {isCompleted ? 'Completed' : `${getDaysRemaining(unstake.unlockTime)} days left`}
+                              </span>
+                            </div>
+                            <div className="flex items-center justify-between text-xs text-foreground-secondary mb-3">
+                              <span>
+                                {!isCompleted ? 'Completes' : 'Completed'}: {unstake.unlockTime.toLocaleDateString()}
+                              </span>
+                            </div>
+                            {!isCompleted && (
+                              <div className="w-full bg-white/10 rounded-full h-2 mb-4">
+                                <div
+                                  className="bg-primary-default h-2 rounded-full"
+                                  style={{
+                                    width: `${((7 - getDaysRemaining(unstake.unlockTime)) / 7) * 100}%`,
+                                  }}
+                                ></div>
+                              </div>
+                            )}
+                            {!isCompleted && (
+                              <Button
+                                isLoading={cancellingUnstake === index}
+                                onPress={() => handleCancelUnstake(index)}
+                                className="w-full bg-white/10 hover:bg-white/20 text-foreground-primary font-medium py-2.5 rounded-xl transition-all flex items-center justify-center gap-2 border border-border/40 hover:border-border/60"
+                              >
+                                <>
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                      <path
+                                        fillRule="evenodd"
+                                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                        clipRule="evenodd"
+                                      />
+                                    </svg>
+                                    Cancel Unstake
+                                  </>
+                              </Button>
+                            )}
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
-
-                  {/* Pending unstakes section */}
-                  {unstaked?.length > 0 && (
-                    <div className="mb-6">
-                      <h4 className="text-lg font-medium text-white mb-4">Unstakes queue</h4>
-
-                      <div className="space-y-4">
-                        {unstaked.map((unstake, index) => {
-                          const isCompleted = unstake.unlockTime < new Date();
-
-                          return (
-                            <div
-                              key={unstake.unlockTime.valueOf()}
-                              className={
-                                'p-6 rounded-xl bg-surface/30 backdrop-blur-sm border-2 border-border/40 transition-all duration-300 hover:border-border/60 hover:shadow-lg ' +
-                                (isCompleted ? 'opacity-70' : '')
-                              }
-                            >
-                              <div className="flex items-center justify-between mb-3">
-                                <span className="font-bold text-xl text-white">
-                                  {unstake.amount.toSignificant()} <span className="text-primary-default">BFD</span>
-                                </span>
-                                <span className="text-xs px-3 py-1.5 bg-primary-default/20 text-primary-default rounded-full font-medium">
-                                  {isCompleted ? 'Completed' : `${getDaysRemaining(unstake.unlockTime)} days left`}
-                                </span>
-                              </div>
-                              <div className="flex items-center justify-between text-xs text-white/70 mb-3">
-                                <span>
-                                  {!isCompleted ? 'Completes' : 'Completed'}: {unstake.unlockTime.toLocaleDateString()}
-                                </span>
-                              </div>
-                              {!isCompleted && (
-                                <div className="w-full bg-white/10 rounded-full h-2 mb-4">
-                                  <div
-                                    className="bg-primary-default h-2 rounded-full"
-                                    style={{
-                                      width: `${((7 - getDaysRemaining(unstake.unlockTime)) / 7) * 100}%`,
-                                    }}
-                                  ></div>
-                                </div>
-                              )}
-                              {!isCompleted && (
-                                <Button
-                                  isLoading={cancellingUnstake === index}
-                                  onPress={() => handleCancelUnstake(index)}
-                                  className="w-full bg-white/10 hover:bg-white/20 text-white font-medium py-2.5 rounded-xl transition-all flex items-center justify-center gap-2 border border-border/40 hover:border-border/60"
-                                >
-                                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                                    <path
-                                      fillRule="evenodd"
-                                      d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                                      clipRule="evenodd"
-                                    />
-                                  </svg>
-                                  Cancel Unstake
-                                </Button>
-                              )}
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
-                </div>
+                )}
               </div>
-            </motion.div>
+            </div>
           </WalletGuard>
         </div>
 
-        <Card className="bg-surface/80 backdrop-blur-xl border-2 border-border/40 p-6 space-y-6 hover:border-border/60 transition-all duration-300">
+        <Card className="bg-surface backdrop-blur-xl border-2 border-border/40 p-6 space-y-6 hover:border-border/60 transition-all duration-300">
           <h3 className="text-xl font-bold text-primary-default">Staking Info</h3>
-          <div className="space-y-4">
-            <div>
-              <h4 className="text-sm font-medium text-white/70 mb-2">Unstaking Period</h4>
-              <p className="text-white">7 days unstaking period for withdrawing BFD tokens</p>
+          <div className="space-y-5">
+            <div className="relative pl-8">
+              <div className="absolute left-0 top-0 flex items-center justify-center w-6 h-6 rounded-full bg-primary-default/20 border border-primary-default/40">
+                <span className="text-sm font-bold text-primary-default">1</span>
+              </div>
+              <h4 className="text-sm font-medium text-foreground-primary mb-1">Stake BFD</h4>
+              <p className="text-sm text-foreground-secondary">Lock your BFD tokens to get gathering allocation</p>
             </div>
-            <div>
-              <h4 className="text-sm font-medium text-white/70 mb-2">Allocation</h4>
-              <p className="text-white">Each staker gets a unique gathering allocation based on the amount of BFD they stake</p>
+            
+            <div className="relative pl-8">
+              <div className="absolute left-0 top-0 flex items-center justify-center w-6 h-6 rounded-full bg-primary-default/20 border border-primary-default/40">
+                <span className="text-sm font-bold text-primary-default">2</span>
+              </div>
+              <h4 className="text-sm font-medium text-foreground-primary mb-1">Unstaking Period</h4>
+              <p className="text-sm text-foreground-secondary">7 days unstaking period for withdrawing BFD tokens</p>
             </div>
-            <div>
-              <h4 className="text-sm font-medium text-white/70 mb-2">Benefits</h4>
-              <ul className="list-disc list-inside text-white space-y-2">
+            
+            <div className="relative pl-8">
+              <div className="absolute left-0 top-0 flex items-center justify-center w-6 h-6 rounded-full bg-primary-default/20 border border-primary-default/40">
+                <span className="text-sm font-bold text-primary-default">3</span>
+              </div>
+              <h4 className="text-sm font-medium text-foreground-primary mb-1">Allocation</h4>
+              <p className="text-sm text-foreground-secondary">Each staker gets a unique gathering allocation based on the amount of BFD they stake</p>
+            </div>
+
+            <div className="mt-4 pt-4 border-t border-border/40">
+              <h4 className="text-sm font-medium text-foreground-secondary mb-2">Benefits</h4>
+              <ul className="list-disc list-inside text-sm text-foreground-primary space-y-1.5">
                 <li>Get gathering allocation proportional to your stake</li>
                 <li>Participate in governance decisions</li>
                 <li>Support the BFD ecosystem</li>
@@ -432,6 +421,6 @@ export const BfdStackingClient = () => {
           </div>
         </Card>
       </div>
-    </motion.div>
+    </div>
   );
 };

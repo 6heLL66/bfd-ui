@@ -8,11 +8,14 @@ export const U256_MAX = BigInt('0xffffffffffffffffffffffffffffffffffffffffffffff
 export const SALE_CA = process.env.NEXT_PUBLIC_SALE_CA as `0x${string}`;
 export const STACKING_CA = process.env.NEXT_PUBLIC_STACKING_CA as `0x${string}`;
 export const BFD_CA = process.env.NEXT_PUBLIC_BFD_CA as `0x${string}`;
+export const VAULT_CA = process.env.NEXT_PUBLIC_VAULT_CA as `0x${string}`;
 
 export const balancerApi = new BalancerApi('https://api.berachain.com/', CHAIN_ID);
 
 export const honeyToken = new Token(CHAIN_ID, '0xFCBD14DC51f0A4d49d5E53C2E0950e0bC26d0Dce', 18, 'HONEY');
 export const usdcToken = new Token(CHAIN_ID, '0x549943e04f40284185054145c6E4e9568C1D3241', 6, 'USDC');
+export const beraHoneyLpToken = new Token(CHAIN_ID, '0x2c4a603a2aa5596287a06886862dc29d56dbc354', 18, '50WBERA-50HONEY-WEIGHTED');
+export const bgtToken = new Token(CHAIN_ID, '0x656b95E550C07a9ffe548bd4085c72418Ceb1dba', 18, 'BGT');
 export const bfdToken = new Token(CHAIN_ID, BFD_CA, 18, 'BFD');
 
 export const tokenAbi = [

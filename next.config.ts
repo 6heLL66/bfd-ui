@@ -10,6 +10,11 @@ const nextConfig: NextConfig = {
         hostname: 'berascan.com',
         pathname: '/token/images/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+        pathname: '/**',
+      },
     ],
   },
 };

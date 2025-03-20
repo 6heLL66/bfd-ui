@@ -5,7 +5,7 @@ import { useAccount } from 'wagmi';
 import Link from 'next/link';
 import Image from 'next/image';
 import { DOCS_LINK } from '@/config/links';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 export const Logo = () => {
   return (
@@ -72,8 +72,13 @@ export const Header = () => {
                 </svg>
               </span>
             </NavLink>
-            {/* <NavLink href="/staking">Staking</NavLink> */}
-            {/* <NavLink href="/swap">Swap</NavLink> */}
+            <NavDropdown 
+              label="Stake" 
+              items={[
+                { label: "Stake BFD", href: "/staking/bfd" },
+                { label: "Farm BGT", href: "/staking/bgt" }
+              ]} 
+            />
             <NavLink href="/treasury">Treasury</NavLink>
             <NavLink href={DOCS_LINK} external>
               Docs
@@ -196,8 +201,20 @@ export const Header = () => {
                   </svg>
                 </span>
               </MobileNavLink>
-              {/* <MobileNavLink href="/staking" onClick={toggleMobileMenu}>Staking</MobileNavLink>
-              <MobileNavLink href="/swap" onClick={toggleMobileMenu}>Swap</MobileNavLink> */}
+              
+              {/* Mobile Stake Options */}
+              <div className="flex flex-col items-center gap-4">
+                <span className="relative font-display text-[32px] text-white py-3">Stake</span>
+                <div className="flex flex-col items-center gap-3 -mt-2">
+                  <MobileNavLink href="/stake/bfd" onClick={toggleMobileMenu}>
+                    <span className="text-[24px] text-white/80">Stake BFD</span>
+                  </MobileNavLink>
+                  <MobileNavLink href="/stake/lp" onClick={toggleMobileMenu}>
+                    <span className="text-[24px] text-white/80">Stake BFD/HONEY LP</span>
+                  </MobileNavLink>
+                </div>
+              </div>
+              
               <MobileNavLink href="/treasury" onClick={toggleMobileMenu}>Treasury</MobileNavLink>
               <MobileNavLink href={DOCS_LINK} external onClick={toggleMobileMenu}>
                 Docs
@@ -339,5 +356,100 @@ const MobileNavLink = ({
         <span className="absolute -bottom-2 left-0 w-0 h-[2px] bg-gradient-to-r from-primary-default to-primary-hover group-hover:w-full transition-all duration-300" />
       </span>
     </Link>
+  );
+};
+
+// New NavDropdown component for desktop navigation
+const NavDropdown = ({ 
+  label, 
+  items 
+}: { 
+  label: string; 
+  items: { label: string; href: string }[];
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      // Clear any lingering timeout when component unmounts
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+
+  const handleMouseEnter = () => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+    setIsOpen(true);
+  };
+
+  const handleMouseLeave = () => {
+    timeoutRef.current = setTimeout(() => {
+      setIsOpen(false);
+    }, 100); // Small delay to prevent menu from closing when moving between elements
+  };
+
+  return (
+    <div 
+      className="relative group" 
+      ref={dropdownRef}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      <button 
+        className="relative font-display text-text text-white/80 hover:text-primary-default transition-colors py-2 flex items-center gap-1"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        {label}
+        <svg 
+          xmlns="http://www.w3.org/2000/svg" 
+          width="14" 
+          height="14" 
+          viewBox="0 0 24 24" 
+          fill="none" 
+          stroke="currentColor" 
+          strokeWidth="2" 
+          strokeLinecap="round" 
+          strokeLinejoin="round"
+          className={`opacity-70 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}
+        >
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
+      </button>
+      
+      {/* Dropdown Menu */}
+      <div 
+        className={`absolute top-full left-1/2 -translate-x-1/2 mt-1 w-48 bg-black/80 backdrop-blur-md border border-white/10 rounded-lg shadow-xl overflow-hidden transition-all duration-300 z-50 ${
+          isOpen ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 -translate-y-2 pointer-events-none'
+        }`}
+      >
+        <div className="py-1">
+          {items.map((item, index) => (
+            <Link 
+              key={index} 
+              href={item.href}
+              className="block px-4 py-2 text-sm text-white/80 hover:text-primary-default hover:bg-white/5 transition-colors"
+              onClick={() => setIsOpen(false)}
+            >
+              {item.label}
+            </Link>
+          ))}
+        </div>
+      </div>
+    </div>
   );
 };
