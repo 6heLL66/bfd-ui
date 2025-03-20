@@ -40,8 +40,8 @@ export const BgtStackingClient = () => {
               <div className="flex flex-col gap-8 w-full">
                 <div className="flex items-center justify-between border-b-2 border-border/40 pb-6">
                   <div className="space-y-1">
-                    <span className="text-h3 font-bold text-primary-default">BFD | HONEY</span>
-                    <p className="text-sm text-foreground-secondary">Stake your BFD/HONEY LP to earn rewards</p>
+                    <span className="text-h3 font-bold text-primary-default">BFD - HONEY</span>
+                    <p className="text-sm text-foreground-secondary">Stake your BFD-HONEY LP to earn rewards</p>
                   </div>
 
                   <Link
@@ -221,7 +221,7 @@ export const BgtStackingClient = () => {
                 <span className="text-sm font-bold text-primary-default">1</span>
               </div>
               <h4 className="text-sm font-medium text-foreground-primary mb-1">Provide Liquidity</h4>
-              <p className="text-sm text-foreground-secondary">Add liquidity to the BFD|HONEY pool to receive LP tokens</p>
+              <p className="text-sm text-foreground-secondary">Add liquidity to the BFD-HONEY pool to receive LP tokens</p>
               <Link 
                 href="https://hub.berachain.com/pools/0x2c4a603a2aa5596287a06886862dc29d56dbc354000200000000000000000002/details/"
                 target="_blank"
@@ -252,7 +252,7 @@ export const BgtStackingClient = () => {
                 <span className="text-sm font-bold text-primary-default">2</span>
               </div>
               <h4 className="text-sm font-medium text-foreground-primary mb-1">Stake LP Tokens</h4>
-              <p className="text-sm text-foreground-secondary">Stake your BFD|HONEY LP tokens in this vault to start earning BGT rewards</p>
+              <p className="text-sm text-foreground-secondary">Stake your BFD-HONEY LP tokens in this vault to start earning BGT rewards</p>
               <Link 
                 href={vault?.metadata.url || ''} 
                 target="_blank"

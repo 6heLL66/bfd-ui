@@ -169,7 +169,7 @@ export function SaleClient() {
                 />
               </div>
 
-              <div className="flex flex-col justify-center gap-5">
+              <div className="flex flex-col gap-5">
                 <div className="space-y-3">
                   <label className="text-sm font-medium text-foreground-secondary">Amount to supply</label>
                   <motion.div className="p-3 py-3 relative rounded-xl flex bg-surface/50 border border-border/40 transition-all duration-300 hover:border-border">
