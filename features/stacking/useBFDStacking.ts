@@ -1,5 +1,5 @@
 import { stackingAbi } from '@/config/abi/stacking';
-import { bfdToken, STACKING_CA } from '@/config/berachain';
+import { bfdToken, STACKING_CA, tokenAbi } from '@/config/berachain';
 import { wagmiConfig } from '@/config/wagmi';
 import { TokenAmount } from '@berachain-foundation/berancer-sdk';
 import { useCallback, useEffect } from 'react';
@@ -19,6 +19,12 @@ export const useBFDStacking = () => {
     address: STACKING_CA,
     abi: stackingAbi,
     functionName: 'totalStaked',
+  });
+
+  const { data: totalSupply, refetch: refetchTotalSupply } = useReadContract({
+    address: bfdToken.address,
+    abi: tokenAbi,
+    functionName: 'totalSupply',
   });
 
   const { data: UNLOCK_PERIOD } = useReadContract({
@@ -48,13 +54,12 @@ export const useBFDStacking = () => {
     args: [address]
   });
 
-  console.log(availableForClaim);
-
   const refetchAll = useCallback(() => {
     refetchTotalStaked();
     refetchStaked();
     refetchUnstaked();
     refetchAvailableForClaim();
+    refetchTotalSupply();
   }, []);
 
   useEffect(() => {
@@ -152,6 +157,7 @@ export const useBFDStacking = () => {
       }
     }),
     availableForClaim: TokenAmount.fromRawAmount(bfdToken, (availableForClaim ?? 0) as bigint),
+    totalSupply: TokenAmount.fromRawAmount(bfdToken, (totalSupply ?? 0) as bigint),
     stake,
     unstake,
     claim,

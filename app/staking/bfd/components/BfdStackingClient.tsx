@@ -2,7 +2,6 @@
 
 import { WalletGuard } from '@/shared/components/WalletGuard';
 import { Button, Card } from '@heroui/react';
-import { Spinner } from '@heroui/spinner';
 import { useEffect, useState } from 'react';
 import { useBFDStacking } from '@/features/stacking/useBFDStacking';
 import { useAccount } from 'wagmi';
@@ -27,7 +26,7 @@ export const BfdStackingClient = () => {
   const [cancellingUnstake, setCancellingUnstake] = useState<number>();
   const [isStaking, setIsStaking] = useState(false);
 
-  const { totalStaked, staked, unstaked, availableForClaim, stake, unstake, cancelUnstake, claim } = useBFDStacking();
+  const { totalStaked, staked, unstaked, availableForClaim, totalSupply, stake, unstake, cancelUnstake, claim } = useBFDStacking();
 
   const refreshBalance = async () => {
     if (!address) return;
@@ -194,8 +193,8 @@ export const BfdStackingClient = () => {
               <div className="flex flex-col gap-8 w-full">
                 <div className="flex items-center justify-between border-b-2 border-border/40 pb-6">
                   <div className="space-y-1">
-                    <span className="text-h3 font-bold text-primary-default">Stake BFD</span>
-                    <p className="text-sm text-foreground-secondary">Lock your BFD to get gathering allocation</p>
+                    <span className="text-h3 font-bold text-primary-default">Stake $BFD</span>
+                    <p className="text-sm text-foreground-secondary">Stake $BFD to receive a share of the gathering allocation.</p>
                   </div>
                 </div>
 
@@ -203,14 +202,14 @@ export const BfdStackingClient = () => {
                   <div className="p-5 rounded-xl bg-gradient-to-br from-surface via-border/5 to-border/10 backdrop-blur-sm border-2 border-border/40 transition-all duration-300 hover:border-border/60 hover:shadow-lg">
                     <div className="flex items-center justify-between gap-2">
                       <span className="text-sm text-foreground-secondary">Total Staked</span>
-                      <span className="font-bold text-lg text-foreground-primary">{totalStaked.toSignificant()} BFD</span>
+                      <span className="font-bold text-lg text-foreground-primary flex items-center gap-2">{totalStaked.toSignificant()} $BFD <span className="text-sm text-foreground-secondary">{totalSupply.amount && (+totalStaked.divUpFixed(totalSupply.amount).toSignificant()).toFixed(2)}%</span></span>
                     </div>
                   </div>
 
                   <div className="p-5 rounded-xl bg-gradient-to-br from-surface via-border/5 to-border/10 backdrop-blur-sm border-2 border-border/40 transition-all duration-300 hover:border-border/60 hover:shadow-lg">
                     <div className="flex items-center justify-between gap-2">
                       <span className="text-sm text-foreground-secondary">Your Stake</span>
-                      <span className="font-bold text-lg text-foreground-primary">{staked.toSignificant()} BFD</span>
+                      <span className="font-bold text-lg text-foreground-primary">{staked.toSignificant()} $BFD</span>
                     </div>
                   </div>
                   
@@ -218,14 +217,14 @@ export const BfdStackingClient = () => {
                     <div className="flex items-center justify-between gap-2">
                       <span className="text-sm text-foreground-secondary">Available to Claim</span>
                       <div className="flex items-center gap-4">
-                        <span className="font-bold text-lg text-foreground-primary">{availableForClaim.toSignificant()} BFD</span>
+                        <span className="font-bold text-lg text-foreground-primary">{availableForClaim.toSignificant()} $BFD</span>
                         {availableForClaim.amount > 0 && (
                           <Button
                             onPress={handleClaim}
                             isLoading={claiming}
                             className="px-5 py-2 bg-gradient-to-r from-primary-default to-primary-hover text-black text-sm font-bold rounded-lg hover:opacity-90 transition-opacity flex items-center justify-center shadow-md"
                           >
-                            {claiming ? <Spinner size="sm" color="default" /> : 'Claim'}
+                            Claim
                           </Button>
                         )}
                       </div>
@@ -273,7 +272,7 @@ export const BfdStackingClient = () => {
                         </button>
                       </div>
                       <div className="flex justify-between text-sm text-foreground-secondary px-1">
-                        <span>Available: {bfdBalance.toLocaleString()} BFD</span>
+                        <span>Available: {bfdBalance.toLocaleString()} $BFD</span>
                       </div>
                       <Button
                         size="lg"
@@ -281,7 +280,7 @@ export const BfdStackingClient = () => {
                         isLoading={isStaking}
                         className="w-full bg-gradient-to-r from-primary-default to-primary-hover text-black font-bold py-4 rounded-xl hover:opacity-90 transition-opacity shadow-md"
                       >
-                        Stake BFD
+                        Stake $BFD
                       </Button>
                     </>
                   ) : (
@@ -302,7 +301,7 @@ export const BfdStackingClient = () => {
                         </button>
                       </div>
                       <div className="flex justify-between text-sm text-foreground-secondary px-1">
-                        <span>Staked: {staked.toSignificant()} BFD</span>
+                        <span>Staked: {staked.toSignificant()} $BFD</span>
                         <span>Unstaking Period: 7 days</span>
                       </div>
                       <Button
@@ -311,7 +310,7 @@ export const BfdStackingClient = () => {
                         className="w-full bg-gradient-to-r from-primary-default to-primary-hover text-black font-bold py-4 rounded-xl hover:opacity-90 transition-opacity shadow-md"
                         size="lg"
                       >
-                        Unstake BFD
+                        Unstake $BFD
                       </Button>
                     </>
                   )}
@@ -333,7 +332,7 @@ export const BfdStackingClient = () => {
                           >
                             <div className="flex items-center justify-between mb-3">
                               <span className="font-bold text-xl text-foreground-primary">
-                                {unstake.amount.toSignificant()} <span className="text-primary-default">BFD</span>
+                                {unstake.amount.toSignificant()} <span className="text-primary-default">$BFD</span>
                               </span>
                               <span className="text-xs px-3 py-1.5 bg-primary-default/20 text-primary-default rounded-full font-medium">
                                 {isCompleted ? 'Completed' : `${getDaysRemaining(unstake.unlockTime)} days left`}
@@ -390,24 +389,24 @@ export const BfdStackingClient = () => {
               <div className="absolute left-0 top-0 flex items-center justify-center w-6 h-6 rounded-full bg-primary-default/20 border border-primary-default/40">
                 <span className="text-sm font-bold text-primary-default">1</span>
               </div>
-              <h4 className="text-sm font-medium text-foreground-primary mb-1">Stake BFD</h4>
-              <p className="text-sm text-foreground-secondary">Lock your BFD tokens to get gathering allocation</p>
+              <h4 className="text-sm font-medium text-foreground-primary mb-1">Stake $BFD</h4>
+              <p className="text-sm text-foreground-secondary">Stake your $BFD tokens to receive a share of the gathering allocation.</p>
             </div>
             
             <div className="relative pl-8">
               <div className="absolute left-0 top-0 flex items-center justify-center w-6 h-6 rounded-full bg-primary-default/20 border border-primary-default/40">
                 <span className="text-sm font-bold text-primary-default">2</span>
               </div>
-              <h4 className="text-sm font-medium text-foreground-primary mb-1">Unstaking Period</h4>
-              <p className="text-sm text-foreground-secondary">7 days unstaking period for withdrawing BFD tokens</p>
+              <h4 className="text-sm font-medium text-foreground-primary mb-1">Allocation</h4>
+              <p className="text-sm text-foreground-secondary">Receive a gathering allocation based on the amount of $BFD staked and the duration of the staking period.</p>
             </div>
             
             <div className="relative pl-8">
               <div className="absolute left-0 top-0 flex items-center justify-center w-6 h-6 rounded-full bg-primary-default/20 border border-primary-default/40">
                 <span className="text-sm font-bold text-primary-default">3</span>
               </div>
-              <h4 className="text-sm font-medium text-foreground-primary mb-1">Allocation</h4>
-              <p className="text-sm text-foreground-secondary">Each staker gets a unique gathering allocation based on the amount of BFD they stake</p>
+              <h4 className="text-sm font-medium text-foreground-primary mb-1">Unstaking Period</h4>
+              <p className="text-sm text-foreground-secondary">A 7-day unstaking period is required to withdraw $BFD tokens.</p>
             </div>
 
             <div className="mt-4 pt-4 border-t border-border/40">
@@ -415,7 +414,7 @@ export const BfdStackingClient = () => {
               <ul className="list-disc list-inside text-sm text-foreground-primary space-y-1.5">
                 <li>Get gathering allocation proportional to your stake</li>
                 <li>Participate in governance decisions</li>
-                <li>Support the BFD ecosystem</li>
+                <li>Support the BeraFlow ecosystem</li>
               </ul>
             </div>
           </div>

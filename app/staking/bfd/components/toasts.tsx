@@ -7,9 +7,9 @@ export const PendingToast = ({ amount, operation }: { amount: string; operation:
     <div className="flex items-center gap-3">
       <UpdateIcon className="w-5 h-5 text-primary-default animate-spin" />
       <div className="flex flex-col">
-        <span className="font-medium">{operation}ing BFD</span>
+        <span className="font-medium">{operation} $BFD</span>
         <span className="text-sm text-foreground-secondary">
-          {amount} BFD
+          {amount} $BFD
         </span>
       </div>
     </div>
@@ -21,7 +21,7 @@ export const PendingToast = ({ amount, operation }: { amount: string; operation:
       <div className="flex flex-col">
         <span className="font-medium">{operation} successful</span>
         <span className="text-sm text-foreground-secondary">
-          {amount} BFD Staked
+          {amount} $BFD Staked
         </span>
       </div>
     </div>

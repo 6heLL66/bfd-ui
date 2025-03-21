@@ -61,13 +61,21 @@ export const Header = () => {
                 Swap
               </span>
             </NavLink>
-            <NavDropdown 
-              label="Stake" 
-              items={[
-                { label: "Stake BFD", href: "/staking/bfd" },
-                { label: "Farm BGT", href: "/staking/bgt" }
-              ]} 
-            />
+            <NavLink href="/pool">
+              <span className="flex items-center gap-1">
+                Pool
+              </span>
+            </NavLink>
+            <NavLink href="/staking/bfd">
+              <span className="flex items-center gap-1">
+                Staking
+              </span>
+            </NavLink>
+            <NavLink href="/staking/bgt">
+              <span className="flex items-center gap-1">
+                Vault
+              </span>
+            </NavLink>
             <NavLink href="/treasury">Treasury</NavLink>
             <NavLink href={DOCS_LINK} external>
               Docs
@@ -191,18 +199,8 @@ export const Header = () => {
                 </span>
               </MobileNavLink>
               
-              {/* Mobile Stake Options */}
-              <div className="flex flex-col items-center gap-4">
-                <span className="relative font-display text-[32px] text-white py-3">Stake</span>
-                <div className="flex flex-col items-center gap-3 -mt-2">
-                  <MobileNavLink href="/stake/bfd" onClick={toggleMobileMenu}>
-                    <span className="text-[24px] text-white/80">Stake BFD</span>
-                  </MobileNavLink>
-                  <MobileNavLink href="/stake/lp" onClick={toggleMobileMenu}>
-                    <span className="text-[24px] text-white/80">Stake BFD/HONEY LP</span>
-                  </MobileNavLink>
-                </div>
-              </div>
+              <MobileNavLink href="/staking/bfd" onClick={toggleMobileMenu}>Staking</MobileNavLink>
+              <MobileNavLink href="/staking/bgt" onClick={toggleMobileMenu}>Vault</MobileNavLink>
               
               <MobileNavLink href="/treasury" onClick={toggleMobileMenu}>Treasury</MobileNavLink>
               <MobileNavLink href={DOCS_LINK} external onClick={toggleMobileMenu}>

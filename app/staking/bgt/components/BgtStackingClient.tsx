@@ -187,7 +187,7 @@ export const BgtStackingClient = () => {
                               className="px-2 py-0.5 text-[11px] font-medium bg-primary-default/20 text-primary-default rounded-full hover:bg-primary-default/30 transition-colors"
                               disabled={isLoading}
                             >
-                              {bgtBalance.toSignificant()} BGT
+                              MAX {bgtBalance.toSignificant()} BGT
                             </button>
                           </div>
                         

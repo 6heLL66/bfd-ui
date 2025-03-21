@@ -93,7 +93,7 @@ export function SaleClient() {
             color="default"
             className="dark h-auto backdrop-blur-sm bg-surface border-2 border-border/40 shadow-xl"
             title={<span className="text-body font-bold text-foreground-primary">There is no active sale now.</span>}
-            description={<span className="text-text font-bold text-foreground-secondary">Announcement will be made in discord when the next sale starts.</span>}
+            description={<span className="text-text font-bold text-foreground-secondary">An announcement with the date of the next sale will be made on our socials.</span>}
           />
         </motion.div>
       )}
@@ -141,7 +141,7 @@ export function SaleClient() {
                   title="Cap"
                   value={isSaleActive && cap ? 
                     <span>
-                      {(+cap.toSignificant()).toLocaleString()} BFD 
+                      {(+cap.toSignificant()).toLocaleString()} $BFD 
                       <span className="text-foreground-secondary text-sm ml-1 opacity-70">
                         (${(+cap.toSignificant()).toLocaleString()} USDC)
                       </span>
@@ -155,7 +155,7 @@ export function SaleClient() {
                   title="Remaining"
                   value={isSaleActive && cap && totalRaised ? 
                     <span>
-                      {(+cap.sub(totalRaised).toSignificant()).toLocaleString()} BFD 
+                      {(+cap.sub(totalRaised).toSignificant()).toLocaleString()} $BFD 
                       <span className="text-foreground-secondary text-sm ml-1 opacity-70">
                         (${(+cap.sub(totalRaised).toSignificant()).toLocaleString()} USDC)
                       </span>
@@ -174,7 +174,7 @@ export function SaleClient() {
                   title="Your allocation"
                   value={isSaleActive && allocation ? 
                     <span>
-                      {(+allocation.toSignificant()).toLocaleString()} BFD 
+                      {(+allocation.toSignificant()).toLocaleString()} $BFD 
                       <span className="text-foreground-secondary text-sm ml-1 opacity-70">
                         (${(+allocation.toSignificant()).toLocaleString()} USDC)
                       </span>
@@ -240,7 +240,7 @@ export function SaleClient() {
               </div>
               <div className="flex w-full justify-between">
                 <span className="text-sm text-foreground-secondary">Cap</span>
-                <span className="text-foreground-primary font-bold">1,000,000 BFD ($1,000,000)</span>
+                <span className="text-foreground-primary font-bold">1,000,000 $BFD ($1,000,000)</span>
               </div>
               <div className="flex w-full justify-between">
                 <span className="text-sm text-foreground-secondary">Total raised</span>

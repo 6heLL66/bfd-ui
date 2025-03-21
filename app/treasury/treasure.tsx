@@ -83,14 +83,14 @@ const TreasuryPage = ({ history, tokens }: { history: TreasuryHistory[], tokens:
         {/* Header */}
         <div className="mb-12">
           <h1 className="text-4xl font-bold bg-gradient-to-r from-primary-default to-secondary bg-clip-text text-transparent">Treasury Overview</h1>
-          <p className="text-foreground-secondary mt-2">Real-time insights into BFD`s treasury performance and metrics</p>
+          <p className="text-foreground-secondary mt-2">Real-time insights into $BFD`s treasury performance and metrics</p>
         </div>
 
         {/* Info Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
           <InfoCard title="Total Treasury Value" value={numeral(total_usd_value).format('$0,0.00')} gradient="from-blue-500/20 to-blue-600/20" />
-          <InfoCard title="Total Circulating BFD" value={numeral(total_supply).format('0,0')} gradient="from-primary-default/20 to-secondary/20" />
-          <InfoCard title="BFD Price" value={numeral(token_price).format('$0,0.00')} gradient="from-purple-500/20 to-purple-600/20" />
+          <InfoCard title="Total Circulating $BFD" value={numeral(total_supply).format('0,0')} gradient="from-primary-default/20 to-secondary/20" />
+          <InfoCard title="$BFD Price" value={numeral(token_price).format('$0,0.00')} gradient="from-purple-500/20 to-purple-600/20" />
           <InfoCard title="Treasury APR" value={numeral(0.125).format('0.0%')} gradient="from-green-500/20 to-green-600/20" />
           <InfoCard title="Expected Profit (monthly)" value={numeral(45000).format('$0,0')} gradient="from-yellow-500/20 to-yellow-600/20" />
         </div>
@@ -110,10 +110,10 @@ const TreasuryPage = ({ history, tokens }: { history: TreasuryHistory[], tokens:
 
           <MetricChart
             data={bfdPriceData}
-            title="BFD Price History"
+            title="$BFD Price History"
             dataKey="price"
             valueFormatter={value => numeral(value).format('$0,0.000')}
-            tooltipLabel="BFD Price"
+            tooltipLabel="$BFD Price"
             gradientId="priceGradient"
           />
         </div>
@@ -121,10 +121,10 @@ const TreasuryPage = ({ history, tokens }: { history: TreasuryHistory[], tokens:
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-6 px-2 sm:px-4">
           <MetricChart
             data={bfdBackingData}
-            title="BFD Backing History"
+            title="$BFD Backing History"
             dataKey="backing"
             valueFormatter={value => numeral(value).format('$0,0.000')}
-            tooltipLabel="BFD Backing"
+            tooltipLabel="$BFD Backing"
             gradientId="backingGradient"
           />
           
