@@ -51,7 +51,7 @@ export const Header = () => {
           </div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-8">
+          <nav className="hidden md:flex items-center gap-6">
             <NavLink href="/sale">
               <span className="flex items-center gap-1">
                 Sale              </span>
@@ -61,14 +61,14 @@ export const Header = () => {
                 Swap
               </span>
             </NavLink>
-            <NavLink href="/pool">
-              <span className="flex items-center gap-1">
-                Pool
-              </span>
-            </NavLink>
             <NavLink href="/staking/bfd">
               <span className="flex items-center gap-1">
                 Staking
+              </span>
+            </NavLink>
+            <NavLink href="/pool">
+              <span className="flex items-center gap-1">
+                Pool
               </span>
             </NavLink>
             <NavLink href="/staking/bgt">

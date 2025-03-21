@@ -99,7 +99,11 @@ export const BfdStackingClient = () => {
 
       createApproveToast(promise, bfdToken.symbol ?? '', amount.toSignificant(), false, 'stake');
 
-      await promise;
+      await promise.catch(() => {
+        setIsStaking(false);
+
+        throw new Error('Failed to approve');
+      });
     }
 
     const promise = stake(amount.amount)
@@ -322,7 +326,7 @@ export const BfdStackingClient = () => {
                     <h3 className="text-xl font-bold text-foreground-primary mb-4">Your Unstaking Requests</h3>
                     
                     <div className="space-y-4">
-                      {unstaked.map((unstake, index) => {
+                      {unstaked.filter(unstake => unstake.amount.amount > 0).map((unstake, index) => {
                         const isCompleted = unstake.unlockTime < new Date();
 
                         return (
@@ -335,7 +339,7 @@ export const BfdStackingClient = () => {
                                 {unstake.amount.toSignificant()} <span className="text-primary-default">$BFD</span>
                               </span>
                               <span className="text-xs px-3 py-1.5 bg-primary-default/20 text-primary-default rounded-full font-medium">
-                                {isCompleted ? 'Completed' : `${getDaysRemaining(unstake.unlockTime)} days left`}
+                                {isCompleted ? 'Ready to claim' : `${getDaysRemaining(unstake.unlockTime)} days left`}
                               </span>
                             </div>
                             <div className="flex items-center justify-between text-xs text-foreground-secondary mb-3">

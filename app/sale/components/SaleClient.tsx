@@ -60,7 +60,11 @@ export function SaleClient() {
 
       createApproveToast(promise, usdcToken.symbol ?? '', amount.toSignificant(), false);
 
-      await promise;
+      await promise.catch(() => {
+        setIsSupplying(false);
+
+        throw new Error('Failed to approve');
+      });
     }
 
     const promise = supply(amount.amount)
