@@ -68,12 +68,12 @@ export const Header = () => {
             </NavLink>
             <NavLink href="/pool">
               <span className="flex items-center gap-1">
-                Pool
+                Liquidity
               </span>
             </NavLink>
-            <NavLink href="/staking/bgt">
+            <NavLink href="/validator">
               <span className="flex items-center gap-1">
-                Vault
+                Validator
               </span>
             </NavLink>
             <NavLink href="/treasury">Treasury</NavLink>

@@ -6,12 +6,17 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { useAccount } from 'wagmi';
 import { PoolCharts } from './PoolCharts';
+import { EarnApy } from './EarnApy';
+import { DepositModal } from './DepositModal';
+import { WithdrawModal } from './WithdrawModal';
 
 export const PoolClient = () => {
   // Mock data for UI development
   const { isConnected } = useAccount();
   
-  // Mock user position data
+  const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
+  const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
+
   const [hasDeposits] = useState(true);
   
   const poolData = {
@@ -30,14 +35,18 @@ export const PoolClient = () => {
         weight: '50%',
         amount: '7.83M',
         value: '$47.25M',
-        logo: 'https://berascan.com/token/images/wrappedbera_ofc_64.png'
+        logo: 'https://berascan.com/token/images/wrappedbera_ofc_64.png',
+        balance: '12.56',
+        price: 604.25
       },
       {
         symbol: 'HONEY',
         weight: '50%',
         amount: '47.34M',
         value: '$47.31M',
-        logo: 'https://berascan.com/token/images/honeybera_32.png'
+        logo: 'https://berascan.com/token/images/honeybera_32.png',
+        balance: '23,578.91',
+        price: 1.0
       }
     ],
     rewardVault: {
@@ -65,8 +74,25 @@ export const PoolClient = () => {
     }
   };
 
-  // Tooltip state for staking link
-  const [showStakingTooltip, setShowStakingTooltip] = useState(false);
+  // Open deposit modal
+  const handleOpenDepositModal = () => {
+    setIsDepositModalOpen(true);
+  };
+
+  // Close deposit modal
+  const handleCloseDepositModal = () => {
+    setIsDepositModalOpen(false);
+  };
+
+  // Open withdraw modal
+  const handleOpenWithdrawModal = () => {
+    setIsWithdrawModalOpen(true);
+  };
+
+  // Close withdraw modal
+  const handleCloseWithdrawModal = () => {
+    setIsWithdrawModalOpen(false);
+  };
 
   return (
     <motion.div 
@@ -74,6 +100,22 @@ export const PoolClient = () => {
       animate={{ opacity: 1, y: 0 }} 
       className="container mx-auto px-4 py-12 max-w-7xl"
     >
+      {/* Modals */}
+      <DepositModal 
+        isOpen={isDepositModalOpen} 
+        onClose={handleCloseDepositModal} 
+        tokens={poolData.tokens} 
+        poolName={poolData.name}
+      />
+      
+      <WithdrawModal 
+        isOpen={isWithdrawModalOpen} 
+        onClose={handleCloseWithdrawModal} 
+        tokens={poolData.userPosition.tokens} 
+        poolName={poolData.name}
+        lpTokens={poolData.userPosition.lpTokens}
+        lpTokensValue={poolData.userPosition.value}
+      />
 
       {/* Pool Header */}
       <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6 mb-8">
@@ -148,10 +190,16 @@ export const PoolClient = () => {
                 <span className="text-foreground-secondary text-sm mb-6">You have no current deposits in this pool</span>
                 
                 <div className="flex flex-col sm:flex-row gap-3 w-full">
-                  <button className="w-full px-4 py-2 bg-primary-default hover:bg-primary-hover text-white font-medium rounded-lg transition-colors">
+                  <button 
+                    className="w-full px-4 py-2 bg-primary-default hover:bg-primary-hover text-white font-medium rounded-lg transition-colors"
+                    onClick={handleOpenDepositModal}
+                  >
                     Deposit
                   </button>
-                  <button className="w-full px-4 py-2 border border-border/40 hover:border-primary-default/40 text-foreground-primary font-medium rounded-lg transition-colors">
+                  <button 
+                    className="w-full px-4 py-2 border border-border/40 hover:border-primary-default/40 text-foreground-primary font-medium rounded-lg transition-colors"
+                    onClick={handleOpenWithdrawModal}
+                  >
                     Withdraw
                   </button>
                 </div>
@@ -203,10 +251,16 @@ export const PoolClient = () => {
                 
                 {/* Action Buttons */}
                 <div className="flex flex-col sm:flex-row gap-2 mt-4">
-                  <button className="w-full px-4 py-2 bg-primary-default hover:bg-primary-hover text-white font-medium rounded-lg transition-colors">
+                  <button 
+                    className="w-full px-4 py-2 bg-primary-default hover:bg-primary-hover text-white font-medium rounded-lg transition-colors"
+                    onClick={handleOpenDepositModal}
+                  >
                     Deposit
                   </button>
-                  <button className="w-full px-4 py-2 border border-border/40 hover:border-primary-default/40 text-foreground-primary font-medium rounded-lg transition-colors">
+                  <button 
+                    className="w-full px-4 py-2 border border-border/40 hover:border-primary-default/40 text-foreground-primary font-medium rounded-lg transition-colors"
+                    onClick={handleOpenWithdrawModal}
+                  >
                     Withdraw
                   </button>
                 </div>
@@ -214,79 +268,7 @@ export const PoolClient = () => {
             )}
           </motion.div>
 
-          {/* Combined Reward Vault & APY Card */}
-          <motion.div
-            className="bg-surface backdrop-blur-xl rounded-2xl border-2 border-border/40 shadow-2xl shadow-primary-default/10 p-6 w-full hover:border-primary-default/40 transition-all duration-300"
-          >
-            <div className="flex items-center justify-between border-b border-border/40 pb-3 mb-4">
-              <h2 className="text-lg font-semibold">Earn APY</h2>
-              <span className="text-2xl font-bold text-primary-default">{poolData.apy}</span>
-            </div>
-            
-            <h3 className="text-sm font-medium text-foreground-primary mb-2">Reward Vault</h3>
-            <div className="flex items-center justify-between mb-2">
-              <Link 
-                href={`https://berascan.com/address/${poolData.rewardVault.address}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sm text-foreground-secondary hover:text-primary-default transition-colors"
-              >
-                {poolData.rewardVault.address}
-              </Link>
-              <svg 
-                xmlns="http://www.w3.org/2000/svg" 
-                width="16" 
-                height="16" 
-                viewBox="0 0 24 24" 
-                fill="none" 
-                stroke="currentColor" 
-                strokeWidth="2" 
-                strokeLinecap="round" 
-                strokeLinejoin="round"
-                className="text-foreground-secondary"
-              >
-                <path d="M7 7h10v10"></path>
-                <path d="M7 17L17 7"></path>
-              </svg>
-            </div>
-
-            <div className="flex justify-between items-center mt-4">
-              <div className="relative">
-                <Link 
-                  href="/staking/bgt" 
-                  className="flex items-center text-primary-default text-sm font-medium hover:underline"
-                  onMouseEnter={() => setShowStakingTooltip(true)}
-                  onMouseLeave={() => setShowStakingTooltip(false)}
-                >
-                  Stake LP tokens
-                  <svg 
-                    xmlns="http://www.w3.org/2000/svg" 
-                    width="16" 
-                    height="16" 
-                    viewBox="0 0 24 24" 
-                    fill="none" 
-                    stroke="currentColor" 
-                    strokeWidth="2" 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round"
-                    className="ml-1"
-                  >
-                    <path d="M5 12h14"></path>
-                    <path d="M12 5l7 7-7 7"></path>
-                  </svg>
-                </Link>
-                
-                {showStakingTooltip && (
-                  <div className="absolute right-0 bottom-full mb-2 p-2 bg-surface border border-border/40 rounded-lg shadow-lg z-10 w-60">
-                    <div className="text-xs text-foreground-primary">
-                      Stake LP to earn additional rewards and boost your APY
-                    </div>
-                    <div className="absolute bottom-0 right-4 transform translate-y-1/2 rotate-45 w-2 h-2 bg-surface border-r border-b border-border/40"></div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </motion.div>
+          <EarnApy />
         </div>
 
         {/* Right Column - Pool Data */}
