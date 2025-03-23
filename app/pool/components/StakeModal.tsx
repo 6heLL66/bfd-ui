@@ -2,7 +2,11 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@heroui/button';
 import { useVaultStacking } from '@/features/stacking/useVaultStacking';
-import { VAULT_CA } from '@/config/berachain';
+import { beraHoneyLpToken, POOL_CA, VAULT_CA } from '@/config/berachain';
+import { TokenAmount } from '@berachain-foundation/berancer-sdk';
+import { useApprove } from '@/shared/hooks/useApprove';
+import { createApproveToast } from '@/app/swap/toasts';
+import { usePool } from '@/features/pool/usePool';
 
 type StakeModalProps = {
   isOpen: boolean;
@@ -10,11 +14,31 @@ type StakeModalProps = {
 };
 
 export const StakeModal = ({ isOpen, onClose }: StakeModalProps) => {
-  const { vault } = useVaultStacking(VAULT_CA);
+  const { checkAllowance, approve } = useApprove();
+  const { vault, stake } = useVaultStacking(VAULT_CA);
+  const { lpTokens, refetchAll } = usePool(POOL_CA);
   const [amount, setAmount] = useState('');
   const [percentage, setPercentage] = useState(0);
-  const [availableLP] = useState(10);
+  const availableLP = lpTokens?.toSignificant();
   const modalRef = useRef<HTMLDivElement>(null);
+
+  const handleStake = async () => {
+    const stakeAmount = TokenAmount.fromHumanAmount(beraHoneyLpToken, amount as `${number}`);
+    const needAllowance = await checkAllowance(VAULT_CA, stakeAmount.amount, beraHoneyLpToken);
+
+    if (needAllowance) {
+      const promise = approve(VAULT_CA, stakeAmount.amount, beraHoneyLpToken) as Promise<void>;
+
+      createApproveToast(promise, beraHoneyLpToken.symbol ?? '', stakeAmount.toSignificant(), false, 'stake');
+
+      await promise;
+    }
+
+    await stake(stakeAmount.amount);
+
+    refetchAll();
+    onClose();
+  }
 
   const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value);
@@ -22,7 +46,7 @@ export const StakeModal = ({ isOpen, onClose }: StakeModalProps) => {
     
     if (availableLP && value > 0) {
       try {
-        const calculatedAmount = (availableLP * value) / 100;
+        const calculatedAmount = (+availableLP * value) / 100;
         const formattedAmount = calculatedAmount.toFixed(6);
         setAmount(formattedAmount);
       } catch (error) {
@@ -38,8 +62,8 @@ export const StakeModal = ({ isOpen, onClose }: StakeModalProps) => {
     
     if (availableLP && newAmount && !isNaN(Number(newAmount))) {
       const amountValue = Number(newAmount);
-      if (availableLP > 0) {
-        const newPercentage = Math.min(Math.round((amountValue / availableLP) * 100), 100);
+      if (+availableLP > 0) {
+        const newPercentage = Math.min(Math.round((amountValue / +availableLP) * 100), 100);
         setPercentage(newPercentage);
       }
     } else if (newAmount === '') {
@@ -52,7 +76,7 @@ export const StakeModal = ({ isOpen, onClose }: StakeModalProps) => {
     
     if (availableLP && percent > 0) {
       try {
-        const calculatedAmount = (availableLP * percent) / 100;
+        const calculatedAmount = (+availableLP * percent) / 100;
         const formattedAmount = calculatedAmount.toFixed(6);
         setAmount(formattedAmount);
       } catch (error) {
@@ -90,13 +114,7 @@ export const StakeModal = ({ isOpen, onClose }: StakeModalProps) => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [isOpen, onClose]);
-
-  const handleStake = () => {
-    console.log('Staking', amount, `(${percentage}%)`);
-    setAmount('');
-    setPercentage(0);
-    onClose();
-  };
+  
   const percentageButtons = [25, 50, 75, 100];
 
   return (
@@ -216,12 +234,12 @@ export const StakeModal = ({ isOpen, onClose }: StakeModalProps) => {
               
               <div className="flex justify-between px-2 mb-6 text-sm text-foreground-secondary">
                 <span>Available:</span>
-                <span>{availableLP.toFixed(6)} LP</span>
+                <span>{Number(availableLP).toFixed(4)} LP</span>
               </div>
               
               <Button 
                 className="w-full px-4 py-2.5 bg-primary-default hover:bg-primary-hover text-white font-medium rounded-lg transition-colors"
-                onClick={handleStake}
+                onPress={handleStake}
                 disabled={!amount || Number(amount) <= 0}
               >
                 Stake LP Tokens

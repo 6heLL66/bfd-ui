@@ -1,77 +1,135 @@
 'use client'
 
-import { useState, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-
-interface Token {
-  symbol: string;
-  logo: string;
-  balance?: string;
-  price?: number;
-}
+import { usePool } from '@/features/pool/usePool';
+import { CHAIN_ID, POOL_CA, RPC_URL } from '@/config/berachain';
+import { AddLiquidityKind, TokenAmount, Token, AddLiquidityInput, AddLiquidityQueryOutput, Slippage, AddLiquidity } from '@berachain-foundation/berancer-sdk';
+import { getTokenImageUrl } from '@/shared/utils';
+import { useApprove } from '@/shared/hooks/useApprove';
+import { createApproveToast } from '@/app/swap/toasts';
+import { useSwapSettings } from '@/features/swap/store/swapSettings';
+import { debounce, upperFirst } from 'lodash';
+import { FullToken } from '@/shared/hooks/useTokens';
 
 interface DepositModalProps {
   isOpen: boolean;
   onClose: () => void;
-  tokens: Token[];
-  poolName: string;
 }
 
-export const DepositModal = ({ isOpen, onClose, tokens, poolName }: DepositModalProps) => {
+export const DepositModal = ({ isOpen, onClose }: DepositModalProps) => {
+  const { approve, checkAllowance } = useApprove();
+  const { deposit, pool, lpVaultAddress, poolState, tokens } = usePool(POOL_CA);
   const [amounts, setAmounts] = useState<Record<string, string>>({});
-  const [totalValue, setTotalValue] = useState<number>(0);
-  const [slippage, setSlippage] = useState<string>("0.5");
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  // Reset state when modal is opened
-  useEffect(() => {
-    if (isOpen) {
-      const initialAmounts: Record<string, string> = {};
-      tokens.forEach(token => {
-        initialAmounts[token.symbol] = '';
-      });
-      setAmounts(initialAmounts);
-      setTotalValue(0);
-      setSlippage("0.5");
-    }
-  }, [isOpen, tokens]);
+  const [queryOutput, setQueryOutput] = useState<AddLiquidityQueryOutput | null>(null);
+  const { slippage, setSlippage } = useSwapSettings();
 
-  // Calculate total value when amounts change
-  useEffect(() => {
-    let total = 0;
-    tokens.forEach(token => {
-      const amount = parseFloat(amounts[token.symbol] || '0');
-      const price = token.price || 0;
-      total += amount * price;
-    });
-    setTotalValue(total);
-  }, [amounts, tokens]);
+  const queryLiquidity = useCallback(async (token: Token, tokenAmount: TokenAmount) => {
+    if (!poolState) return;
+
+    const addLiquidity = new AddLiquidity();
+
+    const addLiquidityInput = {
+      chainId: CHAIN_ID,
+      kind: AddLiquidityKind.Proportional,
+      rpcUrl: RPC_URL,
+      referenceAmount: {
+          address: token.address as `0x${string}`,
+          decimals: token.decimals,
+          rawAmount: tokenAmount.amount
+      },
+    } as AddLiquidityInput;
+
+    const queryOutput = await addLiquidity.query(addLiquidityInput, {...poolState, type: upperFirst(poolState.type.toLocaleLowerCase())});
+    const otherToken = tokens.filter(_token => _token.token.symbol !== token.symbol)[0];
+    const otherTokenIndex = tokens.indexOf(otherToken);
+
+    setAmounts(prev => ({
+      ...prev,
+      [otherToken.token.symbol ?? '']: queryOutput.amountsIn[otherTokenIndex].toSignificant(18)
+    }));
+
+    setQueryOutput(queryOutput);
+
+    return queryOutput;
+  }, [poolState, tokens]);
+
+  const debouncedQueryLiquidity = useCallback(debounce(queryLiquidity, 500), [queryLiquidity]);
 
   const handleAmountChange = (symbol: string, value: string) => {
-    // Only allow numbers and decimals
+    const token = tokens.find(token => token.token.symbol === symbol)!;
+
     if (/^[0-9]*\.?[0-9]*$/.test(value) || value === '') {
       setAmounts(prev => ({
         ...prev,
-        [symbol]: value
+        [symbol]: value,
       }));
     }
+    debouncedQueryLiquidity(token.token, TokenAmount.fromHumanAmount(token.token, value as `${number}`));
   };
 
-  const handleMaxButtonClick = (symbol: string, maxAmount: string) => {
+  const handleMaxButtonClick = (token: FullToken) => {
+    const _slippage = Slippage.fromPercentage(slippage as `${number}`)
+    const maxAmount = TokenAmount.fromRawAmount(token.token, _slippage.applyTo(token.balance.amount, -1)).toSignificant(18);
     setAmounts(prev => ({
       ...prev,
-      [symbol]: maxAmount
+      [token.token.symbol ?? '']: maxAmount
     }));
+
+    handleAmountChange(token.token.symbol ?? '', maxAmount);
   };
 
   const handleDeposit = async () => {
     try {
+      if (!pool || !queryOutput) {
+       return;
+      }
+      const _slippage = Slippage.fromPercentage(slippage as `${number}`)
+
       setIsLoading(true);
-      // Simulate deposit transaction
-      await new Promise(resolve => setTimeout(resolve, 2000));
+
+      const tokenAmountsApproval = tokens.map(token => {
+        return _slippage.applyTo(TokenAmount.fromHumanAmount(token.token, amounts[token.token.symbol ?? ''] as `${number}`).amount);
+      });
+
+      const token1 = tokens[0].token;
+      const token2 = tokens[1].token;
+
+      const needApprove1 = await checkAllowance(lpVaultAddress as `0x${string}`, tokenAmountsApproval[0], token1);
+
+      if (needApprove1) {
+        const promise = approve(lpVaultAddress as `0x${string}`, tokenAmountsApproval[0], token1) as Promise<void>;
+
+        createApproveToast(promise, token1.symbol ?? '', amounts[token1.symbol!] as `${number}`, false, 'deposit');
+  
+        await promise.catch(() => {
+          setIsLoading(false);
+  
+          throw new Error('Failed to approve');
+        });
+      }
+
+      const needApprove2 = await checkAllowance(lpVaultAddress as `0x${string}`, tokenAmountsApproval[1], token2);
+
+      if (needApprove2) {
+        const promise = approve(lpVaultAddress as `0x${string}`, tokenAmountsApproval[1], token2) as Promise<void>;
+
+        createApproveToast(promise, token2.symbol ?? '', amounts[token2.symbol!] as `${number}`, false, 'deposit');
+
+        await promise.catch(() => {
+          setIsLoading(false);
+
+          throw new Error('Failed to approve');
+        });
+      }
+
+      const _queryOutput = await queryLiquidity(token1, TokenAmount.fromHumanAmount(token1, amounts[token1.symbol!] as `${number}`));
+ 
+      await deposit(_queryOutput as AddLiquidityQueryOutput);
       
-      // Close modal and reset state on success
       onClose();
     } catch (error) {
       console.error('Deposit failed:', error);
@@ -86,7 +144,6 @@ export const DepositModal = ({ isOpen, onClose, tokens, poolName }: DepositModal
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Backdrop */}
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -95,7 +152,6 @@ export const DepositModal = ({ isOpen, onClose, tokens, poolName }: DepositModal
             onClick={onClose}
           />
           
-          {/* Modal */}
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -104,9 +160,8 @@ export const DepositModal = ({ isOpen, onClose, tokens, poolName }: DepositModal
             onClick={(e) => e.stopPropagation()}
           >
             <div className="bg-surface backdrop-blur-xl rounded-2xl border-2 border-border/40 shadow-2xl shadow-primary-default/10 p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
-              {/* Header */}
               <div className="flex justify-between items-center mb-6">
-                <h3 className="text-xl font-bold">Deposit to {poolName}</h3>
+                <h3 className="text-xl font-bold">Deposit to {pool?.name}</h3>
                 <button 
                   className="p-1 rounded-full hover:bg-surface/30"
                   onClick={onClose}
@@ -128,37 +183,36 @@ export const DepositModal = ({ isOpen, onClose, tokens, poolName }: DepositModal
                 </button>
               </div>
               
-              {/* Deposit Form */}
               <div className="space-y-4">
-                {tokens.map((token) => (
-                  <div key={token.symbol} className="bg-surface/50 rounded-lg p-4 border border-border/30">
+                {tokens?.map((token) => (
+                  <div key={token.token.symbol} className="bg-surface/50 rounded-lg p-4 border border-border/30">
                     <div className="flex justify-between items-center mb-2">
                       <div className="flex items-center gap-2">
                         <Image 
-                          src={token.logo} 
-                          alt={token.symbol} 
+                          src={getTokenImageUrl(token.token)} 
+                          alt={token.token.symbol ?? ''} 
                           width={24} 
                           height={24} 
                           className="rounded-full"
                         />
-                        <span className="font-medium">{token.symbol}</span>
+                        <span className="font-medium">{token.token.symbol}</span>
                       </div>
                       <div className="text-sm text-foreground-secondary">
-                        Balance: {token.balance || '0.00'}
+                        Balance: {token.balance.toSignificant(2)}
                       </div>
                     </div>
                     
                     <div className="flex items-center mt-2 bg-surface/30 rounded-lg border border-border/20 p-2">
                       <input
                         type="text"
-                        value={amounts[token.symbol] || ''}
-                        onChange={(e) => handleAmountChange(token.symbol, e.target.value)}
+                        value={amounts[token.token.symbol ?? ''] || ''}
+                        onChange={(e) => handleAmountChange(token.token.symbol ?? '', e.target.value)}
                         placeholder="0.00"
                         className="w-full bg-transparent border-none focus:outline-none text-lg"
                       />
                       <button 
                         className="text-xs bg-primary-default/20 hover:bg-primary-default/30 text-primary-default px-2 py-1 rounded-md transition-colors"
-                        onClick={() => handleMaxButtonClick(token.symbol, token.balance || '0')}
+                        onClick={() => handleMaxButtonClick(token)}
                       >
                         MAX
                       </button>
@@ -166,9 +220,8 @@ export const DepositModal = ({ isOpen, onClose, tokens, poolName }: DepositModal
                   </div>
                 ))}
                 
-                {/* Slippage Setting */}
-                <div className="bg-surface/50 rounded-lg p-4 border border-border/30">
-                  <div className="flex justify-between items-center mb-2">
+                <div className="bg-surface/50 rounded-lg p-4 py-3 border border-border/30">
+                  <div className="flex justify-between items-center">
                     <span className="text-sm text-foreground-secondary">Slippage Tolerance</span>
                     <div className="flex items-center gap-1">
                       {["0.1", "0.5", "1.0"].map((value) => (
@@ -203,30 +256,14 @@ export const DepositModal = ({ isOpen, onClose, tokens, poolName }: DepositModal
                   </div>
                 </div>
                 
-                {/* Summary */}
-                <div className="bg-surface/50 rounded-lg p-4 border border-border/30">
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-sm">Total Value</span>
-                    <span className="font-medium">${totalValue.toFixed(2)}</span>
-                  </div>
-                  
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-foreground-secondary">Estimated LP Tokens</span>
-                    <span className="text-sm">
-                      {totalValue > 0 ? (totalValue / 10).toFixed(4) : '0.0000'}
-                    </span>
-                  </div>
-                </div>
-                
-                {/* Action Button */}
                 <button
                   className={`w-full px-4 py-3 rounded-lg font-medium ${
-                    isLoading || totalValue <= 0
+                    isLoading
                       ? 'bg-primary-default/50 cursor-not-allowed'
                       : 'bg-primary-default hover:bg-primary-hover'
                   } text-white transition-colors`}
                   onClick={handleDeposit}
-                  disabled={isLoading || totalValue <= 0}
+                  disabled={isLoading}
                 >
                   {isLoading ? 'Processing...' : 'Deposit'}
                 </button>

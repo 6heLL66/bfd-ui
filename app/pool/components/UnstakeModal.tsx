@@ -2,15 +2,17 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@heroui/button';
 import { useVaultStacking } from '@/features/stacking/useVaultStacking';
-import { VAULT_CA } from '@/config/berachain';
-
+import { beraHoneyLpToken, POOL_CA, VAULT_CA } from '@/config/berachain';
+import { TokenAmount } from '@berachain-foundation/berancer-sdk';
+import { usePool } from '@/features/pool/usePool';
 type UnstakeModalProps = {
   isOpen: boolean;
   onClose: () => void;
 };
 
 export const UnstakeModal = ({ isOpen, onClose }: UnstakeModalProps) => {
-  const { staked } = useVaultStacking(VAULT_CA);
+  const { staked, unstake } = useVaultStacking(VAULT_CA);
+  const { refetchAll } = usePool(POOL_CA);
   const [amount, setAmount] = useState('');
   const [percentage, setPercentage] = useState(0);
   const modalRef = useRef<HTMLDivElement>(null);
@@ -94,10 +96,11 @@ export const UnstakeModal = ({ isOpen, onClose }: UnstakeModalProps) => {
     };
   }, [isOpen, onClose]);
 
-  const handleUnstake = () => {
-    console.log('Unstaking', amount, `(${percentage}%)`);
-    setAmount('');
-    setPercentage(0);
+  const handleUnstake = async () => {
+    const tokenAmount = TokenAmount.fromHumanAmount(beraHoneyLpToken, amount as `${number}`);
+    await unstake(tokenAmount.amount);
+
+    refetchAll();
     onClose();
   };
 

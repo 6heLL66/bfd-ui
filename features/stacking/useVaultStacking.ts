@@ -1,12 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { getRewardVault } from "@/shared/api/berachain";
 import { useAccount, useReadContract, useWriteContract } from "wagmi";
-import { vaultAbi } from "@/config/abi/vault";
 import { beraHoneyLpToken, bgtToken, VAULT_CA } from "@/config/berachain";
 import { BigintIsh, TokenAmount } from "@berachain-foundation/berancer-sdk";
 import { useCallback } from "react";
 import { wagmiConfig } from "@/config/wagmi";
 import { waitForTransactionReceipt } from "wagmi/actions";
+import { vaultAbi } from "@/config/abi/vault";
 
 export const useVaultStacking = (id: string) => {
     const { address } = useAccount()
@@ -32,11 +32,10 @@ export const useVaultStacking = (id: string) => {
     })
 
     const claim = useCallback(async () => {
-        if (!data) return;
         const tx = await writeContractAsync({
             address: VAULT_CA,
             abi: vaultAbi,
-            functionName: 'claimReward',
+            functionName: 'getReward',
             args: [address, address]
         })
 
@@ -45,14 +44,45 @@ export const useVaultStacking = (id: string) => {
         });
 
         refetchRewards();
-    }, [data, writeContractAsync, refetchRewards])
+    }, [writeContractAsync, refetchRewards, address])
+
+    const stake = useCallback(async (amount: BigintIsh) => {
+        const tx = await writeContractAsync({
+            address: VAULT_CA,
+            abi: vaultAbi,
+            functionName: 'stake',
+            args: [amount]
+        })
+
+        await waitForTransactionReceipt(wagmiConfig, {
+            hash: tx,
+        });
+
+        refetchStaked();
+    }, [])
+
+    const unstake = useCallback(async (amount: BigintIsh) => {
+        const tx = await writeContractAsync({
+            address: VAULT_CA,
+            abi: vaultAbi,
+            functionName: 'withdraw',
+            args: [amount]
+        })
+
+        await waitForTransactionReceipt(wagmiConfig, {
+            hash: tx,
+        });
+
+        refetchStaked();
+    }, [])
 
     return {
         vault: data,
         isLoading,
         error,
         claim,
-
+        stake,
+        unstake,
         staked: TokenAmount.fromRawAmount(beraHoneyLpToken, (staked ?? 0) as BigintIsh),
         rewards: TokenAmount.fromRawAmount(bgtToken, (rewards ?? 0) as BigintIsh)
     }

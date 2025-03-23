@@ -10,10 +10,14 @@ import { UnstakeModal } from './UnstakeModal';
 
 export const EarnApy = () => {
   const { isConnected } = useAccount();
-  const { vault, staked, rewards } = useVaultStacking(VAULT_CA);
+  const { vault, staked, rewards, claim } = useVaultStacking(VAULT_CA);
   const [isStakeModalOpen, setIsStakeModalOpen] = useState(false);
   const [isUnstakeModalOpen, setIsUnstakeModalOpen] = useState(false);
-  const hasStaked = true;
+  const hasStaked = staked.amount > 0;
+
+  const handleClaim = async () => {
+    await claim();
+  }
 
   return (
     <>
@@ -71,10 +75,6 @@ export const EarnApy = () => {
                     <div className="text-foreground-secondary text-xs mb-1">Amount</div>
                     <div className="text-foreground-primary font-medium">{staked.toSignificant()}</div>
                   </div>
-                  <div>
-                    <div className="text-foreground-secondary text-xs mb-1">Value</div>
-                    <div className="text-foreground-primary font-medium">$1</div>
-                  </div>
                 </div>
                 
                 <div>
@@ -92,6 +92,7 @@ export const EarnApy = () => {
                           
                           <Button 
                             className={`px-3 py-1 text-sm bg-secondary-default bg-primary-default hover:bg-secondary-hover text-white font-medium rounded-lg transition-colors whitespace-nowrap`}
+                            onPress={handleClaim}
                           >
                             Claim
                           </Button>

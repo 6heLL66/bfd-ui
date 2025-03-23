@@ -13,8 +13,8 @@ interface TokenDistributionChartProps {
   lastUpdated?: string;
 }
 
-const formatCurrency = (value: number) => {
-  return numeral(value).format('$0.00a').toUpperCase();
+export const formatCurrency = (value: number, format: string = '$0.00a') => {
+  return numeral(value).format(format).toUpperCase();
 };
 
 export const TokenDistributionChart = ({ data, lastUpdated }: TokenDistributionChartProps) => {

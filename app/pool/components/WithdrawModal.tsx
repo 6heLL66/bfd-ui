@@ -1,81 +1,73 @@
 'use client'
 
-import { useState, useEffect } from 'react';
+import { useCallback, useState } from 'react';
+import { debounce, upperFirst } from 'lodash';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-
-interface Token {
-  symbol: string;
-  logo: string;
-  amount: string;
-  value: string;
-}
+import { usePool } from '@/features/pool/usePool';
+import { beraHoneyLpToken, CHAIN_ID, POOL_CA, RPC_URL } from '@/config/berachain';
+import { RemoveLiquidity, RemoveLiquidityKind, RemoveLiquidityProportionalInput, RemoveLiquidityQueryOutput, Token, TokenAmount } from '@berachain-foundation/berancer-sdk';
+import { useSwapSettings } from '@/features/swap/store/swapSettings';
+import { formatCurrency } from '@/app/treasury/components/TokenDistributionChart';
 
 interface WithdrawModalProps {
   isOpen: boolean;
   onClose: () => void;
-  tokens: Token[];
-  poolName: string;
-  lpTokens: string;
   lpTokensValue: string;
 }
 
-export const WithdrawModal = ({ isOpen, onClose, tokens, poolName, lpTokens, lpTokensValue }: WithdrawModalProps) => {
+export const WithdrawModal = ({ isOpen, onClose, lpTokensValue }: WithdrawModalProps) => {
+  const { pool, poolState, withdraw, lpTokens, tokens } = usePool(POOL_CA);
   const [withdrawPercentage, setWithdrawPercentage] = useState<number>(0);
-  const [withdrawAmount, setWithdrawAmount] = useState<string>('0');
-  const [slippage, setSlippage] = useState<string>("0.5");
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [queryOutput, setQueryOutput] = useState<RemoveLiquidityQueryOutput | null>(null);
+  const [amountsOut, setAmountsOut] = useState<TokenAmount[]>();
 
-  // Reset state when modal is opened
-  useEffect(() => {
-    if (isOpen) {
-      setWithdrawPercentage(0);
-      setWithdrawAmount('0');
-      setSlippage("0.5");
-    }
-  }, [isOpen]);
-
-  // Calculate withdraw amount when percentage changes
-  useEffect(() => {
-    if (lpTokens) {
-      const maxAmount = parseFloat(lpTokens.replace(/,/g, ''));
-      const amount = (maxAmount * withdrawPercentage / 100).toFixed(4);
-      setWithdrawAmount(amount);
-    }
-  }, [withdrawPercentage, lpTokens]);
+  const { slippage, setSlippage } = useSwapSettings();
 
   const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setWithdrawPercentage(Number(e.target.value));
+
+    debouncedQueryLiquidity(beraHoneyLpToken, TokenAmount.fromHumanAmount(beraHoneyLpToken, String((Number(e.target.value) / 100) * Number(lpTokens.toSignificant())) as `${number}`))
   };
 
-  const handleAmountChange = (value: string) => {
-    // Only allow numbers and decimals
-    if (/^[0-9]*\.?[0-9]*$/.test(value) || value === '') {
-      if (lpTokens) {
-        const maxAmount = parseFloat(lpTokens.replace(/,/g, ''));
-        if (value === '') {
-          setWithdrawAmount('');
-          setWithdrawPercentage(0);
-        } else {
-          const numValue = parseFloat(value);
-          if (!isNaN(numValue)) {
-            // Cap at maximum amount
-            const cappedValue = Math.min(numValue, maxAmount);
-            setWithdrawAmount(cappedValue.toString());
-            setWithdrawPercentage((cappedValue / maxAmount) * 100);
-          }
-        }
-      }
-    }
-  };
+  const queryLiquidity = useCallback(async (token: Token, tokenAmount: TokenAmount) => {
+    if (!poolState) return;
+
+    const removeLiquidity = new RemoveLiquidity();
+
+    const removeLiquidityInput = {
+      chainId: CHAIN_ID,
+      kind: RemoveLiquidityKind.Proportional,
+      rpcUrl: RPC_URL,
+      bptIn: {
+          address: poolState.address as `0x${string}`,
+          decimals: token.decimals,
+          rawAmount: tokenAmount.amount
+      },
+    } as RemoveLiquidityProportionalInput;
+
+    const queryOutput = await removeLiquidity.query(removeLiquidityInput, {...poolState, type: upperFirst(poolState.type.toLocaleLowerCase())});
+
+    setAmountsOut(queryOutput.amountsOut);
+    setQueryOutput(queryOutput);
+
+    return queryOutput
+  }, [poolState, tokens]);
+
+  const debouncedQueryLiquidity = useCallback(debounce(queryLiquidity, 500), [queryLiquidity]);
 
   const handleWithdraw = async () => {
     try {
       setIsLoading(true);
-      // Simulate withdraw transaction
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Close modal and reset state on success
+      if (!pool || !pool.tokens || !queryOutput) {
+        return;
+      }
+
+      const _queryOutput = await queryLiquidity(beraHoneyLpToken, TokenAmount.fromHumanAmount(beraHoneyLpToken, String((Number(withdrawPercentage) / 100) * Number(lpTokens.toSignificant())) as `${number}`))
+
+      await withdraw(_queryOutput as RemoveLiquidityQueryOutput);
+
       onClose();
     } catch (error) {
       console.error('Withdraw failed:', error);
@@ -84,25 +76,12 @@ export const WithdrawModal = ({ isOpen, onClose, tokens, poolName, lpTokens, lpT
     }
   };
 
-  // Calculate token amounts based on percentage
-  const getTokenWithdrawAmount = (token: Token) => {
-    const tokenAmount = parseFloat(token.amount.replace(/,/g, ''));
-    return ((tokenAmount * withdrawPercentage) / 100).toFixed(6);
-  };
-
-  // Calculate token values based on percentage
-  const getTokenWithdrawValue = (token: Token) => {
-    const tokenValue = parseFloat(token.value.replace(/[$,]/g, ''));
-    return '$' + ((tokenValue * withdrawPercentage) / 100).toFixed(2);
-  };
-
   if (!isOpen) return null;
 
   return (
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Backdrop */}
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -111,7 +90,6 @@ export const WithdrawModal = ({ isOpen, onClose, tokens, poolName, lpTokens, lpT
             onClick={onClose}
           />
           
-          {/* Modal */}
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -120,9 +98,8 @@ export const WithdrawModal = ({ isOpen, onClose, tokens, poolName, lpTokens, lpT
             onClick={(e) => e.stopPropagation()}
           >
             <div className="bg-surface backdrop-blur-xl rounded-2xl border-2 border-border/40 shadow-2xl shadow-primary-default/10 p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
-              {/* Header */}
               <div className="flex justify-between items-center mb-6">
-                <h3 className="text-xl font-bold">Withdraw from {poolName}</h3>
+                <h3 className="text-xl font-bold">Withdraw from {pool?.name}</h3>
                 <button 
                   className="p-1 rounded-full hover:bg-surface/30"
                   onClick={onClose}
@@ -144,20 +121,17 @@ export const WithdrawModal = ({ isOpen, onClose, tokens, poolName, lpTokens, lpT
                 </button>
               </div>
               
-              {/* Withdraw Form */}
               <div className="space-y-6">
-                {/* LP Tokens Section */}
                 <div className="bg-surface/50 rounded-lg p-4 border border-border/30">
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-sm text-foreground-secondary">Your LP Tokens</span>
-                    <span className="font-medium">{lpTokens}</span>
+                    <span className="font-medium">{lpTokens.toSignificant()}</span>
                   </div>
                   <div className="flex justify-between items-center mb-4">
                     <span className="text-sm text-foreground-secondary">Value</span>
                     <span className="font-medium">{lpTokensValue}</span>
                   </div>
                   
-                  {/* Percentage Slider */}
                   <div className="space-y-2">
                     <div className="flex justify-between items-center">
                       <span className="text-sm font-medium">Amount to withdraw</span>
@@ -174,65 +148,41 @@ export const WithdrawModal = ({ isOpen, onClose, tokens, poolName, lpTokens, lpT
                     />
                     <div className="flex justify-between">
                       <span className="text-xs text-foreground-secondary">0%</span>
-                      <div className="flex space-x-2">
-                        {[25, 50, 75, 100].map((percentage) => (
-                          <button
-                            key={percentage}
-                            className="px-2 py-1 text-xs bg-surface/30 hover:bg-primary-default/20 text-foreground-secondary rounded"
-                            onClick={() => setWithdrawPercentage(percentage)}
-                          >
-                            {percentage}%
-                          </button>
-                        ))}
-                      </div>
                       <span className="text-xs text-foreground-secondary">100%</span>
-                    </div>
-                  </div>
-                  
-                  {/* LP Token Amount Input */}
-                  <div className="mt-4">
-                    <div className="flex items-center mt-2 bg-surface/30 rounded-lg border border-border/20 p-2">
-                      <input
-                        type="text"
-                        value={withdrawAmount}
-                        onChange={(e) => handleAmountChange(e.target.value)}
-                        placeholder="0.00"
-                        className="w-full bg-transparent border-none focus:outline-none text-lg"
-                      />
-                      <span className="text-sm text-foreground-secondary">LP Tokens</span>
                     </div>
                   </div>
                 </div>
                 
-                {/* Will Receive */}
                 <div className="bg-surface/50 rounded-lg p-4 border border-border/30">
                   <div className="text-sm font-medium mb-3">You will receive</div>
                   
                   <div className="space-y-3">
-                    {tokens.map((token) => (
-                      <div key={token.symbol} className="flex justify-between items-center p-2 rounded-lg border border-border/20 bg-surface/30">
+                    { amountsOut && tokens.map((token, index) => {
+                      const balance = amountsOut[index];
+                      const balanceUSD = balance.mulUpFixed(token.price.amount).toSignificant();
+                      return (
+                      <div key={token.token.symbol} className="flex justify-between items-center p-2 rounded-lg border border-border/20 bg-surface/30">
                         <div className="flex items-center gap-2">
                           <Image 
-                            src={token.logo} 
-                            alt={token.symbol} 
+                            src={token.logo}
+                            alt={token.token.symbol ?? ''} 
                             width={20} 
                             height={20} 
                             className="rounded-full"
                           />
                           <div>
-                            <div className="text-sm font-medium">{token.symbol}</div>
-                            <div className="text-xs text-foreground-secondary">{getTokenWithdrawAmount(token)}</div>
+                            <div className="text-sm font-medium">{token.token.symbol}</div>
+                            <div className="text-xs text-foreground-secondary">{balance.toSignificant(18)}</div>
                           </div>
                         </div>
-                        <div className="text-sm font-medium">{getTokenWithdrawValue(token)}</div>
+                        <div className="text-sm font-medium">{formatCurrency(+balanceUSD, '$0.00a')}</div>
                       </div>
-                    ))}
+                    )})}
                   </div>
                 </div>
                 
-                {/* Slippage Setting */}
-                <div className="bg-surface/50 rounded-lg p-4 border border-border/30">
-                  <div className="flex justify-between items-center mb-2">
+                <div className="bg-surface/50 rounded-lg p-4 py-3 border border-border/30">
+                  <div className="flex justify-between items-center">
                     <span className="text-sm text-foreground-secondary">Slippage Tolerance</span>
                     <div className="flex items-center gap-1">
                       {["0.1", "0.5", "1.0"].map((value) => (
@@ -267,7 +217,6 @@ export const WithdrawModal = ({ isOpen, onClose, tokens, poolName, lpTokens, lpT
                   </div>
                 </div>
                 
-                {/* Action Button */}
                 <button
                   className={`w-full px-4 py-3 rounded-lg font-medium ${
                     isLoading || withdrawPercentage <= 0
