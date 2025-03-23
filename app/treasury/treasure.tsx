@@ -79,7 +79,7 @@ const TreasuryPage = ({ history, tokens }: { history: TreasuryHistory[], tokens:
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="relative">
-      <div className="container mx-auto px-4 py-12 max-w-7xl">
+      <div className="container px-4 py-12 max-w-7xl">
         {/* Header */}
         <div className="mb-12">
           <h1 className="text-4xl font-bold bg-gradient-to-r from-primary-default to-secondary bg-clip-text text-transparent">Treasury Overview</h1>

@@ -55,6 +55,10 @@ export const MetricChart = ({ data, title, dataKey, valueFormatter, tooltipLabel
                   dx={-4} 
                   width={60} 
                   tickMargin={4}
+                  domain={([dataMin, dataMax]) => {
+                    const padding = (dataMax - dataMin) * 0.5;
+                    return [Math.max(0, dataMin - padding), dataMax + padding];
+                  }}
                 />
                 <Tooltip
                   contentStyle={{
