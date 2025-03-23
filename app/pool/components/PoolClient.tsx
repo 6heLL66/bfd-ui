@@ -14,6 +14,7 @@ import { getTokenImageUrl } from '@/shared/utils';
 import { CHAIN_ID, POOL_CA } from '@/config/berachain';
 import { Token, TokenAmount } from '@berachain-foundation/berancer-sdk';
 import { formatCurrency } from '@/app/treasury/components/TokenDistributionChart';
+import { Button } from '@heroui/button';
 
 export const PoolClient = () => {
   const { isConnected } = useAccount();
@@ -55,11 +56,11 @@ export const PoolClient = () => {
         onClose={handleCloseDepositModal} 
       />}
       
-      <WithdrawModal 
+      {isWithdrawModalOpen && <WithdrawModal 
         isOpen={isWithdrawModalOpen} 
         onClose={handleCloseWithdrawModal} 
         lpTokensValue={lpValue ? formatCurrency(+lpValue, '$0.00a') : '$0'}
-      />
+      />}
 
       <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6 mb-8">
         <div className="flex items-center gap-4">
@@ -130,18 +131,19 @@ export const PoolClient = () => {
                 <span className="text-foreground-secondary text-sm mb-6">You have no current deposits in this pool</span>
                 
                 <div className="flex flex-col sm:flex-row gap-3 w-full">
-                  <button 
+                  <Button 
                     className="w-full px-4 py-2 bg-primary-default hover:bg-primary-hover text-white font-medium rounded-lg transition-colors"
-                    onClick={handleOpenDepositModal}
+                    onPress={handleOpenDepositModal}
                   >
                     Deposit
-                  </button>
-                  <button 
-                    className="w-full px-4 py-2 border border-border/40 hover:border-primary-default/40 text-foreground-primary font-medium rounded-lg transition-colors"
-                    onClick={handleOpenWithdrawModal}
+                  </Button>
+                  <Button 
+                    className="w-full bg-tranparent font-bold px-4 py-2 border border-border/40 hover:border-primary-default/40 text-foreground-primary font-medium rounded-lg transition-colors"
+                    onPress={handleOpenWithdrawModal}
+                    isDisabled={+lpTokens.toSignificant() <= 0}
                   >
                     Withdraw
-                  </button>
+                  </Button>
                 </div>
               </div>
             ) : (
@@ -188,18 +190,19 @@ export const PoolClient = () => {
                 </div>
                 
                 <div className="flex flex-col sm:flex-row gap-2 mt-4">
-                  <button 
+                  <Button 
                     className="w-full px-4 py-2 bg-primary-default hover:bg-primary-hover text-white font-medium rounded-lg transition-colors"
-                    onClick={handleOpenDepositModal}
+                    onPress={handleOpenDepositModal}
                   >
                     Deposit
-                  </button>
-                  <button 
-                    className="w-full px-4 py-2 border border-border/40 hover:border-primary-default/40 text-foreground-primary font-medium rounded-lg transition-colors"
-                    onClick={handleOpenWithdrawModal}
+                  </Button>
+                  <Button 
+                    className="w-full bg-tranparent font-bold px-4 py-2 border border-border/40 hover:border-primary-default/40 text-foreground-primary font-medium rounded-lg transition-colors"
+                    onPress={handleOpenWithdrawModal}
+                    isDisabled={+lpTokens.toSignificant() <= 0}
                   >
                     Withdraw
-                  </button>
+                  </Button>
                 </div>
               </div>
             )}

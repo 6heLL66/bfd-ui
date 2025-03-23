@@ -1,23 +1,47 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { useVaultStacking } from '@/features/stacking/useVaultStacking';
-import { VAULT_CA } from '@/config/berachain';
+import { bgtToken, VAULT_CA } from '@/config/berachain';
 import { useAccount } from 'wagmi';
 import { Button } from '@heroui/button';
 import { StakeModal } from './StakeModal';
 import { UnstakeModal } from './UnstakeModal';
+import { createClaimBGTToast } from './toasts';
+import { getTokensPrice } from '@/shared/api/berachain';
+import { TokenAmount } from '@berachain-foundation/berancer-sdk';
+import { formatCurrency } from '@/app/treasury/components/TokenDistributionChart';
 
 export const EarnApy = () => {
   const { isConnected } = useAccount();
   const { vault, staked, rewards, claim } = useVaultStacking(VAULT_CA);
   const [isStakeModalOpen, setIsStakeModalOpen] = useState(false);
   const [isUnstakeModalOpen, setIsUnstakeModalOpen] = useState(false);
+  const [isClaiming, setIsClaiming] = useState(false);
   const hasStaked = staked.amount > 0;
 
+  const [bgtPrice, setBgtPrice] = useState<TokenAmount>();
+
   const handleClaim = async () => {
-    await claim();
+    setIsClaiming(true);
+
+    const promise = claim();
+
+    createClaimBGTToast(promise, rewards.toSignificant());
+
+    await promise;
+
+    setIsClaiming(false);
   }
+
+  const fetchBgtPrice = async () => {
+    const price = await getTokensPrice([bgtToken.address]);
+    setBgtPrice(TokenAmount.fromHumanAmount(bgtToken, String(price?.[0].price) as `${number}`));
+  }
+
+  useEffect(() => {
+    fetchBgtPrice();
+  }, []);
 
   return (
     <>
@@ -85,7 +109,7 @@ export const EarnApy = () => {
                               <span className="text-foreground-primary text-sm">BGT</span>
                               <div className="text-right">
                                 <div className="text-foreground-primary text-sm font-medium">{rewards.toSignificant()}</div>
-                                <div className="text-foreground-secondary text-xs">$1</div>
+                                <div className="text-foreground-secondary text-xs">{bgtPrice && formatCurrency(+bgtPrice.mulUpFixed(rewards.amount).toSignificant(), '$0.00a')}</div>
                               </div>
                             </div>
                           </div>
@@ -93,6 +117,7 @@ export const EarnApy = () => {
                           <Button 
                             className={`px-3 py-1 text-sm bg-secondary-default bg-primary-default hover:bg-secondary-hover text-white font-medium rounded-lg transition-colors whitespace-nowrap`}
                             onPress={handleClaim}
+                            isLoading={isClaiming}
                           >
                             Claim
                           </Button>
@@ -104,7 +129,7 @@ export const EarnApy = () => {
             <div className="flex flex-col sm:flex-row gap-2 mt-2">
               <Button 
                 className="w-full px-4 py-2 bg-primary-default hover:bg-primary-hover text-white font-medium rounded-lg transition-colors"
-                onClick={() => setIsStakeModalOpen(true)}
+                onPress={() => setIsStakeModalOpen(true)}
               >
                 Stake
               </Button>
@@ -112,7 +137,7 @@ export const EarnApy = () => {
               {hasStaked && (
                 <Button 
                   className="w-full px-4 py-2 border border-border/40 hover:border-primary-default/40 bg-transparent text-foreground-primary font-medium rounded-lg transition-colors"
-                  onClick={() => setIsUnstakeModalOpen(true)}
+                  onPress={() => setIsUnstakeModalOpen(true)}
                 >
                   Unstake
                 </Button>

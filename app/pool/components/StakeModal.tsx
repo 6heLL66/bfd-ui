@@ -7,6 +7,7 @@ import { TokenAmount } from '@berachain-foundation/berancer-sdk';
 import { useApprove } from '@/shared/hooks/useApprove';
 import { createApproveToast } from '@/app/swap/toasts';
 import { usePool } from '@/features/pool/usePool';
+import { createStakeToast } from './toasts';
 
 type StakeModalProps = {
   isOpen: boolean;
@@ -34,7 +35,11 @@ export const StakeModal = ({ isOpen, onClose }: StakeModalProps) => {
       await promise;
     }
 
-    await stake(stakeAmount.amount);
+    const promise = stake(stakeAmount.amount);
+
+    createStakeToast(promise, stakeAmount.toSignificant());
+
+    await promise;
 
     refetchAll();
     onClose();

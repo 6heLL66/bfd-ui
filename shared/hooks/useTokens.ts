@@ -43,15 +43,11 @@ const useTokensStore = create<TokensState>((set) => ({
                 getTokensPrice(addresses)
             ]);
 
-            console.log(balances, prices, 'asd');
-
             if (!balances || !prices) return;
-
-            
 
             const tokens = addresses.map((address, index) => {
                 const balance = balances[index as keyof typeof balances] as GetBalanceReturnType;
-                const price = prices[index as keyof typeof prices] as Prices[0];
+                const price = prices.find((price) => price.address === address) as Prices[0];
                 const token = new Token(CHAIN_ID, address as `0x${string}`, balance.decimals, balance.symbol);
 
                 const balanceAmount = TokenAmount.fromRawAmount(token, balance.value);

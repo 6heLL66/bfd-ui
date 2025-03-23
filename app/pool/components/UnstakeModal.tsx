@@ -5,6 +5,7 @@ import { useVaultStacking } from '@/features/stacking/useVaultStacking';
 import { beraHoneyLpToken, POOL_CA, VAULT_CA } from '@/config/berachain';
 import { TokenAmount } from '@berachain-foundation/berancer-sdk';
 import { usePool } from '@/features/pool/usePool';
+import { createUnstakeToast } from './toasts';
 type UnstakeModalProps = {
   isOpen: boolean;
   onClose: () => void;
@@ -98,7 +99,11 @@ export const UnstakeModal = ({ isOpen, onClose }: UnstakeModalProps) => {
 
   const handleUnstake = async () => {
     const tokenAmount = TokenAmount.fromHumanAmount(beraHoneyLpToken, amount as `${number}`);
-    await unstake(tokenAmount.amount);
+    const promise = unstake(tokenAmount.amount);
+
+    createUnstakeToast(promise, tokenAmount.toSignificant());
+
+    await promise;
 
     refetchAll();
     onClose();

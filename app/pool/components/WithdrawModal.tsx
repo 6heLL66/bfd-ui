@@ -9,6 +9,9 @@ import { beraHoneyLpToken, CHAIN_ID, POOL_CA, RPC_URL } from '@/config/berachain
 import { RemoveLiquidity, RemoveLiquidityKind, RemoveLiquidityProportionalInput, RemoveLiquidityQueryOutput, Token, TokenAmount } from '@berachain-foundation/berancer-sdk';
 import { useSwapSettings } from '@/features/swap/store/swapSettings';
 import { formatCurrency } from '@/app/treasury/components/TokenDistributionChart';
+import { Spinner } from '@heroui/spinner';
+import { Button } from '@heroui/button';
+import { createWithdrawToast } from './toasts';
 
 interface WithdrawModalProps {
   isOpen: boolean;
@@ -23,6 +26,8 @@ export const WithdrawModal = ({ isOpen, onClose, lpTokensValue }: WithdrawModalP
   const [queryOutput, setQueryOutput] = useState<RemoveLiquidityQueryOutput | null>(null);
   const [amountsOut, setAmountsOut] = useState<TokenAmount[]>();
 
+  const [isQueryLoading, setIsQueryLoading] = useState<boolean>(false);
+
   const { slippage, setSlippage } = useSwapSettings();
 
   const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -33,7 +38,7 @@ export const WithdrawModal = ({ isOpen, onClose, lpTokensValue }: WithdrawModalP
 
   const queryLiquidity = useCallback(async (token: Token, tokenAmount: TokenAmount) => {
     if (!poolState) return;
-
+    setIsQueryLoading(true);
     const removeLiquidity = new RemoveLiquidity();
 
     const removeLiquidityInput = {
@@ -52,10 +57,12 @@ export const WithdrawModal = ({ isOpen, onClose, lpTokensValue }: WithdrawModalP
     setAmountsOut(queryOutput.amountsOut);
     setQueryOutput(queryOutput);
 
+    setIsQueryLoading(false);
+
     return queryOutput
   }, [poolState, tokens]);
 
-  const debouncedQueryLiquidity = useCallback(debounce(queryLiquidity, 500), [queryLiquidity]);
+  const debouncedQueryLiquidity = useCallback(debounce(queryLiquidity, 100), [queryLiquidity]);
 
   const handleWithdraw = async () => {
     try {
@@ -66,8 +73,10 @@ export const WithdrawModal = ({ isOpen, onClose, lpTokensValue }: WithdrawModalP
 
       const _queryOutput = await queryLiquidity(beraHoneyLpToken, TokenAmount.fromHumanAmount(beraHoneyLpToken, String((Number(withdrawPercentage) / 100) * Number(lpTokens.toSignificant())) as `${number}`))
 
-      await withdraw(_queryOutput as RemoveLiquidityQueryOutput);
+      const promise = withdraw(_queryOutput as RemoveLiquidityQueryOutput);
 
+      createWithdrawToast(promise, withdrawPercentage, lpTokens.toSignificant(), amountsOut?.[0].toSignificant() ?? '0', tokens[0].token.symbol ?? '', amountsOut?.[1].toSignificant() ?? '0', tokens[1].token.symbol ?? '');
+      await promise;
       onClose();
     } catch (error) {
       console.error('Withdraw failed:', error);
@@ -154,18 +163,19 @@ export const WithdrawModal = ({ isOpen, onClose, lpTokensValue }: WithdrawModalP
                 </div>
                 
                 <div className="bg-surface/50 rounded-lg p-4 border border-border/30">
-                  <div className="text-sm font-medium mb-3">You will receive</div>
+                  <div className="text-sm font-medium mb-3 flex items-center">You will receive {isQueryLoading && <Spinner variant='simple' className="w-4 h-4 ml-2" />} </div>
                   
                   <div className="space-y-3">
                     { amountsOut && tokens.map((token, index) => {
                       const balance = amountsOut[index];
-                      const balanceUSD = balance.mulUpFixed(token.price.amount).toSignificant();
+                      
+                      const balanceUSD = balance.mulDownFixed(token.price.amount).toSignificant();
                       return (
                       <div key={token.token.symbol} className="flex justify-between items-center p-2 rounded-lg border border-border/20 bg-surface/30">
                         <div className="flex items-center gap-2">
                           <Image 
                             src={token.logo}
-                            alt={token.token.symbol ?? ''} 
+                            alt={token.token.symbol ?? ''}
                             width={20} 
                             height={20} 
                             className="rounded-full"
@@ -217,17 +227,15 @@ export const WithdrawModal = ({ isOpen, onClose, lpTokensValue }: WithdrawModalP
                   </div>
                 </div>
                 
-                <button
-                  className={`w-full px-4 py-3 rounded-lg font-medium ${
-                    isLoading || withdrawPercentage <= 0
-                      ? 'bg-primary-default/50 cursor-not-allowed'
-                      : 'bg-primary-default hover:bg-primary-hover'
-                  } text-white transition-colors`}
-                  onClick={handleWithdraw}
-                  disabled={isLoading || withdrawPercentage <= 0}
+                <Button
+                  className={`w-full px-4 py-3 rounded-lg font-medium border-none font-bold text-white bg-primary-default hover:bg-primary-hover transition-colors`}
+                  onPress={handleWithdraw}
+                  size='lg'
+                  isDisabled={isLoading || withdrawPercentage <= 0 || isQueryLoading}
+                  isLoading={isLoading}
                 >
                   {isLoading ? 'Processing...' : 'Withdraw'}
-                </button>
+                </Button>
               </div>
             </div>
           </motion.div>

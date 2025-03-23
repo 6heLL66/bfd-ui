@@ -138,7 +138,7 @@ export const PoolCharts = ({ className = '', historicalData }: PoolChartsProps) 
       tick={{ fill: 'rgba(255,255,255,0.7)', fontSize: 12 }}
       tickLine={{ stroke: 'rgba(255,255,255,0.2)' }}
       axisLine={false}
-      tickFormatter={(value) => formatValue(value, activeTab)}
+      tickFormatter={(value) => formatValue(value)}
       width={60}
       domain={['auto', 'auto']}
     />
@@ -175,7 +175,7 @@ export const PoolCharts = ({ className = '', historicalData }: PoolChartsProps) 
 
   const renderTooltip = () => (
     <Tooltip 
-      formatter={(value: number) => [formatValue(value, activeTab), activeTab.charAt(0).toUpperCase() + activeTab.slice(1)]}
+      formatter={(value: number) => [formatValue(value), activeTab.charAt(0).toUpperCase() + activeTab.slice(1)]}
       labelFormatter={(label) => {
         const date = new Date(Number(label));
         
@@ -318,7 +318,7 @@ export const PoolCharts = ({ className = '', historicalData }: PoolChartsProps) 
           <h2 className="text-lg font-semibold bg-gradient-to-r from-foreground-primary to-foreground-secondary bg-clip-text text-transparent">Pool Analytics</h2>
           {activeData.length > 0 && (
             <div className="font-medium text-foreground-primary bg-surface/40 px-3 py-1 rounded-lg border border-border/30">
-              {formatValue(activeData[activeData.length - 1]?.value || 0, activeTab)}
+              {formatValue(activeData[activeData.length - 1]?.value || 0)}
             </div>
           )}
         </div>
