@@ -9,7 +9,7 @@ export const SALE_CA = process.env.NEXT_PUBLIC_SALE_CA as `0x${string}`;
 export const STACKING_CA = process.env.NEXT_PUBLIC_STACKING_CA as `0x${string}`;
 export const BFD_CA = process.env.NEXT_PUBLIC_BFD_CA as `0x${string}`;
 export const VAULT_CA = process.env.NEXT_PUBLIC_VAULT_CA as `0x${string}`;
-export const POOL_CA = process.env.NEXT_PUBLIC_POOL_CA as `0x${string}`;
+export const POOL_ID = process.env.NEXT_PUBLIC_POOL_ID as `0x${string}`;
 
 export const balancerApi = new BalancerApi('https://api.berachain.com/', CHAIN_ID);
 

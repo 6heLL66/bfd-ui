@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@heroui/button';
 import { useVaultStacking } from '@/features/stacking/useVaultStacking';
-import { beraHoneyLpToken, POOL_CA, VAULT_CA } from '@/config/berachain';
+import { beraHoneyLpToken, POOL_ID, VAULT_CA } from '@/config/berachain';
 import { TokenAmount } from '@berachain-foundation/berancer-sdk';
 import { useApprove } from '@/shared/hooks/useApprove';
 import { createApproveToast } from '@/app/swap/toasts';
@@ -17,7 +17,7 @@ type StakeModalProps = {
 export const StakeModal = ({ isOpen, onClose }: StakeModalProps) => {
   const { checkAllowance, approve } = useApprove();
   const { vault, stake } = useVaultStacking(VAULT_CA);
-  const { lpTokens, refetchAll } = usePool(POOL_CA);
+  const { lpTokens, refetchAll } = usePool(POOL_ID);
   const [amount, setAmount] = useState('');
   const [percentage, setPercentage] = useState(0);
   const availableLP = lpTokens?.toSignificant();

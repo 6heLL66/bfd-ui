@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@heroui/button';
 import { useVaultStacking } from '@/features/stacking/useVaultStacking';
-import { beraHoneyLpToken, POOL_CA, VAULT_CA } from '@/config/berachain';
+import { beraHoneyLpToken, POOL_ID, VAULT_CA } from '@/config/berachain';
 import { TokenAmount } from '@berachain-foundation/berancer-sdk';
 import { usePool } from '@/features/pool/usePool';
 import { createUnstakeToast } from './toasts';
@@ -13,7 +13,7 @@ type UnstakeModalProps = {
 
 export const UnstakeModal = ({ isOpen, onClose }: UnstakeModalProps) => {
   const { staked, unstake } = useVaultStacking(VAULT_CA);
-  const { refetchAll } = usePool(POOL_CA);
+  const { refetchAll } = usePool(POOL_ID);
   const [amount, setAmount] = useState('');
   const [percentage, setPercentage] = useState(0);
   const modalRef = useRef<HTMLDivElement>(null);

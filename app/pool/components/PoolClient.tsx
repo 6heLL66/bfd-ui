@@ -11,7 +11,7 @@ import { DepositModal } from './DepositModal';
 import { WithdrawModal } from './WithdrawModal';
 import { usePool } from '@/features/pool/usePool';
 import { getTokenImageUrl } from '@/shared/utils';
-import { CHAIN_ID, POOL_CA } from '@/config/berachain';
+import { CHAIN_ID, POOL_ID } from '@/config/berachain';
 import { Token, TokenAmount } from '@berachain-foundation/berancer-sdk';
 import { formatCurrency } from '@/app/treasury/components/TokenDistributionChart';
 import { Button } from '@heroui/button';
@@ -21,7 +21,7 @@ export const PoolClient = () => {
   const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
   
-  const { pool, lpTokens, k, tokens, historicalData } = usePool(POOL_CA);
+  const { pool, lpTokens, k, tokens, historicalData } = usePool(POOL_ID);
 
   const handleOpenDepositModal = () => {
     setIsDepositModalOpen(true);

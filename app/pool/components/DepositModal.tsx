@@ -4,7 +4,7 @@ import { useState, useCallback } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePool } from '@/features/pool/usePool';
-import { CHAIN_ID, POOL_CA, RPC_URL } from '@/config/berachain';
+import { CHAIN_ID, POOL_ID, RPC_URL } from '@/config/berachain';
 import { AddLiquidityKind, TokenAmount, Token, AddLiquidityInput, AddLiquidityQueryOutput, Slippage, AddLiquidity } from '@berachain-foundation/berancer-sdk';
 import { getTokenImageUrl } from '@/shared/utils';
 import { useApprove } from '@/shared/hooks/useApprove';
@@ -21,7 +21,7 @@ interface DepositModalProps {
 
 export const DepositModal = ({ isOpen, onClose }: DepositModalProps) => {
   const { approve, checkAllowance } = useApprove();
-  const { deposit, pool, lpVaultAddress, poolState, tokens } = usePool(POOL_CA);
+  const { deposit, pool, lpVaultAddress, poolState, tokens } = usePool(POOL_ID);
   const [amounts, setAmounts] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isQueryLoading, setIsQueryLoading] = useState<boolean>(false);

@@ -5,7 +5,7 @@ import { debounce, upperFirst } from 'lodash';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePool } from '@/features/pool/usePool';
-import { beraHoneyLpToken, CHAIN_ID, POOL_CA, RPC_URL } from '@/config/berachain';
+import { beraHoneyLpToken, CHAIN_ID, POOL_ID, RPC_URL } from '@/config/berachain';
 import { RemoveLiquidity, RemoveLiquidityKind, RemoveLiquidityProportionalInput, RemoveLiquidityQueryOutput, Token, TokenAmount } from '@berachain-foundation/berancer-sdk';
 import { useSwapSettings } from '@/features/swap/store/swapSettings';
 import { formatCurrency } from '@/app/treasury/components/TokenDistributionChart';
@@ -20,7 +20,7 @@ interface WithdrawModalProps {
 }
 
 export const WithdrawModal = ({ isOpen, onClose, lpTokensValue }: WithdrawModalProps) => {
-  const { pool, poolState, withdraw, lpTokens, tokens } = usePool(POOL_CA);
+  const { pool, poolState, withdraw, lpTokens, tokens } = usePool(POOL_ID);
   const [withdrawPercentage, setWithdrawPercentage] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [queryOutput, setQueryOutput] = useState<RemoveLiquidityQueryOutput | null>(null);
