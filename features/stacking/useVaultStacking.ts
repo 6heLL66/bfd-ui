@@ -3,7 +3,7 @@ import { getRewardVault } from "@/shared/api/berachain";
 import { useAccount, useReadContract, useWriteContract } from "wagmi";
 import { beraHoneyLpToken, bgtToken, VAULT_CA } from "@/config/berachain";
 import { BigintIsh, TokenAmount } from "@berachain-foundation/berancer-sdk";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { wagmiConfig } from "@/config/wagmi";
 import { waitForTransactionReceipt } from "wagmi/actions";
 import { vaultAbi } from "@/config/abi/vault";
@@ -30,6 +30,14 @@ export const useVaultStacking = (id: string) => {
         functionName: 'earned',
         args: [address]
     })
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            refetchRewards();
+        }, 10000)
+
+        return () => clearInterval(interval);
+    }, [refetchRewards])
 
     const claim = useCallback(async () => {
         const tx = await writeContractAsync({

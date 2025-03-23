@@ -68,6 +68,14 @@ export const usePool = (id: string) => {
     refetchTotalSupply();
   }, [refetchLpTokens, refetchPoolState, refetchTotalSupply, refetchPool]);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      refetchAll();
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, [refetchAll]);
+
   const deposit = useCallback(
     async (queryOutput: AddLiquidityQueryOutput) => {
       if (!poolState || !lpVaultAddress) return;
