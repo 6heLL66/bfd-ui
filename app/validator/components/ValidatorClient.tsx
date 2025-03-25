@@ -146,7 +146,7 @@ export const ValidatorClient = () => {
           <div className="flex gap-6">
             {/* Boost APY Card */}
             <div
-              className="bg-surface backdrop-blur-xl rounded-2xl border- border-border/40 shadow-2xl hover:border-primary-default/40 shadow-primary-default/10 p-5 transition-all duration-300"
+              className="bg-surface backdrop-blur-xl rounded-2xl border-2 border-border/40 shadow-2xl hover:border-primary-default/40 shadow-primary-default/10 p-5 transition-all duration-300"
               style={{ flexGrow: 1 }}
             >
               <div className="flex items-center mb-4 ">
