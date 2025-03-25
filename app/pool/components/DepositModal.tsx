@@ -151,11 +151,9 @@ export const DepositModal = ({ isOpen, onClose }: DepositModalProps) => {
 
   const _slippage = Slippage.fromPercentage(slippage as `${number}`);
 
-  console.log(TokenAmount.fromRawAmount(tokens[0].token, _slippage.applyTo(tokens[0].balance.amount, -1)).amount, TokenAmount.fromHumanAmount(tokens[0].token, (amounts[tokens[0].token.symbol ?? ''] ?? '0') as `${number}`).amount)
-
   const isError = (index: number) =>
-    TokenAmount.fromRawAmount(tokens[index].token, _slippage.applyTo(tokens[index].balance.amount, -1)).amount <
-    TokenAmount.fromHumanAmount(tokens[index].token, (amounts[tokens[index].token.symbol ?? ''] ?? '0') as `${number}`).amount;
+    TokenAmount.fromRawAmount(tokens[index]?.token, _slippage.applyTo(tokens[index]?.balance.amount ?? 0, -1)).amount <
+    TokenAmount.fromHumanAmount(tokens[index]?.token, (amounts[tokens[index]?.token.symbol ?? ''] ?? '0') as `${number}`).amount;
 
   if (!isOpen) return null;
 

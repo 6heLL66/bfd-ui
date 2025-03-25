@@ -128,5 +128,9 @@ export const getTokenImageUrl = (token: Token) => {
     return 'https://berascan.com/token/images/wrappedbera_ofc_64.png';
   }
 
+  if (token.symbol === 'BGT') {
+    return 'https://berascan.com/token/images/berachainbgt_64.png';
+  }
+
   return `https://berascan.com/token/images/honeybera_32.png`;
 };

@@ -15,6 +15,7 @@ import { CHAIN_ID, POOL_ID } from '@/config/berachain';
 import { Token, TokenAmount } from '@berachain-foundation/berancer-sdk';
 import { formatCurrency } from '@/app/treasury/components/TokenDistributionChart';
 import { Button } from '@heroui/button';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 export const PoolClient = () => {
   const { isConnected } = useAccount();
@@ -102,14 +103,6 @@ export const PoolClient = () => {
             </div>
           </div>
         </div>
-        
-        <div className="flex flex-col gap-2">
-          {!isConnected && (
-            <button className="px-4 py-2 bg-primary-default hover:bg-primary-hover text-white font-medium rounded-lg transition-colors">
-              Connect Wallet
-            </button>
-          )}
-        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -122,9 +115,7 @@ export const PoolClient = () => {
             {!isConnected ? (
               <div className="flex flex-col items-center justify-center py-12">
                 <span className="text-foreground-secondary text-sm mb-4">Connect your wallet to view your deposits</span>
-                <button className="px-4 py-2 bg-primary-default hover:bg-primary-hover text-white font-medium rounded-lg transition-colors">
-                  Connect Wallet
-                </button>
+                <ConnectButton />
               </div>
             ) : +lpTokens.toSignificant() <= 0 ? (
               <div className="flex flex-col items-center justify-center py-8">

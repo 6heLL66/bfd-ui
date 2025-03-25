@@ -11,6 +11,8 @@ import { createClaimBGTToast } from './toasts';
 import { getTokensPrice } from '@/shared/api/berachain';
 import { TokenAmount } from '@berachain-foundation/berancer-sdk';
 import { formatCurrency } from '@/app/treasury/components/TokenDistributionChart';
+import { getTokenImageUrl } from '@/shared/utils';
+import Image from 'next/image';
 
 export const EarnApy = () => {
   const { isConnected } = useAccount();
@@ -106,7 +108,7 @@ export const EarnApy = () => {
                     <div className="flex items-center p-2 rounded-lg gap-1 border border-border/20 bg-surface/30">
                           <div className="flex-1 mr-3">
                             <div className="flex justify-between items-center">
-                              <span className="text-foreground-primary text-sm">BGT</span>
+                              <span className="text-foreground-primary flex gap-2 items-center text-sm"><Image src={getTokenImageUrl(bgtToken)} className='rounded-full' alt="BGT" width={22} height={22} /> BGT</span>
                               <div className="text-right">
                                 <div className="text-foreground-primary text-sm font-medium">{rewards.toSignificant()}</div>
                                 <div className="text-foreground-secondary text-xs">{bgtPrice && formatCurrency(+bgtPrice.mulUpFixed(rewards.amount).toSignificant(), '$0.00a')}</div>

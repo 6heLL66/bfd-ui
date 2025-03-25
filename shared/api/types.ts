@@ -53,7 +53,7 @@ interface RewardVault {
     dynamicData: GqlRewardVaultDynamicData;
     stakingToken: GqlToken;
     metadata: GqlRewardVaultMetadata;
-    activeIncentives: any[];
+    activeIncentives: GqlRewardVaultIncentive[];
 }
 
 interface GqlPoolTokenDetail {
@@ -110,7 +110,7 @@ interface GqlPoolSnapshot {
     __typename: string;
 }
 
-type Prices ={
+type Prices = {
     address: string;
     chain: string;
     price: number;
@@ -118,6 +118,79 @@ type Prices ={
     updatedBy: string;
     __typename: string;
 }[]
+
+interface GqlValidatorMetadata {
+    name: string;
+    logoURI: string;
+    __typename: string;
+    website: string;
+    description: string;
+}
+
+interface GqlValidatorDynamicData {
+    activeBoostAmount: string;
+    usersActiveBoostCount: number;
+    queuedBoostAmount: string;
+    usersQueuedBoostCount: number;
+    allTimeDistributedBGTAmount: string;
+    rewardRate: string;
+    stakedBeraAmount: string;
+    lastDayDistributedBGTAmount: string;
+    activeBoostAmountRank: number;
+    __typename: string;
+}
+
+interface GqlRewardVaultIncentive {
+    active: boolean;
+    remainingAmount: string;
+    remainingAmountUsd: string;
+    incentiveRate: string;
+    tokenAddress: string;
+    token: GqlToken;
+    __typename: string;
+}
+
+interface GqlValidatorBlockUptime {
+    isActive: boolean;
+    __typename: string;
+}
+
+interface GqlValidatorRewardAllocationWeight {
+    percentageNumerator: number;
+    validatorId: string;
+    receivingVault: RewardVault;
+    receiver: string;
+    startBlock: number;
+    __typename: string;
+}
+
+interface Validator {
+    id: string;
+    pubkey: string;
+    operator: string;
+    metadata: GqlValidatorMetadata;
+    dynamicData: GqlValidatorDynamicData;
+    __typename: string;
+    rewardAllocationWeights: GqlValidatorRewardAllocationWeight[];
+    lastBlockUptime: GqlValidatorBlockUptime;
+}
+
+interface BoostPeriod {
+    id: string;
+    boost_total_bgt: string;
+    rewards_total_usd: string;
+    daily_rate: string;
+    apr: string;
+    apy: string;
+    tokens: string[];
+    validator: string;
+    start_block: number;
+    end_block: number;
+    start_timestamp: number;
+    end_timestamp: number;
+    created_at: string;
+    updated_at: string;
+}
 
 export type { 
     TreasuryHistory, 
@@ -131,5 +204,12 @@ export type {
     GqlPoolDynamicData,
     Pool,
     Prices,
-    GqlPoolSnapshot
+    GqlPoolSnapshot,
+    Validator,
+    GqlValidatorMetadata,
+    GqlValidatorDynamicData,
+    GqlValidatorBlockUptime,
+    GqlValidatorRewardAllocationWeight,
+    GqlRewardVaultIncentive,
+    BoostPeriod
 };

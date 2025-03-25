@@ -1,4 +1,4 @@
-import { GqlPoolSnapshot, Pool, Prices, RewardVault } from './types';
+import { BoostPeriod, GqlPoolSnapshot, Pool, Prices, RewardVault, Validator } from './types';
 
 export const getTokensPrice = async (token_addresses: string[]) => {
   try {
@@ -23,7 +23,7 @@ export const getTokensPrice = async (token_addresses: string[]) => {
       credentials: 'omit',
     }).then(res => res.json());
 
-    return response.data.tokenGetCurrentPrices as Prices;
+    return response?.data?.tokenGetCurrentPrices as Prices;
   } catch (error) {
     console.error(error);
   }
@@ -52,7 +52,7 @@ export const getRewardVault = async (id: string) => {
       credentials: 'omit',
     }).then(res => res.json());
 
-    return response.data.rewardVault as RewardVault;
+    return response?.data?.rewardVault as RewardVault;
   } catch (error) {
     console.error(error);
   }
@@ -81,7 +81,7 @@ export const getPool = async (id: string) => {
       "credentials": "omit"
     }).then(res => res.json());
 
-    return response.data.poolGetPool as Pool;
+    return response?.data?.poolGetPool as Pool;
   } catch (error) {
     console.error(error);
   }
@@ -110,7 +110,36 @@ export const getPoolHistoricalData = async (id: string) => {
       "credentials": "omit"
     }).then(res => res.json());
 
-    return response.data.poolGetSnapshots as GqlPoolSnapshot[];
+    return response?.data?.poolGetSnapshots as GqlPoolSnapshot[];
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const getValidator = async (id: string) => {
+  try {
+    const response = await fetch("https://api.berachain.com/", {
+      "headers": {
+        "accept": "*/*",
+        "accept-language": "en-US,en;q=0.9,ru;q=0.8",
+        "content-type": "application/json",
+        "priority": "u=1, i",
+        "sec-ch-ua": "\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Google Chrome\";v=\"134\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Windows\"",
+        "sec-fetch-dest": "empty",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "same-site"
+      },
+      "referrer": "https://hub.berachain.com/",
+      "referrerPolicy": "strict-origin-when-cross-origin",
+      "body": `{\"operationName\":\"GetValidator\",\"variables\":{\"id\":\"${id}\",\"chain\":\"BERACHAIN\"},\"query\":\"query GetValidator($id: String!, $chain: GqlChain!) {\\n  validator: polGetValidator(validatorId: $id, chain: $chain) {\\n    ...ApiValidator\\n    __typename\\n  }\\n  uptime: polGetValidatorBlockUptimes(validatorId: $id, chain: $chain) {\\n    ...ApiValidatorBlockUptime\\n    __typename\\n  }\\n}\\n\\nfragment ApiValidator on GqlValidator {\\n  ...ApiValidatorMinimal\\n  operator\\n  rewardAllocationWeights {\\n    ...ApiRewardAllocationWeight\\n    __typename\\n  }\\n  lastBlockUptime {\\n    isActive\\n    __typename\\n  }\\n  metadata {\\n    name\\n    logoURI\\n    website\\n    description\\n    __typename\\n  }\\n  __typename\\n}\\n\\nfragment ApiValidatorMinimal on GqlValidator {\\n  id\\n  pubkey\\n  operator\\n  metadata {\\n    name\\n    logoURI\\n    __typename\\n  }\\n  dynamicData {\\n    activeBoostAmount\\n    usersActiveBoostCount\\n    queuedBoostAmount\\n    usersQueuedBoostCount\\n    allTimeDistributedBGTAmount\\n    rewardRate\\n    stakedBeraAmount\\n    lastDayDistributedBGTAmount\\n    activeBoostAmountRank\\n    __typename\\n  }\\n  __typename\\n}\\n\\nfragment ApiRewardAllocationWeight on GqlValidatorRewardAllocationWeight {\\n  percentageNumerator\\n  validatorId\\n  receivingVault {\\n    ...ApiVault\\n    __typename\\n  }\\n  receiver\\n  startBlock\\n  __typename\\n}\\n\\nfragment ApiVault on GqlRewardVault {\\n  id: vaultAddress\\n  vaultAddress\\n  address: vaultAddress\\n  isVaultWhitelisted\\n  dynamicData {\\n    allTimeReceivedBGTAmount\\n    apr\\n    bgtCapturePercentage\\n    activeIncentivesValueUsd\\n    __typename\\n  }\\n  stakingToken {\\n    address\\n    name\\n    symbol\\n    decimals\\n    __typename\\n  }\\n  metadata {\\n    name\\n    logoURI\\n    url\\n    protocolName\\n    description\\n    __typename\\n  }\\n  activeIncentives {\\n    ...ApiVaultIncentive\\n    __typename\\n  }\\n  __typename\\n}\\n\\nfragment ApiVaultIncentive on GqlRewardVaultIncentive {\\n  active\\n  remainingAmount\\n  remainingAmountUsd\\n  incentiveRate\\n  tokenAddress\\n  token {\\n    address\\n    name\\n    symbol\\n    decimals\\n    __typename\\n  }\\n  __typename\\n}\\n\\nfragment ApiValidatorBlockUptime on GqlValidatorBlockUptime {\\n  isActive\\n  isProposer\\n  isSigner\\n  status\\n  blockNumber\\n  __typename\\n}\"}`,
+      "method": "POST",
+      "mode": "cors",
+      "credentials": "omit"
+    }).then(res => res.json());
+
+    return response?.data?.validator as Validator;
   } catch (error) {
     console.error(error);
   }

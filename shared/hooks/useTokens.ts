@@ -77,7 +77,7 @@ export const useTokens = (addresses?: string[]) => {
         if (addresses && address && addresses.length > 0) {
             fetchTokens(addresses, address);
         }
-    }, [addresses, address, fetchTokens]);
+    }, [address]);
 
     return { tokens, fetchTokens, loading };
 }
