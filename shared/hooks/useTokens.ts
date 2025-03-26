@@ -1,6 +1,6 @@
 import { wagmiConfig } from "@/config/wagmi";
 import { Token, TokenAmount } from "@berachain-foundation/berancer-sdk";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { getBalance, GetBalanceReturnType } from "wagmi/actions";
 import { getTokensPrice } from "../api/berachain";
 import { Prices } from "../api/types";
@@ -22,7 +22,7 @@ interface TokensState {
     setTokens: (tokens: FullToken[]) => void;
     loading: boolean;
     setLoading: (loading: boolean) => void;
-    fetchTokens: (addresses: string[], address: string) => Promise<void>;
+    fetchTokens: (addresses: string[], address?: string) => Promise<void>;
 }
 
 const useTokensStore = create<TokensState>((set) => ({
@@ -39,7 +39,7 @@ const useTokensStore = create<TokensState>((set) => ({
                 Promise.all(addresses.map((_address) => getBalance(wagmiConfig, {
                     address: address as `0x${string}`,
                     token: _address as `0x${string}`
-                }))), 
+                }).catch(() => ({ value: 0, decimals: 18, symbol: '' })))), 
                 getTokensPrice(addresses)
             ]);
 
@@ -74,10 +74,17 @@ export const useTokens = (addresses?: string[]) => {
     const { tokens, fetchTokens, loading } = useTokensStore();
 
     useEffect(() => {
-        if (addresses && address && addresses.length > 0) {
+        if (addresses && addresses.length > 0) {
             fetchTokens(addresses, address);
         }
     }, [address]);
 
-    return { tokens, fetchTokens, loading };
+    const tokensMap = useMemo(() => {
+        return tokens.reduce((acc, token) => {
+            acc[token.token.address] = token;
+            return acc;
+        }, {} as Record<string, FullToken>);
+    }, [tokens]);
+
+    return { tokens, fetchTokens, loading, tokensMap };
 }

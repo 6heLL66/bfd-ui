@@ -44,7 +44,7 @@ export const useValidator = (id: string) => {
   const { writeContractAsync } = useWriteContract();
   const [bgtBalance, setBgtBalance] = useState<TokenAmount>();
 
-  const { tokens, fetchTokens } = useTokens([bgtToken.address]);
+  const { tokens, tokensMap, fetchTokens } = useTokens([bgtToken.address]);
 
   const { data: validator, refetch: refetchValidator } = useQuery({
     queryKey: ['validator', id],
@@ -236,7 +236,7 @@ export const useValidator = (id: string) => {
   const boostAprRate = TokenAmount.fromHumanAmount(bgtToken, boostApr as `${number}`);
 
   const weeklybgtPerBgt = +boostAprRate.mulDownFixed(TokenAmount.fromHumanAmount(bgtToken, '1').amount).toSignificant() / WEEKS_IN_YEAR;
-  const bgtFullToken = tokens.find(token => token.token.symbol === bgtToken.symbol);
+  const bgtFullToken = tokensMap[bgtToken.address];
   const weeklyUsdPerBgt = Number(bgtFullToken?.price.toSignificant()) * weeklybgtPerBgt;
 
   const insencitives = validator?.rewardAllocationWeights.reduce((acc, incentives) => {

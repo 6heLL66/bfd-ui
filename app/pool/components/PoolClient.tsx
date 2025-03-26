@@ -41,7 +41,7 @@ export const PoolClient = () => {
   };
 
   const lpValue = pool?.tokens && tokens?.reduce((acc, token, index) => {
-    const globalBalanceUSD = TokenAmount.fromHumanAmount(token.token, pool.tokens[index].balanceUSD as `${number}`);
+    const globalBalanceUSD = TokenAmount.fromHumanAmount(token.token, (pool.tokens[index]?.balanceUSD ?? '0')as `${number}`);
     return acc + +globalBalanceUSD.mulUpFixed(k.amount).toSignificant();
   }, 0).toFixed(2);
 

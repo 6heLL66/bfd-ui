@@ -538,7 +538,7 @@ export const ValidatorClient = () => {
                   )}
 
                   {!isConnected && (
-                    <div className="mt-3 pt-3 border-t border-border/20">
+                    <div className="mt-3 pt-3 border-t border-border/20 flex flex-col items-center gap-4">
                       <p className="text-sm text-foreground-secondary mb-2 text-center">Connect your wallet to start boosting and earning rewards.</p>
                       <ConnectButton />
                     </div>
