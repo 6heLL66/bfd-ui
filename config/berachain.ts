@@ -13,6 +13,7 @@ export const BFD_CA = process.env.NEXT_PUBLIC_BFD_CA as `0x${string}`;
 export const VAULT_CA = process.env.NEXT_PUBLIC_VAULT_CA as `0x${string}`;
 export const POOL_ID = process.env.NEXT_PUBLIC_POOL_ID as `0x${string}`;
 export const VALIDATOR_ID = process.env.NEXT_PUBLIC_VALIDATOR_ID as `0x${string}`;
+export const INCENCIVE_DISTRIBUTOR_CA = '0xBDDba144482049382eC79CadfA02f0fa0F462dE3' as `0x${string}`;
 
 export const balancerApi = new BalancerApi('https://api.berachain.com/', CHAIN_ID);
 

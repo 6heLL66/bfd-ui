@@ -61,7 +61,7 @@ const useTokensStore = create<TokensState>((set) => ({
                     logo: getTokenImageUrl(token)
                 }
             });
-            set((prev) => ({ ...prev, tokens, loading: false }));
+            set((prev) => ({ ...prev, tokens: [...tokens, ...prev.tokens.filter(token => !tokens.find(t => t.token.address === token.token.address))], loading: false }));
         } catch (error) {
             console.error("Error fetching tokens:", error);
             set({ loading: false });

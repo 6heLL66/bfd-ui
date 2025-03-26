@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { getValidator } from '@/shared/api/berachain';
 import { useAccount, useReadContract, useWriteContract } from 'wagmi';
-import { bgtToken, CHAIN_ID, provider } from '@/config/berachain';
+import { bgtToken, CHAIN_ID, INCENCIVE_DISTRIBUTOR_CA, provider } from '@/config/berachain';
 import { bgtAbi } from '@/config/abi/bgt';
 import { getBalance, waitForTransactionReceipt } from 'wagmi/actions';
 import { wagmiConfig } from '@/config/wagmi';
@@ -12,12 +12,14 @@ import {
   createActivateBoostToast,
   createQueueDropBoostToast,
   createCancelDropBoostToast,
-  createDropBoostToast
+  createDropBoostToast,
+  createClaimAllRewardsToast
 } from '@/app/validator/components/toasts';
 import { useEffect, useMemo } from 'react';
 import { useState } from 'react';
 import Requests from '@/shared/api/requests';
 import { useTokens } from '@/shared/hooks/useTokens';
+import { incentiveDistributorAbi } from '@/config/abi/incentiveDistributor';
 
 const AVERAGE_BLOCK_TIME = 2;
 const WEEKS_IN_YEAR = 52;
@@ -42,9 +44,7 @@ export const useValidator = (id: string) => {
   const { writeContractAsync } = useWriteContract();
   const [bgtBalance, setBgtBalance] = useState<TokenAmount>();
 
-  const { tokens } = useTokens([bgtToken.address]);
-
-  console.log(id)
+  const { tokens, fetchTokens } = useTokens([bgtToken.address]);
 
   const { data: validator, refetch: refetchValidator } = useQuery({
     queryKey: ['validator', id],
@@ -64,6 +64,15 @@ export const useValidator = (id: string) => {
   const { data: apr } = useQuery({
     queryKey: ['validatorApr'],
     queryFn: () => Requests.getValidatorsApr()
+  });
+
+  const { data: rewards, refetch: refetchRewards } = useQuery({
+    queryKey: ['validatorRewards', validator?.pubkey, address],
+    queryFn: async () => {
+      const res = await Requests.getValidatorUserRewards(validator?.pubkey ?? '', address ?? '')
+      await fetchTokens(res.map(reward => reward.token), address as `0x${string}`)
+      return res
+    }
   });
 
   const {data: activateBoostDelay} = useReadContract({
@@ -216,6 +225,7 @@ export const useValidator = (id: string) => {
     refetchValidator();
     refetchQueueDropBoostAmount();
     refetchBoosts();
+    refetchRewards();
   };
 
   const boostApr = apr?.find(period => period.validator === validator?.pubkey)?.apr ?? '0';
@@ -246,6 +256,18 @@ export const useValidator = (id: string) => {
     }
   }, [dropBoostQueue, dropBoostDelay, currentBlock])
 
+  const rewardsMemo = useMemo(() => {
+    return rewards?.map((reward) => {
+      const token = tokens.find(token => token.token.address === reward.token);
+      return {
+        ...reward,
+        token: token?.token,
+        price: token?.price,
+        amount: TokenAmount.fromRawAmount(token?.token ?? bgtToken, reward.amount as `${number}`),
+      }
+    })
+  }, [rewards, tokens])
+
   const boostedQueueMemo = useMemo(() => {
     return {
       amount: TokenAmount.fromRawAmount(bgtToken, (boostedQueue as [number, bigint])?.[1] ?? BigInt(0)),
@@ -253,8 +275,26 @@ export const useValidator = (id: string) => {
     }
   }, [boostedQueue, activateBoostDelay, currentBlock])
 
+  const claimAllRewards = async () => {
+    if (!rewardsMemo) return;
+    const promise = async () => {
+      const tx = await writeContractAsync({
+        address: INCENCIVE_DISTRIBUTOR_CA,
+        abi: incentiveDistributorAbi,
+        functionName: 'claim',
+        args: [rewardsMemo.map(reward => ({ identifier: reward.dist_id, account: address, amount: reward.amount.amount, merkleProof: reward.merkle_proof }))]
+      });
+
+      await waitForTransactionReceipt(wagmiConfig, { hash: tx });
+      refetchAll();
+    };
+
+    return createClaimAllRewardsToast(promise());
+  }
+
   return {
     apr: boostApr,
+    rewards: rewardsMemo,
     validator,
     weeklyUsdPerBgt,
     boostedQueue: boostedQueueMemo,
@@ -270,5 +310,6 @@ export const useValidator = (id: string) => {
     cancelDropBoost,
     dropBoost,
     refetchAll,
+    claimAllRewards,
   };
 };

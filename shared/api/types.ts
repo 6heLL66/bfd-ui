@@ -192,6 +192,29 @@ interface BoostPeriod {
     updated_at: string;
 }
 
+interface RewardPagination {
+    next: number;
+    previous: number;
+    record_per_page: number;
+    current_page: number;
+    total_page: number;
+}
+
+interface RewardItem {
+    id: string;
+    dist_id: string;
+    token: string;
+    recipient: string;
+    amount: string;
+    merkle_proof: string[];
+    available_at: number;
+}
+
+interface RewardsResponse {
+    pagination: RewardPagination;
+    rewards: RewardItem[];
+}
+
 export type { 
     TreasuryHistory, 
     TokensData, 
@@ -211,5 +234,8 @@ export type {
     GqlValidatorBlockUptime,
     GqlValidatorRewardAllocationWeight,
     GqlRewardVaultIncentive,
-    BoostPeriod
+    BoostPeriod,
+    RewardPagination,
+    RewardItem,
+    RewardsResponse
 };

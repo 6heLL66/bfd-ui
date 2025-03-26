@@ -349,3 +349,61 @@ export const createDropBoostToast = (promise: Promise<void>, amount: string) => 
     },
   });
 };
+
+// Claim All Rewards Toasts
+export const ClaimAllRewardsPendingToast = () => (
+  <div className="flex items-center gap-3">
+    <UpdateIcon className="w-5 h-5 text-primary-default animate-spin" />
+    <div className="flex flex-col">
+      <span className="font-medium">Claiming rewards</span>
+      <span className="text-sm text-foreground-secondary">
+        Processing your transaction
+      </span>
+    </div>
+  </div>
+);
+
+export const ClaimAllRewardsSuccessToast = () => (
+  <div className="flex items-center gap-3">
+    <CheckCircledIcon className="w-5 h-5 text-success" />
+    <div className="flex flex-col">
+      <span className="font-medium">Rewards claimed successfully</span>
+      <span className="text-sm text-foreground-secondary">
+        All rewards have been claimed
+      </span>
+    </div>
+  </div>
+);
+
+export const ClaimAllRewardsErrorToast = () => (
+  <div className="flex items-center gap-3">
+    <CrossCircledIcon className="w-5 h-5 text-error" />
+    <div className="flex flex-col">
+      <span className="font-medium">Claim rewards failed</span>
+      <span className="text-sm text-foreground-secondary">Please try again later</span>
+    </div>
+  </div>
+);
+
+export const createClaimAllRewardsToast = (promise: Promise<void>) => {
+  return toast.promise(promise, {
+    pending: {
+      render() {
+        return <ClaimAllRewardsPendingToast />;
+      },
+      icon: false,
+    },
+    success: {
+      render() {
+        return <ClaimAllRewardsSuccessToast />;
+      },
+      icon: false,
+    },
+    error: {
+      render() {
+        return <ClaimAllRewardsErrorToast />;
+      },
+      icon: false,
+    },
+  });
+};

@@ -20,7 +20,25 @@ import { RemoveBoostModal } from './RemoveBoostModal';
 
 export const ValidatorClient = () => {
   const { isConnected } = useAccount();
-  const { validator, boostedQueue, boosted, dropBoostQueue, availableForBoost, availableForDropBoost, apr, weeklyUsdPerBgt, queueBoost, cancelBoost, activateBoost, queueDropBoost, cancelDropBoost, dropBoost, refetchAll } = useValidator(VALIDATOR_ID);
+  const {
+    validator,
+    boostedQueue,
+    rewards: validatorRewards,
+    boosted,
+    dropBoostQueue,
+    availableForBoost,
+    availableForDropBoost,
+    apr,
+    weeklyUsdPerBgt,
+    claimAllRewards,
+    queueBoost,
+    cancelBoost,
+    activateBoost,
+    queueDropBoost,
+    cancelDropBoost,
+    dropBoost,
+    refetchAll,
+  } = useValidator(VALIDATOR_ID);
   const { rewards, vault, claim } = useVaultStacking(VAULT_CA);
 
   const [readyItems, setReadyItems] = useState<string[]>([]);
@@ -29,14 +47,14 @@ export const ValidatorClient = () => {
     if (boostedQueue.timeReady < Date.now()) {
       setReadyItems([...readyItems, boostedQueue.timeReady.toString()]);
     } else if (readyItems.includes(boostedQueue.timeReady.toString())) {
-      setReadyItems(readyItems.filter((item) => item !== boostedQueue.timeReady.toString()));
+      setReadyItems(readyItems.filter(item => item !== boostedQueue.timeReady.toString()));
     }
     if (dropBoostQueue.timeReady < Date.now()) {
       setReadyItems([...readyItems, dropBoostQueue.timeReady.toString()]);
     } else if (readyItems.includes(dropBoostQueue.timeReady.toString())) {
-      setReadyItems(readyItems.filter((item) => item !== dropBoostQueue.timeReady.toString()));
+      setReadyItems(readyItems.filter(item => item !== dropBoostQueue.timeReady.toString()));
     }
-  }, [boostedQueue, dropBoostQueue])
+  }, [boostedQueue, dropBoostQueue]);
 
   const countdownRenderer = ({ hours, minutes }: { hours: number; minutes: number }) => {
     return (
@@ -48,17 +66,6 @@ export const ValidatorClient = () => {
         until confirmation is available
       </span>
     );
-  };
-
-  const mockIncentivesEarned = {
-    totalCount: 3,
-    tokens: [{ symbol: 'HONEY', amount: 1850000000000, logoURI: '/logos/honey.png' }],
-  };
-
-  const mockHoneyPerBgtRate = {
-    daily: 0.25,
-    weekly: 1.75,
-    isHighYield: true,
   };
 
   const [isBoostModalOpen, setIsBoostModalOpen] = React.useState(false);
@@ -77,11 +84,10 @@ export const ValidatorClient = () => {
 
     createClaimBGTToast(promise, rewards.toSignificant());
 
-
     refetchAll();
   };
 
-  if (!validator) return null
+  if (!validator) return null;
 
   return (
     <div className="container mx-auto px-4 py-12 max-w-7xl">
@@ -164,7 +170,7 @@ export const ValidatorClient = () => {
 
               <div className="flex flex-col gap-2">
                 <div className="flex justify-between items-baseline">
-                  <span className="text-3xl font-bold text-primary-default">{(Number(Number(apr) * 100)).toFixed(2)}%</span>
+                  <span className="text-3xl font-bold text-primary-default">{Number(Number(apr) * 100).toFixed(2)}%</span>
                 </div>
 
                 <div className="flex items-center mt-2 bg-surface/50 rounded-lg p-2 border border-border/30">
@@ -173,8 +179,8 @@ export const ValidatorClient = () => {
                   </div>
                   <div className="flex flex-col flex-1">
                     <div className="flex items-center justify-between">
-                      <div className="text-foreground-primary text-sm font-medium">~{formatCurrency(weeklyUsdPerBgt, '$0.00a')}/weekly HONEY per BGT</div>
-                      {mockHoneyPerBgtRate.isHighYield && <span className="px-1.5 py-0.5 bg-amber-500/20 text-amber-500 text-xs rounded-md font-medium">High Yield</span>}
+                      <div className="text-foreground-primary text-sm font-medium">~{formatCurrency(weeklyUsdPerBgt, '$0.0000a')}/weekly HONEY per BGT</div>
+                      <span className="px-1.5 py-0.5 bg-amber-500/20 text-amber-500 text-xs rounded-md font-medium">High Yield</span>
                     </div>
                     <div className="text-foreground-secondary text-xs">Weekly reward rate</div>
                   </div>
@@ -230,7 +236,7 @@ export const ValidatorClient = () => {
                 </div>
                 <button
                   onClick={handleClaim}
-                  className="px-4 py-1.5 bg-gradient-to-r from-primary-default to-primary-hover text-black font-medium rounded-lg text-xs transition-all duration-200 shadow-sm hover:shadow"
+                  className="px-4 py-1.5 bg-gradient-to-r from-primary-default to-primary-hover hover:primary-hover hover:to-primary-default text-black font-medium rounded-lg text-xs transition-all duration-200 shadow-sm hover:shadow"
                 >
                   Claim
                 </button>
@@ -258,26 +264,25 @@ export const ValidatorClient = () => {
           <div className="bg-surface backdrop-blur-xl rounded-2xl border-2 border-border/40 shadow-2xl shadow-primary-default/10 p-5 hover:border-primary-default/40 transition-all duration-300 flex-1">
             <h4 className="text-sm font-medium mb-3 text-foreground-primary">Incentives Earned</h4>
 
-            {mockIncentivesEarned.tokens.length > 0 ? (
+            {Number(validatorRewards?.length) > 0 ? (
               <div className="space-y-3">
-                {mockIncentivesEarned.tokens.map((token, index) => (
+                {validatorRewards?.map((reward, index) => (
                   <div
                     key={index}
-                    className="flex items-center justify-between py-4 px-3 bg-surface/50 rounded-lg border border-border/30 hover:border-primary-default/30 transition-colors"
+                    className="flex items-center justify-between py-2 px-3 bg-surface/50 rounded-lg border border-border/30 hover:border-primary-default/30 transition-colors"
                   >
-                    <div className="flex items-center">
-                      <div className="w-6 h-6 rounded-full overflow-hidden mr-2 bg-surface/80">
-                        <Image src={token.logoURI} alt={token.symbol} width={24} height={24} />
+                    {reward.token && reward.price && <div className="flex w-full items-center justify-between">
+                      <div className="flex items-center">
+                        <Image className="w-6 h-6 rounded-full overflow-hidden mr-2 bg-surface/80" src={getTokenImageUrl(reward.token)} alt={reward.token?.symbol ?? ''} width={24} height={24} />
+                        <span className="text-foreground-primary text-sm font-medium">{reward.token.symbol}</span>
                       </div>
                       <div>
-                        <div className="text-foreground-primary text-sm font-medium">
-                          {formatCurrency(Number(token.amount), '0.00a')} {token.symbol}
+                        <div className="text-foreground-primary text-sm font-medium flex gap-2 items-center">
+                          <span className="text-foreground-secondary text-xs">~${reward.amount.mulDownFixed(reward.price.amount ?? 0).toSignificant(4)}</span>
+                          {reward.amount.toSignificant()}
                         </div>
                       </div>
-                    </div>
-                    <button className="px-5 py-2 bg-gradient-to-r from-primary-default to-primary-hover text-black font-medium rounded-lg text-sm transition-all duration-200 shadow-sm hover:shadow">
-                      Claim
-                    </button>
+                    </div>}
                   </div>
                 ))}
               </div>
@@ -286,12 +291,13 @@ export const ValidatorClient = () => {
                 <p className="text-sm text-foreground-secondary">Your claimable incentive rewards will show here.</p>
               </div>
             )}
+            {Number(validatorRewards?.length) > 0 && <Button className="w-full bg-primary-default border-none mt-5 rounded-md font-bold hover:bg-primary-hover text-md text-[#000]" onClick={claimAllRewards}>Claim all</Button>}
           </div>
+
+          
         </div>
 
-        {/* Right Column - Boost Actions */}
         <div className="col-span-12 lg:col-span-4 flex flex-col space-y-6 h-full">
-          {/* Main Boost Card */}
           <div className="flex-1">
             <AnimatedBorder>
               <div className="bg-surface min-h-[400px] backdrop-blur-xl rounded-2xl h-full border-2 border-border/40 shadow-2xl shadow-primary-default/10 p-5 hover:border-primary-default/40 transition-all duration-300">
@@ -309,7 +315,6 @@ export const ValidatorClient = () => {
                 </div>
 
                 <div className="p-2 h-full">
-                  {/* Active Boosts Section - теперь сверху */}
                   <div className="mb-3 h-full">
                     <h4 className="text-sm font-medium mb-2 text-foreground-primary flex items-center">
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2">
@@ -321,9 +326,7 @@ export const ValidatorClient = () => {
                       {boosted.amount > BigInt(0) ? (
                         <div className="w-full px-3">
                           <div className="flex items-center justify-between mb-3">
-                            <div className="px-2 py-0.5 bg-primary-default/20 text-primary-default rounded-md text-xs font-medium">
-                              Active
-                            </div>
+                            <div className="px-2 py-0.5 bg-primary-default/20 text-primary-default rounded-md text-xs font-medium">Active</div>
                           </div>
                           <div className="flex items-center justify-between mb-2">
                             <div className="flex items-center">
@@ -335,9 +338,7 @@ export const ValidatorClient = () => {
                                   <Image src={getTokenImageUrl(bgtToken)} className="rounded-full" alt="BGT" width={16} height={16} />
                                   {boosted.toSignificant()} BGT
                                 </div>
-                                <div className="text-foreground-secondary text-xs mt-0.5">
-                                  Boosting {validator?.metadata.name}
-                                </div>
+                                <div className="text-foreground-secondary text-xs mt-0.5">Boosting {validator?.metadata.name}</div>
                               </div>
                             </div>
                           </div>
@@ -386,82 +387,89 @@ export const ValidatorClient = () => {
                     </div>
                   </div>
 
-                  {/* Разделитель между секциями */}
-                  {boostedQueue.amount.amount > 0 && <><div className="mb-3 mt-8 border-t border-border/30"></div>
+                  {boostedQueue.amount.amount > 0 && (
+                    <>
+                      <div className="mb-3 mt-8 border-t border-border/30"></div>
 
-                  <div className="mb-4">
-                    <h4 className="text-sm font-medium mb-2 text-foreground-primary flex items-center">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2">
-                        <path
-                          d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"
-                          stroke="var(--primary-default)"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                      Queued Boost
-                    </h4>
+                      <div className="mb-4">
+                        <h4 className="text-sm font-medium mb-2 text-foreground-primary flex items-center">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2">
+                            <path
+                              d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"
+                              stroke="var(--primary-default)"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                          Queued Boost
+                        </h4>
 
-                    <div className="rounded-xl bg-primary-default/10 p-3 border border-primary-default/30">
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="px-2 py-0.5 bg-primary-default/20 text-primary-default rounded-md text-xs font-medium">
-                          {!readyItems.includes(boostedQueue.timeReady.toString()) ? 'Pending' : 'Ready'}
-                        </div>
-                      </div>
-
-                      {boostedQueue.amount.amount > 0 ? (
-                        <>
+                        <div className="rounded-xl bg-primary-default/10 p-3 border border-primary-default/30">
                           <div className="flex items-center justify-between mb-2">
-                            <div className="flex items-center">
-                              <div className="w-7 h-7 rounded-full bg-primary-default/20 flex items-center justify-center mr-2 border-1 border-primary-default">
-                                <LightningBoltIcon className="w-4 h-4 text-primary-default" />
-                              </div>
-                              <div>
-                                <div className="flex gap-1 items-center text-foreground-primary text-sm font-bold">
-                                  <Image src={getTokenImageUrl(bgtToken)} className="rounded-full" alt="BGT" width={16} height={16} />
-                                  {boostedQueue.amount.toSignificant()} BGT
-                                </div>
-                                <div className="text-foreground-secondary text-xs mt-0.5">
-                                  {!readyItems.includes(boostedQueue.timeReady.toString()) ? (
-                                    <Countdown date={boostedQueue.timeReady} renderer={countdownRenderer} onComplete={() => setReadyItems([...readyItems, boostedQueue.timeReady.toString()])} />
-                                  ) : (
-                                    'Awaiting confirmation'
-                                  )}
-                                </div>
-                              </div>
+                            <div className="px-2 py-0.5 bg-primary-default/20 text-primary-default rounded-md text-xs font-medium">
+                              {!readyItems.includes(boostedQueue.timeReady.toString()) ? 'Pending' : 'Ready'}
                             </div>
                           </div>
-                          <div className="flex gap-2 mt-3"> 
-                            <Button
-                              disabled={!readyItems.includes(boostedQueue.timeReady.toString())}
-                              onClick={() => confirmBoost()}
-                              className="flex-1 border-none px-3 py-1.5 bg-gradient-to-r from-primary-default to-primary-hover text-black font-medium rounded-lg text-xs transition-all duration-200 shadow-sm hover:shadow flex items-center justify-center"
-                            >
-                              Confirm
-                            </Button>
-                            <Button
-                              onClick={() => cancelQueuedBoost()}
-                              className="flex-1 px-3 py-1.5 bg-surface border border-border/40 text-foreground-primary font-medium rounded-lg text-xs transition-all duration-200 hover:border-primary-default/40 flex items-center justify-center"
-                            >
-                              Cancel
-                            </Button>
-                          </div>
-                        </>
-                      ) : (
-                        <div className="text-center py-3">
-                          <p className="text-sm text-foreground-secondary">No pending boosts in queue</p>
-                          <button
-                            onClick={() => setIsBoostModalOpen(true)}
-                            className="mt-2 px-3 py-1 bg-gradient-to-r from-primary-default to-primary-hover text-black font-medium rounded-lg text-xs transition-all duration-200 shadow-sm hover:shadow flex items-center justify-center mx-auto"
-                          >
-                            <span className="mr-1">+</span> Add Boost
-                          </button>
+
+                          {boostedQueue.amount.amount > 0 ? (
+                            <>
+                              <div className="flex items-center justify-between mb-2">
+                                <div className="flex items-center">
+                                  <div className="w-7 h-7 rounded-full bg-primary-default/20 flex items-center justify-center mr-2 border-1 border-primary-default">
+                                    <LightningBoltIcon className="w-4 h-4 text-primary-default" />
+                                  </div>
+                                  <div>
+                                    <div className="flex gap-1 items-center text-foreground-primary text-sm font-bold">
+                                      <Image src={getTokenImageUrl(bgtToken)} className="rounded-full" alt="BGT" width={16} height={16} />
+                                      {boostedQueue.amount.toSignificant()} BGT
+                                    </div>
+                                    <div className="text-foreground-secondary text-xs mt-0.5">
+                                      {!readyItems.includes(boostedQueue.timeReady.toString()) ? (
+                                        <Countdown
+                                          date={boostedQueue.timeReady}
+                                          renderer={countdownRenderer}
+                                          onComplete={() => setReadyItems([...readyItems, boostedQueue.timeReady.toString()])}
+                                        />
+                                      ) : (
+                                        'Awaiting confirmation'
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="flex gap-2 mt-3">
+                                <Button
+                                  disabled={!readyItems.includes(boostedQueue.timeReady.toString())}
+                                  onClick={() => confirmBoost()}
+                                  className="flex-1 border-none px-3 py-1.5 bg-gradient-to-r from-primary-default to-primary-hover text-black font-medium rounded-lg text-xs transition-all duration-200 shadow-sm hover:shadow flex items-center justify-center"
+                                >
+                                  Confirm
+                                </Button>
+                                <Button
+                                  onClick={() => cancelQueuedBoost()}
+                                  className="flex-1 px-3 py-1.5 bg-surface border border-border/40 text-foreground-primary font-medium rounded-lg text-xs transition-all duration-200 hover:border-primary-default/40 flex items-center justify-center"
+                                >
+                                  Cancel
+                                </Button>
+                              </div>
+                            </>
+                          ) : (
+                            <div className="text-center py-3">
+                              <p className="text-sm text-foreground-secondary">No pending boosts in queue</p>
+                              <button
+                                onClick={() => setIsBoostModalOpen(true)}
+                                className="mt-2 px-3 py-1 bg-gradient-to-r from-primary-default to-primary-hover text-black font-medium rounded-lg text-xs transition-all duration-200 shadow-sm hover:shadow flex items-center justify-center mx-auto"
+                              >
+                                <span className="mr-1">+</span> Add Boost
+                              </button>
+                            </div>
+                          )}
                         </div>
-                      )}
-                    </div>
-                  </div></>}
-                  
+                      </div>
+                    </>
+                  )}
+
                   {dropBoostQueue.amount.amount > 0 && (
                     <>
                       <div className="mb-3 mt-8 border-t border-border/30"></div>
@@ -493,12 +501,15 @@ export const ValidatorClient = () => {
                               </div>
                               <div>
                                 <div className="flex gap-1 items-center text-foreground-primary text-sm font-bold text-red-500">
-                                  <Image src={getTokenImageUrl(bgtToken)} className="rounded-full" alt="BGT" width={16} height={16} />
-                                  - {dropBoostQueue.amount.toSignificant()} BGT
+                                  <Image src={getTokenImageUrl(bgtToken)} className="rounded-full" alt="BGT" width={16} height={16} />- {dropBoostQueue.amount.toSignificant()} BGT
                                 </div>
                                 <div className="text-foreground-secondary text-xs mt-0.5">
                                   {!readyItems.includes(dropBoostQueue.timeReady.toString()) ? (
-                                    <Countdown date={dropBoostQueue.timeReady} renderer={countdownRenderer} onComplete={() => setReadyItems([...readyItems, dropBoostQueue.timeReady.toString()])} />
+                                    <Countdown
+                                      date={dropBoostQueue.timeReady}
+                                      renderer={countdownRenderer}
+                                      onComplete={() => setReadyItems([...readyItems, dropBoostQueue.timeReady.toString()])}
+                                    />
                                   ) : (
                                     'Awaiting confirmation for drop'
                                   )}
@@ -538,7 +549,7 @@ export const ValidatorClient = () => {
           </div>
 
           {/* What are validator boosts - Separate Card */}
-          <div className="bg-surface backdrop-blur-xl rounded-2xl border-2 border-border/40 shadow-2xl shadow-primary-default/10 p-4 hover:border-primary-default/40 transition-all duration-300 flex flex-col flex-none">
+          <div className="bg-surface backdrop-blur-xl rounded-2xl border-2 border-border/40 shadow-2xl shadow-primary-default/10 p-4 hover:border-primary-default/40 transition-all duration-300 flex flex-1 flex-col">
             <h4 className="text-sm font-medium mb-2 text-foreground-primary">What are validator boosts?</h4>
             <p className="text-xs text-foreground-secondary">
               Boosting validators allows you to support network security while earning additional rewards from transaction fees and emissions.
@@ -561,7 +572,12 @@ export const ValidatorClient = () => {
               </ul>
             </div>
             <div className="mt-auto pt-3 border-t border-border/20">
-              <Link href="https://docs.berachain.com/learn/guides/boost-a-validator" target="_blank" rel="noopener noreferrer" className="flex items-center text-xs text-primary-default hover:underline">
+              <Link
+                href="https://docs.berachain.com/learn/guides/boost-a-validator"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center text-xs text-primary-default hover:underline"
+              >
                 <span>Learn more about boosting</span>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="ml-1">
                   <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -572,19 +588,11 @@ export const ValidatorClient = () => {
         </div>
       </div>
 
-      {isBoostModalOpen && <BoostModal
-        isOpen={isBoostModalOpen}
-        onClose={() => setIsBoostModalOpen(false)}
-        availableBGT={availableForBoost}
-        onQueueBoost={queueBoost}
-      />}
+      {isBoostModalOpen && <BoostModal isOpen={isBoostModalOpen} onClose={() => setIsBoostModalOpen(false)} availableBGT={availableForBoost} onQueueBoost={queueBoost} />}
 
-      {isRemoveBoostModalOpen && <RemoveBoostModal
-        isOpen={isRemoveBoostModalOpen}
-        onClose={() => setIsRemoveBoostModalOpen(false)}
-        availableBGT={availableForDropBoost}
-        onQueueDropBoost={queueDropBoost}
-      />}
+      {isRemoveBoostModalOpen && (
+        <RemoveBoostModal isOpen={isRemoveBoostModalOpen} onClose={() => setIsRemoveBoostModalOpen(false)} availableBGT={availableForDropBoost} onQueueDropBoost={queueDropBoost} />
+      )}
     </div>
   );
 };
@@ -620,13 +628,7 @@ const AnimatedBorder = ({ children }: { children: React.ReactNode }) => {
           position: absolute;
           z-index: 1;
           inset: -200%;
-          background: 
-            linear-gradient(
-              to right,
-              transparent 40%,
-              var(--primary-default) 50%,
-              transparent 60%
-            );
+          background: linear-gradient(to right, transparent 40%, var(--primary-default) 50%, transparent 60%);
           width: 500%;
           height: 500%;
           animation: rotate 6s linear infinite;
@@ -639,13 +641,7 @@ const AnimatedBorder = ({ children }: { children: React.ReactNode }) => {
           position: absolute;
           z-index: 2;
           inset: -200%;
-          background: 
-            linear-gradient(
-              to bottom,
-              transparent 40%,
-              var(--primary-default) 50%,
-              transparent 60%
-            );
+          background: linear-gradient(to bottom, transparent 40%, var(--primary-default) 50%, transparent 60%);
           width: 500%;
           height: 500%;
           animation: rotate 6s linear infinite;

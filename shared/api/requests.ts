@@ -1,4 +1,4 @@
-import { BoostPeriod, TokensData, TreasuryHistory } from "./types";
+import { BoostPeriod, RewardsResponse, TokensData, TreasuryHistory } from "./types";
 
 const url = `${process.env.NEXT_PUBLIC_API_URL}`
 
@@ -32,6 +32,12 @@ class Requests {
         const response = await fetch(`${url}/apr`, { headers: { 'Content-Type': 'application/json' } });
 
         return response.json();
+    }
+
+    static async getValidatorUserRewards(validatorId: string, address: string): Promise<RewardsResponse['rewards']> {
+        const response = await fetch(`${url}/rewards/${validatorId}/${address}`);
+
+        return (await response.json()).rewards;
     }
 }
 
