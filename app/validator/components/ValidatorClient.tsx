@@ -251,7 +251,7 @@ export const ValidatorClient = () => {
                     <path d="M9 11l3 3l8-8" stroke="var(--primary-default)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                     <path d="M20 12v6a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h9" stroke="var(--primary-default)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
-                  <span>Earn bgt</span>
+                  <span>Earn BGT</span>
                 </div>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
