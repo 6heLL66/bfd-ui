@@ -40,7 +40,7 @@ const TreasuryPage = ({ history, tokens }: { history: TreasuryHistory[], tokens:
     value: item.total_usd_value
   }));
 
-  const { total_usd_value, token_price, total_supply } = history[history.length - 1];
+  const { total_usd_value } = history[history.length - 1];
 
   const bfdPriceData = history.map(item => ({
     date: item.created_at,
@@ -89,60 +89,128 @@ const TreasuryPage = ({ history, tokens }: { history: TreasuryHistory[], tokens:
 
         {/* Info Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          <InfoCard title="Total Treasury Value" value={numeral(total_usd_value).format('$0,0.00')} gradient="from-blue-500/20 to-blue-600/20" />
-          <InfoCard title="Total Circulating $BFD" value={numeral(total_supply).format('0,0')} gradient="from-primary-default/20 to-secondary/20" />
-          <InfoCard title="$BFD Dex Price" value={numeral(token_price).format('$0,0.000')} gradient="from-purple-500/20 to-purple-600/20" />
-          <InfoCard title="$BFD Backing Price" value={numeral(bfdBackingData[bfdBackingData.length - 1].backing).format('$0,0.000')} gradient="from-purple-500/20 to-purple-600/20" />
+          <InfoCard 
+            title="Total Treasury Value" 
+            value="$0.00" 
+            gradient="from-blue-500/20 to-blue-600/20" 
+          />
+          <InfoCard 
+            title="Total Circulating $BFD" 
+            value="0" 
+            gradient="from-primary-default/20 to-secondary/20" 
+          />
+          <InfoCard 
+            title="$BFD Dex Price" 
+            value="Coming Soon" 
+            gradient="from-purple-500/20 to-purple-600/20" 
+          />
+          <InfoCard 
+            title="$BFD Backing Price" 
+            value="Coming Soon" 
+            gradient="from-purple-500/20 to-purple-600/20" 
+          />
         </div>
       </div>
 
       {/* Charts Section */}
       <div className="mb-8 sm:mb-12 px-2 sm:-mx-4 md:-mx-2">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-6 mb-3 sm:mb-6 px-2 sm:px-4">
-          <MetricChart
-            data={treasuryData}
-            title="Treasury Value History"
-            dataKey="value"
-            valueFormatter={value => numeral(value / 1000000).format('$0,0.00') + 'M'}
-            tooltipLabel="Treasury Value"
-            gradientId="treasuryGradient"
-          />
+          <div className="relative group">
+            <div className="absolute inset-0 backdrop-blur-sm z-10 bg-surface/40 flex items-center justify-center transition-all duration-300">
+              <div className="flex flex-col items-center gap-2">
+                <motion.span 
+                  className="text-sm uppercase tracking-wider text-foreground-secondary font-medium"
+                  animate={{ opacity: [0.5, 1, 0.5] }}
+                  transition={{ duration: 3, repeat: Infinity }}
+                >
+                  Coming Soon
+                </motion.span>
+              </div>
+            </div>
+            <MetricChart
+              data={treasuryData}
+              title="Treasury Value History"
+              dataKey="value"
+              valueFormatter={value => numeral(value / 1000000).format('$0,0.00') + 'M'}
+              tooltipLabel="Treasury Value"
+              gradientId="treasuryGradient"
+            />
+          </div>
 
-          <MetricChart
-            data={bfdPriceData}
-            title="$BFD Price History"
-            dataKey="price"
-            valueFormatter={value => numeral(value).format('$0,0.000')}
-            tooltipLabel="$BFD Price"
-            gradientId="priceGradient"
-          />
+          <div className="relative group">
+            <div className="absolute inset-0 backdrop-blur-sm z-10 bg-surface/40 flex items-center justify-center transition-all duration-300">
+              <div className="flex flex-col items-center gap-2">
+                <motion.span 
+                  className="text-sm uppercase tracking-wider text-foreground-secondary font-medium"
+                  animate={{ opacity: [0.5, 1, 0.5] }}
+                  transition={{ duration: 3, repeat: Infinity, delay: 0.5 }}
+                >
+                  Coming Soon
+                </motion.span>
+              </div>
+            </div>
+            <MetricChart
+              data={bfdPriceData}
+              title="$BFD Price History"
+              dataKey="price"
+              valueFormatter={value => numeral(value).format('$0,0.000')}
+              tooltipLabel="$BFD Price"
+              gradientId="priceGradient"
+            />
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-6 px-2 sm:px-4">
-          <MetricChart
-            data={bfdBackingData}
-            title="$BFD Backing History"
-            dataKey="backing"
-            valueFormatter={value => numeral(value).format('$0,0.000')}
-            tooltipLabel="$BFD Backing"
-            gradientId="backingGradient"
-          />
+          <div className="relative group">
+            <div className="absolute inset-0 backdrop-blur-sm z-10 bg-surface/40 flex items-center justify-center transition-all duration-300">
+              <div className="flex flex-col items-center gap-2">
+                <motion.span 
+                  className="text-sm uppercase tracking-wider text-foreground-secondary font-medium"
+                  animate={{ opacity: [0.5, 1, 0.5] }}
+                  transition={{ duration: 3, repeat: Infinity, delay: 1 }}
+                >
+                  Coming Soon
+                </motion.span>
+              </div>
+            </div>
+            <MetricChart
+              data={bfdBackingData}
+              title="$BFD Backing History"
+              dataKey="backing"
+              valueFormatter={value => numeral(value).format('$0,0.000')}
+              tooltipLabel="$BFD Backing"
+              gradientId="backingGradient"
+            />
+          </div>
           
-          <TokenDistributionChart 
-            data={tokenDistributionData} 
-            lastUpdated={new Date(history[history.length - 1].created_at).toLocaleString()}
-          />
+          <div className="relative group">
+            <div className="absolute inset-0 backdrop-blur-sm z-10 bg-surface/40 flex items-center justify-center transition-all duration-300">
+              <div className="flex flex-col items-center gap-2">
+                <motion.span 
+                  className="text-sm uppercase tracking-wider text-foreground-secondary font-medium"
+                  animate={{ opacity: [0.5, 1, 0.5] }}
+                  transition={{ duration: 3, repeat: Infinity, delay: 1.5 }}
+                >
+                  Coming Soon
+                </motion.span>
+              </div>
+            </div>
+            <TokenDistributionChart 
+              data={tokenDistributionData} 
+              lastUpdated={new Date(history[history.length - 1].created_at).toLocaleString()}
+            />
+          </div>
         </div>
       </div>
 
+      {/* Reports Section */}
       <div className="px-4">
-        {/* Monthly Reports */}
         <Card className="p-6 hover:shadow-lg transition-shadow duration-300">
-          <Title className="text-xl font-semibold mb-4">Monthly Treasury Reports</Title>
+          <Title className="text-xl font-semibold mb-4">Treasury Reports</Title>
           <div className="flex flex-col items-center justify-center py-8 text-center">
             <FileIcon className="w-12 h-12 text-foreground-secondary mb-4" />
-            <p className="text-lg font-medium text-foreground-secondary">Monthly Reports Coming Soon</p>
-            <p className="text-sm text-foreground-secondary mt-2">Stay tuned for detailed monthly treasury reports</p>
+            <p className="text-lg font-medium text-foreground-secondary">Reports Coming Soon</p>
+            <p className="text-sm text-foreground-secondary mt-2">Stay tuned for detailed treasury reports</p>
           </div>
         </Card>
       </div>
