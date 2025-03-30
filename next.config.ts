@@ -7,6 +7,30 @@ const nextConfig: NextConfig = {
     config.externals.push('pino-pretty', 'lokijs', 'encoding')
     return config
   },
+  redirects: async () => {
+    return [
+      {
+        source: '/pool',
+        destination: '/',
+        permanent: true,
+      },
+      {
+        source: '/validator',
+        destination: '/',
+        permanent: true,
+      },
+      {
+        source: '/swap',
+        destination: '/',
+        permanent: true,
+      },
+      {
+        source: '/stacking',
+        destination: '/',
+        permanent: true,
+      },
+    ]
+  },
   images: {
     remotePatterns: [
       {

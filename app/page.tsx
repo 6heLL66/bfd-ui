@@ -130,7 +130,7 @@ export default function Home() {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 mt-4 justify-center lg:justify-start w-full">
-              <Link href={'/swap'} className="w-full sm:w-auto">
+              <Link href={'/sale'} className="w-full sm:w-auto">
                 <Button className="bg-gradient-to-r from-primary-default to-primary-hover hover:opacity-90 transition-opacity w-full sm:min-w-[200px]" size="lg">
                   <span className="text-white font-bold text-base md:text-lg">Explore</span>
                 </Button>
