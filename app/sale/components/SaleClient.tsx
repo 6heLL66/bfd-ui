@@ -5,9 +5,7 @@ import { WalletGuard } from '@/shared/components/WalletGuard';
 import { getTokenImageUrl } from '@/shared/utils';
 import { Alert } from '@heroui/alert';
 import { Button } from '@heroui/button';
-import { Card, CardBody, CardHeader, CardFooter } from '@heroui/card';
 import { Divider } from '@heroui/divider';
-import { Link } from '@heroui/link';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { useSaleContract } from '@/features/sale/useSaleContract';
@@ -226,7 +224,7 @@ export function SaleClient() {
         </motion.div>
       </WalletGuard>
 
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="flex flex-col gap-6 mt-4">
+      {/* <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="flex flex-col gap-6 mt-4">
         <div className="flex flex-col gap-4">
           <span className="text-body font-bold text-foreground-primary">Previous sales</span>
           <Card className="max-w-[300px] bg-surface backdrop-blur-xl border-2 border-border/40 font-display mt-2 p-1 hover:border-primary-default/40 transition-all duration-300 shadow-xl">
@@ -259,7 +257,7 @@ export function SaleClient() {
             </CardFooter>
           </Card>
         </div>
-      </motion.div>
+      </motion.div> */}
     </motion.div>
   );
 } 

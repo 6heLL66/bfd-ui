@@ -2,21 +2,39 @@ import Link from 'next/link';
 import { Logo } from '../header/ui';
 import { DISCORD_LINK, DOCS_LINK, TWITTER_LINK } from '@/config/links';
 
-const SocialButton = ({ icon, title, className, color, href }: { icon: React.ReactNode; title: string; color?: string; className?: string; href: string }) => {
+const SocialButton = ({ icon, title, className, href, gradientColors }: { 
+  icon: React.ReactNode; 
+  title: string; 
+  className?: string; 
+  href: string;
+  gradientColors: {
+    from: string;
+    via: string;
+    to: string;
+  };
+}) => {
   return (
     <Link
       href={href}
       target="_blank"
-      className={`group flex items-center text-body font-bold gap-2 md:gap-3 rounded-lg p-1.5 md:p-2 transition-all hover:bg-white/5 ${className}`}
-      style={{ color }}
+      className={`group relative flex items-center text-text/60 font-medium gap-2 md:gap-3 rounded-xl p-2 md:p-2.5 
+        transition-all duration-300 border border-white/10 backdrop-blur-sm
+        before:absolute before:inset-0 before:rounded-xl before:transition-opacity before:opacity-0 
+        before:bg-gradient-to-r ${className}`}
+      style={{
+        '--tw-gradient-from': gradientColors.from,
+        '--tw-gradient-via': gradientColors.via,
+        '--tw-gradient-to': gradientColors.to,
+      } as React.CSSProperties}
       rel="noopener noreferrer"
     >
-      <div className="rounded-md border-2 p-1.5 md:p-2 transition-transform group-hover:scale-110" style={{ borderColor: color, color }}>
+      <div className="relative z-10 transition-all duration-200 group-hover:scale-110 group-hover:[transition:all_0.2s_ease-out]">
         {icon}
       </div>
-      <span className="hidden md:inline font-medium transition-colors group-hover:text-white" style={{ color }}>
+      <span className="relative z-10 hidden md:inline transition-all duration-200 group-hover:translate-x-0.5 group-hover:[transition:all_0.2s_ease-out]">
         {title}
       </span>
+      <div className="absolute inset-0 rounded-xl bg-black/20 transition-opacity opacity-0 group-hover:opacity-100" />
     </Link>
   );
 };
@@ -28,7 +46,7 @@ export const Footer = () => {
         {/* Main Footer Content */}
         <div className="flex flex-col gap-8 py-8 md:py-12">
           {/* Logo and Description */}
-          <div className="flex flex-col md:flex-row gap-6 md:gap-24 justify-center items-center">
+          <div className="flex flex-col md:flex-row gap-6 md:gap-24 justify-between px-4 items-center">
             <div className="flex md:flex-row gap-4 md:gap-6 items-center">
               <Logo />
               <span className="text-text/60 max-w-[300px] text-left md:text-left text-sm md:text-base">
@@ -37,33 +55,49 @@ export const Footer = () => {
             </div>
 
             {/* Social Links */}
-            <div className="flex gap-4 md:gap-8 justify-center items-center">
+            <div className="flex gap-4 md:gap-6 justify-center items-center">
               <SocialButton 
                 icon={<XIcon />} 
-                href={TWITTER_LINK} 
-                color="#1DA1F2" 
-                className="x hover:scale-105 transition-transform" 
-                title="Twitter" 
+                href={TWITTER_LINK}
+                className="hover:border-[#1DA1F2]/30 hover:text-[#1DA1F2] hover:before:opacity-100
+                  hover:shadow-[0_0_20px_rgba(29,161,242,0.2)]" 
+                title="Twitter"
+                gradientColors={{
+                  from: 'rgba(29,161,242,0.2)',
+                  via: 'rgba(29,161,242,0.1)',
+                  to: 'rgba(29,161,242,0.05)'
+                }}
               />
               <SocialButton 
                 icon={<DiscordIcon />} 
                 href={DISCORD_LINK} 
                 title="Discord" 
-                className="discord hover:scale-105 transition-transform" 
-                color="#8c9eff" 
+                className="hover:border-[#5865F2]/30 hover:text-[#5865F2] hover:before:opacity-100
+                  hover:shadow-[0_0_20px_rgba(88,101,242,0.2)]"
+                gradientColors={{
+                  from: 'rgba(88,101,242,0.2)',
+                  via: 'rgba(88,101,242,0.1)',
+                  to: 'rgba(88,101,242,0.05)'
+                }}
               />
               <SocialButton 
                 icon={<GitbookIcon />} 
                 href={DOCS_LINK} 
-                className="gitbook hover:scale-105 transition-transform" 
-                title="Gitbook" 
+                className="hover:border-[#FF6B6B]/30 hover:text-[#FF6B6B] hover:before:opacity-100
+                  hover:shadow-[0_0_20px_rgba(255,107,107,0.2)]"
+                title="Docs"
+                gradientColors={{
+                  from: 'rgba(255,107,107,0.2)',
+                  via: 'rgba(255,107,107,0.1)',
+                  to: 'rgba(255,107,107,0.05)'
+                }}
               />
             </div>
           </div>
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-white/10">
+        <div className="border-t border-white/10 px-4">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 py-6 md:py-8 text-sm text-text/60">
             <span className="order-2 md:order-1">Copyright © BeraFlow DAO 2025</span>
             <div className="flex gap-4 md:gap-8 order-1 md:order-2">
@@ -118,7 +152,7 @@ const DiscordIcon = () => {
 
 const GitbookIcon = () => {
   return (
-    <svg fill="#ffffff" className="w-5 h-5 md:w-8 md:h-8" viewBox="0 0 24 24" role="img" xmlns="http://www.w3.org/2000/svg">
+    <svg fill="currentColor" className="w-5 h-5 md:w-8 md:h-8" viewBox="0 0 24 24" role="img" xmlns="http://www.w3.org/2000/svg">
       <path d="M10.802 17.77a.703.703 0 1 1-.002 1.406.703.703 0 0 1 .002-1.406m11.024-4.347a.703.703 0 1 1 .001-1.406.703.703 0 0 1-.001 1.406m0-2.876a2.176 2.176 0 0 0-2.174 2.174c0 .233.039.465.115.691l-7.181 3.823a2.165 2.165 0 0 0-1.784-.937c-.829 0-1.584.475-1.95 1.216l-6.451-3.402c-.682-.358-1.192-1.48-1.138-2.502.028-.533.212-.947.493-1.107.178-.1.392-.092.62.027l.042.023c1.71.9 7.304 3.847 7.54 3.956.363.169.565.237 1.185-.057l11.564-6.014c.17-.064.368-.227.368-.474 0-.342-.354-.477-.355-.477-.658-.315-1.669-.788-2.655-1.25-2.108-.987-4.497-2.105-5.546-2.655-.906-.474-1.635-.074-1.765.006l-.252.125C7.78 6.048 1.46 9.178 1.1 9.397.457 9.789.058 10.57.006 11.539c-.08 1.537.703 3.14 1.824 3.727l6.822 3.518a2.175 2.175 0 0 0 2.15 1.862 2.177 2.177 0 0 0 2.173-2.14l7.514-4.073c.38.298.853.461 1.337.461A2.176 2.176 0 0 0 24 12.72a2.176 2.176 0 0 0-2.174-2.174" />
     </svg>
   );

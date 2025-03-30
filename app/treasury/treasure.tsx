@@ -28,11 +28,12 @@ const TOKEN_COLORS = [
 ];
 
 const TreasuryPage = ({ history, tokens }: { history: TreasuryHistory[], tokens: TokensData }) => {
-  const reports = [
-    { month: 'March 2024', url: '#' },
-    { month: 'February 2024', url: '#' },
-    { month: 'January 2024', url: '#' },
-  ];
+  // Comment out the reports array since it's not ready yet
+  // const reports = [
+  //   { month: 'March 2024', url: '#' },
+  //   { month: 'February 2024', url: '#' },
+  //   { month: 'January 2024', url: '#' },
+  // ];
 
   const treasuryData = history.map(item => ({
     date: item.created_at,
@@ -134,22 +135,14 @@ const TreasuryPage = ({ history, tokens }: { history: TreasuryHistory[], tokens:
         </div>
       </div>
 
-      <div className="container mx-auto px-4 max-w-7xl">
+      <div className="px-4">
         {/* Monthly Reports */}
         <Card className="p-6 hover:shadow-lg transition-shadow duration-300">
           <Title className="text-xl font-semibold mb-4">Monthly Treasury Reports</Title>
-          <div className="mt-4 divide-y divide-border/40">
-            {reports.map(report => (
-              <a key={report.month} href={report.url} className="flex items-center justify-between py-4 hover:bg-surface/40 px-4 rounded-lg transition-all duration-300 group">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-primary-default/10 group-hover:bg-primary-default/20 transition-colors">
-                    <FileIcon className="w-5 h-5 text-primary-default" />
-                  </div>
-                  <span className="font-medium group-hover:text-primary-default transition-colors">{report.month} Report</span>
-                </div>
-                <span className="text-sm text-foreground-secondary group-hover:text-primary-default transition-colors">View PDF →</span>
-              </a>
-            ))}
+          <div className="flex flex-col items-center justify-center py-8 text-center">
+            <FileIcon className="w-12 h-12 text-foreground-secondary mb-4" />
+            <p className="text-lg font-medium text-foreground-secondary">Monthly Reports Coming Soon</p>
+            <p className="text-sm text-foreground-secondary mt-2">Stay tuned for detailed monthly treasury reports</p>
           </div>
         </Card>
       </div>
