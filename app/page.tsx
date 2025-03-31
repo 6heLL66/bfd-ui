@@ -119,13 +119,11 @@ export default function Home() {
 
             <div className="space-y-4 md:space-y-6">
               <p className="text-sm md:text-base text-white/80 leading-relaxed text-center lg:text-left">
-                BeraFlow DAO is a DAO forged through the innovative Proof-of-Liquidity (POL) mechanism of Berachain.
+                Treasury backed POL-integrated (3,3) protocol on berachain.
               </p>
 
               <p className="text-sm md:text-base text-white/80 leading-relaxed text-center lg:text-left">
-                BeraFlow DAO is built on the foundation of Berachain because we recognize the immense potential DeFi and the future of cryptocurrency within it. We believe that
-                projects with a robust foundation based on a strong treasury value are the key to the future of crypto. We also see the importance of markets becoming more
-                efficient and reaching their fair P/E ratios.
+                BeraFlowDao is committed to building a self-sustaining and growth-oriented ecosystem within Berachain. By combining Protocol-Owned Liquidity (POL), efficient tokenomics, and strategic treasury management, BeraFlowDao creates value for its community while growing its treasury.
               </p>
             </div>
 
