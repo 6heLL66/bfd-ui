@@ -51,7 +51,6 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'BeraFlow DAO',
     description: 'BeraFlow DAO is a DAO forged through the innovative Proof-of-Liquidity (POL) mechanism of Berachain.',
-    url: 'https://beraflowdao.com',
     siteName: 'BeraFlow DAO',
     type: 'website',
     locale: 'en_US',
@@ -60,11 +59,11 @@ export const metadata: Metadata = {
         url: '/images/og.png',
         width: 1200,
         height: 630,
-        alt: 'Bera flow DAO',
+        alt: 'Beraflow DAO',
       }
     ]
   },
-  metadataBase: new URL('https://beraflowdao.com'),
+  metadataBase: new URL('https://beraflow.io'),
   alternates: {
     canonical: '/',
   },
