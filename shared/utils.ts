@@ -120,15 +120,15 @@ export function stop() {
 }
 
 export const getTokenImageUrl = (token: Token) => {
-  if (token.symbol === 'USDC') {
+  if (token?.symbol === 'USDC') {
     return 'https://berascan.com/token/images/usdc_32.png';
   }
 
-  if (token.symbol === 'WBERA') {
+  if (token?.symbol === 'WBERA') {
     return 'https://berascan.com/token/images/wrappedbera_ofc_64.png';
   }
 
-  if (token.symbol === 'BGT') {
+  if (token?.symbol === 'BGT') {
     return 'https://berascan.com/token/images/berachainbgt_64.png';
   }
 

@@ -57,13 +57,11 @@ export function SaleClient() {
       });
 
     toast.promise(promise, {
-      pending: `Supplying ${saleToken.symbol}...`,
-      success: `${saleToken.symbol} supplied successfully`,
-      error: `Failed to supply ${saleToken.symbol}`,
+      pending: `Supplying ${saleToken?.symbol}...`,
+      success: `${saleToken?.symbol} supplied successfully`,
+      error: `Failed to supply ${saleToken?.symbol}`,
     });
   };
-
-  if (!saleToken) return null;
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-[800px] min-h-[600px] w-full mx-auto flex flex-col gap-8 justify-between py-8 px-4 md:px-8">
@@ -88,7 +86,7 @@ export function SaleClient() {
           <div className="flex flex-col gap-8 w-full">
             <div className="flex flex-col md:flex-row md:items-center justify-between border-b-2 border-border/40 pb-6 gap-4 md:gap-0">
               <div className="space-y-1">
-                <span className="text-h3 font-bold text-primary-default">Supply {saleToken.symbol}</span>
+                <span className="text-h3 font-bold text-primary-default">Supply {saleToken?.symbol}</span>
                 <p className="text-sm text-foreground-secondary">Participate in the active sale round</p>
               </div>
               <div className="flex flex-wrap gap-2">
@@ -117,7 +115,7 @@ export function SaleClient() {
               <div className="space-y-4">
                 <InfoCard title="Price" value={isSaleActive && saleTokenFull.price ? 
                   <span>
-                    1.00 {saleToken.symbol}
+                    1.00 {saleToken?.symbol}
                   </span> : '-'
                 } gradientFrom="purple-600" isSaleActive={isSaleActive} />
 
@@ -127,7 +125,7 @@ export function SaleClient() {
                     <span>
                       {(+cap.toSignificant()).toLocaleString()} $BFD 
                       <span className="text-foreground-secondary text-sm ml-1 opacity-70">
-                        (${(+cap.toSignificant()).toLocaleString()} {saleToken.symbol})
+                        (${(+cap.toSignificant()).toLocaleString()} {saleToken?.symbol})
                       </span>
                     </span> : '-'
                   }
@@ -141,7 +139,7 @@ export function SaleClient() {
                     <span>
                       {(+cap.sub(totalRaised).toSignificant()).toLocaleString()} $BFD 
                       <span className="text-foreground-secondary text-sm ml-1 opacity-70">
-                        (${(+cap.sub(totalRaised).toSignificant()).toLocaleString()} {saleToken.symbol})
+                        (${(+cap.sub(totalRaised).toSignificant()).toLocaleString()} {saleToken?.symbol})
                       </span>
                     </span> : '-'
                   }
@@ -160,7 +158,7 @@ export function SaleClient() {
                     <span>
                       {(+allocation.toSignificant()).toLocaleString()} $BFD 
                       <span className="text-foreground-secondary text-sm ml-1 opacity-70">
-                        (${(+allocation.toSignificant()).toLocaleString()} {saleToken.symbol})
+                        (${(+allocation.toSignificant()).toLocaleString()} {saleToken?.symbol})
                       </span>
                     </span> : '-'
                   }
@@ -175,7 +173,7 @@ export function SaleClient() {
                   <motion.div className="p-3 py-3 relative rounded-xl flex bg-surface/50 border border-border/40 transition-all duration-300 hover:border-border">
                     <input
                       className="w bg-transparent border-none"
-                      placeholder={`Enter ${saleToken.symbol} amount`}
+                      placeholder={`Enter ${saleToken?.symbol} amount`}
                       value={supplyValue ?? ''}
                       onChange={e => setSupplyValue(e.target.value)}
                       type="number"
@@ -184,21 +182,21 @@ export function SaleClient() {
                     <div className="flex items-center gap-2">
                       <Divider className="h-8 bg-border/40" orientation="vertical" />
                       <div className="text-foreground-secondary font-medium flex gap-2 items-center">
-                        <Image src={getTokenImageUrl(saleToken)} alt={saleToken.symbol ?? ''} width={24} height={24} />
-                        {saleToken.symbol}
+                        <Image src={getTokenImageUrl(saleToken)} alt={saleToken?.symbol ?? ''} width={24} height={24} />
+                        {saleToken?.symbol}
                       </div>
                     </div>
                   </motion.div>
 
-                  <Button className="text-xs text-foreground-secondary bg-transparent border-2 border-border/40" onPress={() => setSupplyValue(saleTokenFull.balance.toSignificant(18))}>Available balance: {saleTokenFull.balance.toSignificant()} {saleToken.symbol}</Button>
+                  <Button className="text-xs text-foreground-secondary bg-transparent border-2 border-border/40" onPress={() => setSupplyValue(saleTokenFull.balance.toSignificant(18))}>Available balance: {saleTokenFull?.balance.toSignificant()} {saleToken?.symbol}</Button>
                 </div>
                 <Button
-                  isDisabled={saleTokenFull.balance.amount <= 0 || !isSaleActive}
+                  isDisabled={saleTokenFull?.balance.amount <= 0 || !isSaleActive}
                   isLoading={isSupplying}
                   onPress={handleSupply}
                   className="w-full font-bold bg-gradient-to-r from-primary-default to-primary-hover hover:opacity-90 transition-all duration-300 h-12 text-base shadow-xl shadow-primary-default/20 border-2 border-primary-default/40"
                 >
-                  Supply {saleToken.symbol}
+                  Supply {saleToken?.symbol}
                 </Button>
               </div>
             </div>
