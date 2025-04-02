@@ -1,5 +1,4 @@
 import { Metadata } from 'next';
-import { PoolClient } from './components/PoolClient';
 
 export const metadata: Metadata = {
   title: 'BFD-HONEY Pool | BFD Protocol',
@@ -20,5 +19,6 @@ export const metadata: Metadata = {
 };
 
 export default function PoolPage() {
-  return <PoolClient />;
+  return null
+  // return <PoolClient />;
 }
