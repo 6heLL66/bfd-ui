@@ -104,8 +104,8 @@ export default function RootLayout({
               "@type": "Organization",
               "name": "BeraFlow DAO",
               "alternateName": alternativeNames,
-              "url": "https://beraflowdao.com",
-              "logo": "https://beraflowdao.com/images/logo.jpg",
+              "url": "https://beraflow.io",
+              "logo": "https://beraflow.io/images/logo.jpg",
               "description": "BeraFlow DAO is a DAO forged through the innovative Proof-of-Liquidity (POL) mechanism of Berachain."
             })
           }}
