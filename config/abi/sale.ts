@@ -40,5 +40,6 @@ export const saleAbi = [
   { inputs: [], name: 'startSale', outputs: [], stateMutability: 'nonpayable', type: 'function' },
   { inputs: [], name: 'stopSale', outputs: [], stateMutability: 'nonpayable', type: 'function' },
   { inputs: [], name: 'totalRaised', outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }], stateMutability: 'view', type: 'function' },
+  { inputs: [], name: 'price', outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }], stateMutability: 'view', type: 'function' },
   { inputs: [], name: 'withdrawFunds', outputs: [], stateMutability: 'payable', type: 'function' },
 ];

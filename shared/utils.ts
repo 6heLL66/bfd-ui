@@ -124,7 +124,7 @@ export const getTokenImageUrl = (token: Token) => {
     return 'https://berascan.com/token/images/usdc_32.png';
   }
 
-  if (token.symbol === 'WBERA') {
+  if (token.symbol === 'WBERA' || token.symbol === 'BERA') {
     return 'https://berascan.com/token/images/wrappedbera_ofc_64.png';
   }
 

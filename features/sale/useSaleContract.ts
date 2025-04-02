@@ -1,29 +1,30 @@
 import { saleAbi } from '@/config/abi/sale';
-import { SALE_CA, usdcToken } from '@/config/berachain';
+import { wberaToken, bfdToken, SALE_CA } from '@/config/berachain';
 import { wagmiConfig } from '@/config/wagmi';
 import { TokenAmount } from '@berachain-foundation/berancer-sdk';
 import { useEffect } from 'react';
 import { useAccount, useReadContract, useWriteContract } from 'wagmi';
 import { waitForTransactionReceipt } from 'wagmi/actions';
 
-interface ReturnType {
-  isSaleActive: boolean;
-  cap: TokenAmount | undefined;
-  isPublicSale: boolean;
-  totalRaised: TokenAmount | undefined;
-  allocation: TokenAmount | undefined;
-  supply: (amount: bigint) => Promise<void>;
-}
 
-export const useSaleContract = (): ReturnType => {
+export const useSaleContract = () => {
   const { address } = useAccount();
 
   const { writeContractAsync } = useWriteContract();
+
+  const saleToken = wberaToken;
+  const outToken = bfdToken;
 
   const { data: isSaleActive, refetch: refetchIsSaleActive } = useReadContract({
     address: SALE_CA,
     abi: saleAbi,
     functionName: 'isSaleActive',
+  });
+
+  const { data: price } = useReadContract({
+    address: SALE_CA,
+    abi: saleAbi,
+    functionName: 'price',
   });
 
   const { data: cap } = useReadContract({
@@ -83,14 +84,15 @@ export const useSaleContract = (): ReturnType => {
     return () => clearInterval(interval);
   }, [address]);
 
-  console.log(address, isSaleActive, cap, isPublicSale, totalRaised, allocation);
-
   return {
-    isSaleActive,
-    cap: cap !== undefined && TokenAmount.fromRawAmount(usdcToken, cap as bigint),
-    isPublicSale,
-    totalRaised: totalRaised !== undefined && TokenAmount.fromRawAmount(usdcToken, totalRaised as bigint),
-    allocation: allocation !== undefined && TokenAmount.fromRawAmount(usdcToken, allocation as bigint),
+    isSaleActive: isSaleActive as boolean,
+    cap: TokenAmount.fromRawAmount(saleToken, (cap ?? 0) as bigint),
+    isPublicSale: isPublicSale as boolean,
+    totalRaised: TokenAmount.fromRawAmount(saleToken, (totalRaised ?? 0) as bigint),
+    allocation: TokenAmount.fromRawAmount(saleToken, (allocation ?? 0) as bigint),
+    price: TokenAmount.fromRawAmount(saleToken, (price ?? 0) as bigint),
+    saleToken,
+    outToken,
     supply,
-  } as ReturnType;
+  };
 };

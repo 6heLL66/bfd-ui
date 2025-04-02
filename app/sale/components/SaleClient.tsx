@@ -1,6 +1,6 @@
 'use client';
 
-import { usdcToken, SALE_CA } from '@/config/berachain';
+import { SALE_CA } from '@/config/berachain';
 import { WalletGuard } from '@/shared/components/WalletGuard';
 import { getTokenImageUrl } from '@/shared/utils';
 import { Alert } from '@heroui/alert';
@@ -20,14 +20,15 @@ import { InfoCard } from './InfoCard';
 import { Tooltip } from '@heroui/tooltip';
 import { InfoCircledIcon } from '@radix-ui/react-icons';
 import { createApproveToast } from '@/app/swap/toasts';
+import numeral from 'numeral';
 
 export function SaleClient() {
   const { address } = useAccount();
   const { checkAllowance, approve } = useApprove();
   const [isSupplying, setIsSupplying] = useState<boolean>(false);
   const [supplyValue, setSupplyValue] = useState<string>();
-  const [usdcBalance, setUsdcBalance] = useState<number>();
-  const { isSaleActive, cap, isPublicSale, totalRaised, allocation, supply } = useSaleContract();
+  const [tokenBalance, setTokenBalance] = useState<number>();
+  const { isSaleActive, cap, isPublicSale, totalRaised, allocation, price, saleToken, outToken, supply } = useSaleContract();
 
   const progress = useMemo(() => {
     if (!cap || !totalRaised) return 0;
@@ -38,25 +39,25 @@ export function SaleClient() {
     if (!address) return;
 
     getBalance(wagmiConfig, {
-      token: usdcToken.address,
+      token: saleToken.address,
       address: address as `0x${string}`,
     }).then(token1Balance => {
-      const balance = +token1Balance.value.toString() / 10 ** usdcToken.decimals;
-      setUsdcBalance(+token1Balance.value.toString() > 1e2 ? balance : 0);
+      const balance = +token1Balance.value.toString() / 10 ** saleToken.decimals;
+      setTokenBalance(+token1Balance.value.toString() > 1e2 ? balance : 0);
     });
   };
 
   const handleSupply = async () => {
     if (!supplyValue) return;
     setIsSupplying(true);
-    const amount = TokenAmount.fromHumanAmount(usdcToken, supplyValue as `${number}`);
+    const amount = TokenAmount.fromHumanAmount(saleToken, supplyValue as `${number}`);
 
-    const needApprove = await checkAllowance(SALE_CA, amount.amount, usdcToken);
+    const needApprove = await checkAllowance(SALE_CA, amount.amount, saleToken);
 
     if (needApprove) {
-      const promise = approve(SALE_CA, amount.amount, usdcToken) as Promise<void>;
+      const promise = approve(SALE_CA, amount.amount, saleToken) as Promise<void>;
 
-      createApproveToast(promise, usdcToken.symbol ?? '', amount.toSignificant(), false);
+      createApproveToast(promise, saleToken.symbol ?? '', amount.toSignificant(), false);
 
       await promise.catch(() => {
         setIsSupplying(false);
@@ -85,7 +86,7 @@ export function SaleClient() {
     if (!address) return;
 
     refreshBalance();
-  }, [address]);
+  }, [address, saleToken]);
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-[800px] min-h-[600px] w-full mx-auto flex flex-col gap-8 justify-between py-8 px-4 md:px-8">
@@ -137,15 +138,15 @@ export function SaleClient() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-4">
-                <InfoCard title="Price" value="1.00 USDC" gradientFrom="purple-600" isSaleActive={isSaleActive} />
+                <InfoCard title="Price" value={price ? `${price?.toSignificant()} ${saleToken?.symbol}` : '-'} gradientFrom="purple-600" isSaleActive={isSaleActive} />
 
                 <InfoCard
                   title="Cap"
                   value={isSaleActive && cap ? 
                     <span>
-                      {(+cap.toSignificant()).toLocaleString()} $BFD 
+                      {numeral(+cap.toSignificant() / Number(price?.toSignificant())).format('0.00a')} $BFD 
                       <span className="text-foreground-secondary text-sm ml-1 opacity-70">
-                        (${(+cap.toSignificant()).toLocaleString()} USDC)
+                        (${(+cap.toSignificant()).toLocaleString()} {cap?.token?.symbol})
                       </span>
                     </span> : '-'
                   }
@@ -157,9 +158,9 @@ export function SaleClient() {
                   title="Remaining"
                   value={isSaleActive && cap && totalRaised ? 
                     <span>
-                      {(+cap.sub(totalRaised).toSignificant()).toLocaleString()} $BFD 
+                      {numeral(+cap.sub(totalRaised).toSignificant() / Number(price?.toSignificant())).format('0.00a')} $BFD 
                       <span className="text-foreground-secondary text-sm ml-1 opacity-70">
-                        (${(+cap.sub(totalRaised).toSignificant()).toLocaleString()} USDC)
+                        (${(+cap.sub(totalRaised).toSignificant()).toLocaleString()} {totalRaised?.token?.symbol})
                       </span>
                     </span> : '-'
                   }
@@ -176,9 +177,9 @@ export function SaleClient() {
                   title="Your allocation"
                   value={isSaleActive && allocation ? 
                     <span>
-                      {(+allocation.toSignificant()).toLocaleString()} $BFD 
+                      {numeral(+allocation.toSignificant() / Number(price?.toSignificant())).format('0.00a')} $BFD 
                       <span className="text-foreground-secondary text-sm ml-1 opacity-70">
-                        (${(+allocation.toSignificant()).toLocaleString()} USDC)
+                        (${numeral(+allocation.toSignificant()).format('0.00a')} {allocation?.token?.symbol})
                       </span>
                     </span> : '-'
                   }
@@ -193,7 +194,7 @@ export function SaleClient() {
                   <motion.div className="p-3 py-3 relative rounded-xl flex bg-surface/50 border border-border/40 transition-all duration-300 hover:border-border">
                     <input
                       className="w-full bg-transparent border-none"
-                      placeholder="Enter USDC amount"
+                      placeholder={`Enter ${saleToken?.symbol} amount`}
                       value={supplyValue ?? ''}
                       onChange={e => setSupplyValue(e.target.value)}
                       type="number"
@@ -202,21 +203,21 @@ export function SaleClient() {
                     <div className="flex items-center">
                       <Divider className="h-8 mx-2 bg-border/40" orientation="vertical" />
                       <span className="text-foreground-secondary font-medium flex gap-2 w-20 items-center">
-                        <Image src={getTokenImageUrl(usdcToken)} alt="usdc" width={24} height={24} />
-                        USDC
+                        <Image src={getTokenImageUrl(saleToken)} alt={saleToken?.symbol ?? ''} width={24} height={24} />
+                        {saleToken?.symbol}
                       </span>
                     </div>
                   </motion.div>
 
-                  <Button className="text-xs text-foreground-secondary bg-transparent border-2 border-border/40">Available balance: {usdcBalance} USDC</Button>
+                  <Button className="text-xs text-foreground-secondary bg-transparent border-2 border-border/40">Available balance: {tokenBalance} {saleToken?.symbol}</Button>
                 </div>
                 <Button
-                  isDisabled={usdcBalance === 0 || !isSaleActive}
+                  isDisabled={tokenBalance === 0 || !isSaleActive}
                   isLoading={isSupplying}
                   onPress={handleSupply}
                   className="w-full font-bold bg-gradient-to-r from-primary-default to-primary-hover hover:opacity-90 transition-all duration-300 h-12 text-base shadow-xl shadow-primary-default/20 border-2 border-primary-default/40"
                 >
-                  Supply USDC
+                  Supply {saleToken?.symbol}
                 </Button>
               </div>
             </div>
