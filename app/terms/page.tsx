@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Card } from '@heroui/react';
 import { InfoCircledIcon } from '@radix-ui/react-icons';
 import Link from 'next/link';
+import { DOCS_LINK } from '@/config/links';
 
 const TermsOfService = () => {
   return (
@@ -117,7 +118,7 @@ const TermsOfService = () => {
             <div className="flex flex-col gap-4">
               <p className="text-sm text-foreground-secondary">Last updated: {new Date().toLocaleDateString()}</p>
               <div className="flex gap-4 text-sm">
-                <Link href="https://beraflowdao.gitbook.io/beraflowdao" target="_blank" className="text-primary-default hover:text-primary-hover transition-colors">
+                <Link href={DOCS_LINK} target="_blank" className="text-primary-default hover:text-primary-hover transition-colors">
                   Documentation
                 </Link>
                 <span className="text-border">•</span>
