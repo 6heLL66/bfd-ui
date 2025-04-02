@@ -28,7 +28,7 @@ export function SaleClient() {
   const [isSupplying, setIsSupplying] = useState<boolean>(false);
   const [supplyValue, setSupplyValue] = useState<string>();
   const [tokenBalance, setTokenBalance] = useState<number>();
-  const { isSaleActive, cap, isPublicSale, totalRaised, allocation, price, saleToken, outToken, supply } = useSaleContract();
+  const { isSaleActive, cap, isPublicSale, totalRaised, allocation, price, saleToken, supply } = useSaleContract();
 
   const progress = useMemo(() => {
     if (!cap || !totalRaised) return 0;
