@@ -32,6 +32,8 @@ export const useSaleContract = () => {
     }
   }, [saleTokenAddress, address]);
 
+  console.log(saleTokenAddress)
+
   const { data: cap } = useReadContract({
     address: SALE_CA,
     abi: saleAbi,

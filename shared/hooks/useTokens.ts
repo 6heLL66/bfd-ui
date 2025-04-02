@@ -50,7 +50,7 @@ const useTokensStore = create<TokensState>((set) => ({
                 const token = new Token(chainId, address as `0x${string}`, balance.decimals, balance.symbol);
 
                 const balanceAmount = TokenAmount.fromRawAmount(token, balance.value);
-                const priceAmount = TokenAmount.fromHumanAmount(token, String(price.price) as `${number}`);
+                const priceAmount = TokenAmount.fromHumanAmount(token, String(price?.price ?? 0) as `${number}`);
 
                 return { 
                     token,
