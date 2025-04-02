@@ -130,6 +130,7 @@ interface GqlValidatorMetadata {
 interface GqlValidatorDynamicData {
     activeBoostAmount: string;
     usersActiveBoostCount: number;
+    boostApr: string;
     queuedBoostAmount: string;
     usersQueuedBoostCount: number;
     allTimeDistributedBGTAmount: string;

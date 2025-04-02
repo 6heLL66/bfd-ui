@@ -5,13 +5,14 @@ import { debounce, upperFirst } from 'lodash';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePool } from '@/features/pool/usePool';
-import { beraHoneyLpToken, CHAIN_ID, POOL_ID, RPC_URL } from '@/config/berachain';
+import { POOL_ID } from '@/config/berachain';
 import { RemoveLiquidity, RemoveLiquidityKind, RemoveLiquidityProportionalInput, RemoveLiquidityQueryOutput, Token, TokenAmount } from '@berachain-foundation/berancer-sdk';
 import { useSwapSettings } from '@/features/swap/store/swapSettings';
 import { formatCurrency } from '@/app/treasury/components/TokenDistributionChart';
 import { Spinner } from '@heroui/spinner';
 import { Button } from '@heroui/button';
 import { createWithdrawToast } from './toasts';
+import { useChainId, useConfig } from 'wagmi';
 
 interface WithdrawModalProps {
   isOpen: boolean;
@@ -20,11 +21,13 @@ interface WithdrawModalProps {
 }
 
 export const WithdrawModal = ({ isOpen, onClose, lpTokensValue }: WithdrawModalProps) => {
-  const { pool, poolState, withdraw, lpTokens, tokens } = usePool(POOL_ID);
+  const { pool, poolState, withdraw, lpTokens, lpToken, tokens } = usePool(POOL_ID);
   const [withdrawPercentage, setWithdrawPercentage] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [queryOutput, setQueryOutput] = useState<RemoveLiquidityQueryOutput | null>(null);
   const [amountsOut, setAmountsOut] = useState<TokenAmount[]>();
+  const chainId = useChainId  ();
+  const config = useConfig();
 
   const [isQueryLoading, setIsQueryLoading] = useState<boolean>(false);
 
@@ -33,7 +36,7 @@ export const WithdrawModal = ({ isOpen, onClose, lpTokensValue }: WithdrawModalP
   const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setWithdrawPercentage(Number(e.target.value));
 
-    debouncedQueryLiquidity(beraHoneyLpToken, TokenAmount.fromHumanAmount(beraHoneyLpToken, String((Number(e.target.value) / 100) * Number(lpTokens.toSignificant())) as `${number}`))
+    debouncedQueryLiquidity(lpToken, TokenAmount.fromHumanAmount(lpToken, String((Number(e.target.value) / 100) * Number(lpTokens.toSignificant())) as `${number}`))
   };
 
   const queryLiquidity = useCallback(async (token: Token, tokenAmount: TokenAmount) => {
@@ -42,9 +45,9 @@ export const WithdrawModal = ({ isOpen, onClose, lpTokensValue }: WithdrawModalP
     const removeLiquidity = new RemoveLiquidity();
 
     const removeLiquidityInput = {
-      chainId: CHAIN_ID,
+      chainId,
       kind: RemoveLiquidityKind.Proportional,
-      rpcUrl: RPC_URL,
+      rpcUrl: config.chains[chainId].rpcUrls.default.http[0],
       bptIn: {
           address: poolState.address as `0x${string}`,
           decimals: token.decimals,
@@ -71,7 +74,7 @@ export const WithdrawModal = ({ isOpen, onClose, lpTokensValue }: WithdrawModalP
         return;
       }
 
-      const _queryOutput = await queryLiquidity(beraHoneyLpToken, TokenAmount.fromHumanAmount(beraHoneyLpToken, String((Number(withdrawPercentage) / 100) * Number(lpTokens.toSignificant())) as `${number}`))
+      const _queryOutput = await queryLiquidity(lpToken, TokenAmount.fromHumanAmount(lpToken, String((Number(withdrawPercentage) / 100) * Number(lpTokens.toSignificant())) as `${number}`))
 
       const promise = withdraw(_queryOutput as RemoveLiquidityQueryOutput);
 

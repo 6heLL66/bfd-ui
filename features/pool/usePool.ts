@@ -1,28 +1,30 @@
 import { getPool, getPoolHistoricalData } from '@/shared/api/berachain';
-import { weightedPoolAbi_V3, TokenAmount, AddLiquidityQueryOutput, Slippage, RemoveLiquidityQueryOutput, AddLiquidity, RemoveLiquidity } from '@berachain-foundation/berancer-sdk';
+import { weightedPoolAbi_V3, TokenAmount, AddLiquidityQueryOutput, Slippage, RemoveLiquidityQueryOutput, AddLiquidity, RemoveLiquidity, Token } from '@berachain-foundation/berancer-sdk';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect} from 'react';
-import { useReadContract, useAccount } from 'wagmi';
-import { balancerApi, beraHoneyLpToken } from '@/config/berachain';
+import { useReadContract, useAccount, useChainId } from 'wagmi';
 import { waitForTransactionReceipt, sendTransaction } from 'wagmi/actions';
 import { wagmiConfig } from '@/config/wagmi';
 import { useSwapSettings } from '../swap/store/swapSettings';
 import { useTokens } from '@/shared/hooks/useTokens';
 import { Pool } from '@/shared/api/types';
+import { useBalancer } from '@/shared/hooks/useBalancer';
 
 export const usePool = (id: string) => {
   const { address } = useAccount();
+
+  const balancerApi = useBalancer();
   const { slippage } = useSwapSettings();
+  const chainId = useChainId();
 
   const { tokens, fetchTokens } = useTokens();
 
   const { data: pool, refetch: refetchPool } = useQuery<any, unknown, Pool>({
     queryKey: ['pool', id],
-    queryFn: async () => {
-        const pool = await getPool(id);
-        return pool;
-    },
+    queryFn: () => getPool(id),
   });
+
+  const lpToken = new Token(chainId, (pool?.address ?? '') as `0x${string}`, 18, 'WBERA-HONEY-WEIGHTED');
 
   useEffect(() => {
     if (address) {
@@ -32,7 +34,7 @@ export const usePool = (id: string) => {
   }, [pool?.tokens, address]);
 
   const { data: poolState, refetch: refetchPoolState } = useQuery({
-    queryKey: ['pool-state', id],
+    queryKey: ['pool-state', id, balancerApi],
     queryFn: () => balancerApi.pools.fetchPoolStateWithBalances(id),
   });
 
@@ -60,7 +62,6 @@ export const usePool = (id: string) => {
     functionName: 'totalSupply',
   });
   
-
   const refetchAll = useCallback(() => {
     refetchPool();
     refetchLpTokens();
@@ -71,7 +72,7 @@ export const usePool = (id: string) => {
   useEffect(() => {
     const interval = setInterval(() => {
       refetchAll();
-    }, 10000);
+    }, 60000);
 
     return () => clearInterval(interval);
   }, [refetchAll]);
@@ -133,9 +134,11 @@ export const usePool = (id: string) => {
     [lpVaultAddress, poolState, slippage, address]
   );
 
-  const lpTokens = TokenAmount.fromRawAmount(beraHoneyLpToken, lpAmount ?? 0);
-  const totalLp = TokenAmount.fromRawAmount(beraHoneyLpToken, totalSupply ?? 0);
-  const k = lpTokens.amount && totalLp.amount ? lpTokens.divUpFixed(totalLp.amount) : TokenAmount.fromRawAmount(beraHoneyLpToken, 1);
+  const lpTokens = TokenAmount.fromRawAmount(lpToken, lpAmount ?? 0);
+  const totalLp = TokenAmount.fromRawAmount(lpToken, totalSupply ?? 0);
+  const k = lpTokens.amount && totalLp.amount ? lpTokens.divUpFixed(totalLp.amount) : TokenAmount.fromRawAmount(lpToken, 1);
 
-  return { poolState, pool, tokens, lpTokens, lpVaultAddress, k, historicalData, deposit, withdraw, refetchAll };
+  const liquidityTokens = tokens.filter((token) => pool?.tokens.some((t) => t.address === token.token.address));
+
+  return { poolState, pool, tokens: liquidityTokens, lpTokens, lpVaultAddress, k, historicalData, lpToken, deposit, withdraw, refetchAll };
 };

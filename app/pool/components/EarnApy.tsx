@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { useVaultStacking } from '@/features/stacking/useVaultStacking';
@@ -8,11 +8,10 @@ import { Button } from '@heroui/button';
 import { StakeModal } from './StakeModal';
 import { UnstakeModal } from './UnstakeModal';
 import { createClaimBGTToast } from './toasts';
-import { getTokensPrice } from '@/shared/api/berachain';
-import { TokenAmount } from '@berachain-foundation/berancer-sdk';
 import { formatCurrency } from '@/app/treasury/components/TokenDistributionChart';
 import { getTokenImageUrl } from '@/shared/utils';
 import Image from 'next/image';
+import { useTokens } from '@/shared/hooks/useTokens';
 
 export const EarnApy = () => {
   const { isConnected } = useAccount();
@@ -22,7 +21,7 @@ export const EarnApy = () => {
   const [isClaiming, setIsClaiming] = useState(false);
   const hasStaked = staked.amount > 0;
 
-  const [bgtPrice, setBgtPrice] = useState<TokenAmount>();
+  const {tokensMap} = useTokens([bgtToken.address]);
 
   const handleClaim = async () => {
     setIsClaiming(true);
@@ -35,15 +34,6 @@ export const EarnApy = () => {
 
     setIsClaiming(false);
   }
-
-  const fetchBgtPrice = async () => {
-    const price = await getTokensPrice([bgtToken.address]);
-    setBgtPrice(TokenAmount.fromHumanAmount(bgtToken, String(price?.[0].price) as `${number}`));
-  }
-
-  useEffect(() => {
-    fetchBgtPrice();
-  }, []);
 
   return (
     <>
@@ -58,7 +48,7 @@ export const EarnApy = () => {
         <h3 className="text-sm font-medium text-foreground-primary mb-2">Reward Vault</h3>
         <div className="flex items-center justify-between mb-4">
           <Link 
-            href={`https://berascan.com/address/${vault?.metadata.url}`}
+            href={vault?.metadata?.url ?? ''}
             target="_blank"
             rel="noopener noreferrer"
             className="text-sm text-foreground-secondary hover:text-primary-default transition-colors"
@@ -111,7 +101,7 @@ export const EarnApy = () => {
                               <span className="text-foreground-primary flex gap-2 items-center text-sm"><Image src={getTokenImageUrl(bgtToken)} className='rounded-full' alt="BGT" width={22} height={22} /> BGT</span>
                               <div className="text-right">
                                 <div className="text-foreground-primary text-sm font-medium">{rewards.toSignificant()}</div>
-                                <div className="text-foreground-secondary text-xs">{bgtPrice && formatCurrency(+bgtPrice.mulUpFixed(rewards.amount).toSignificant(), '$0.00a')}</div>
+                                <div className="text-foreground-secondary text-xs">{tokensMap?.[bgtToken.address.toLowerCase()] && formatCurrency(+tokensMap?.[bgtToken.address.toLowerCase()]?.price * Number(rewards.amount), '$0.00a')}</div>
                               </div>
                             </div>
                           </div>

@@ -1,20 +1,26 @@
-import { honeyToken } from '@/config/berachain';
-import { balancerApi, CHAIN_ID, RPC_URL, usdcToken } from '@/config/berachain';
 import { ExactInQueryOutput, Slippage, Swap, SwapKind, Token, TokenAmount } from '@berachain-foundation/berancer-sdk';
 import { useState, useCallback, useEffect } from 'react';
-import { useAccount, useSendTransaction } from 'wagmi';
+import { useAccount, useChainId, useConfig, useSendTransaction } from 'wagmi';
 import { debounce } from 'lodash';
 import { useSwapSettings } from './store/swapSettings';
 import { getTokensPrice } from '@/shared/api/berachain';
 import { useApprove } from '@/shared/hooks/useApprove';
 import { waitForTransactionReceipt } from 'wagmi/actions';
 import { wagmiConfig } from '@/config/wagmi';
+import { useBalancer } from '@/shared/hooks/useBalancer';
 
 export const slippageOptions = ['0.1', '1.0', '2.5'];
+
+const usdcToken = new Token(1, '0x6581e59A1C8dA66eD0D313a0d4029DcE2F746Cc5' as `0x${string}`, 18, 'USDC');
+const honeyToken = new Token(1, '0x7EeCA4205fF31f947EdBd49195a7A88E6A91161B' as `0x${string}`, 18, 'HONEY');
 
 export const useSwap = () => {
   const [token1, setToken1] = useState<Token>(usdcToken);
   const [token2, setToken2] = useState<Token>(honeyToken);
+
+  const balancerApi = useBalancer();
+  const chainId = useChainId();
+  const rpcUrl = useConfig();
 
   const { slippage, deadline, setSlippage, setDeadline } = useSwapSettings();
 
@@ -55,7 +61,7 @@ export const useSwap = () => {
 
       try {
         const { paths: sorPaths, priceImpact } = await balancerApi.sorSwapPaths.fetchSorSwapPaths({
-          chainId: CHAIN_ID,
+          chainId,
           tokenIn: token1.address,
           tokenOut: token2.address,
           swapKind: SwapKind.GivenIn,
@@ -65,13 +71,13 @@ export const useSwap = () => {
         setPriceImpact(priceImpact);
 
         const swap = new Swap({
-          chainId: CHAIN_ID,
+          chainId,
           paths: sorPaths,
           swapKind: SwapKind.GivenIn,
           userData: '0x',
         });
 
-        const queryOutput = await swap.query(RPC_URL);
+        const queryOutput = await swap.query(rpcUrl.chains[chainId].rpcUrls.default.http[0]);
 
         const isAllowanceNeeded = await checkAllowance(queryOutput.to as `0x${string}`, swapAmount.amount, token1);
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { usdcToken, SALE_CA } from '@/config/berachain';
+import { SALE_CA } from '@/config/berachain';
 import { WalletGuard } from '@/shared/components/WalletGuard';
 import { getTokenImageUrl } from '@/shared/utils';
 import { Alert } from '@heroui/alert';
@@ -9,10 +9,7 @@ import { Divider } from '@heroui/divider';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { useSaleContract } from '@/features/sale/useSaleContract';
-import { useEffect, useState, useMemo } from 'react';
-import { getBalance } from 'wagmi/actions';
-import { wagmiConfig } from '@/config/wagmi';
-import { useAccount } from 'wagmi';
+import { useState, useMemo } from 'react';
 import { TokenAmount } from '@berachain-foundation/berancer-sdk';
 import { toast } from 'react-toastify';
 import { useApprove } from '@/shared/hooks/useApprove';
@@ -22,41 +19,27 @@ import { InfoCircledIcon } from '@radix-ui/react-icons';
 import { createApproveToast } from '@/app/swap/toasts';
 
 export function SaleClient() {
-  const { address } = useAccount();
   const { checkAllowance, approve } = useApprove();
   const [isSupplying, setIsSupplying] = useState<boolean>(false);
   const [supplyValue, setSupplyValue] = useState<string>();
-  const [usdcBalance, setUsdcBalance] = useState<number>();
-  const { isSaleActive, cap, isPublicSale, totalRaised, allocation, supply } = useSaleContract();
+  const { isSaleActive, cap, isPublicSale, totalRaised, allocation, saleToken, saleTokenFull, supply } = useSaleContract();
 
   const progress = useMemo(() => {
     if (!cap || !totalRaised) return 0;
     return (Number(totalRaised.toSignificant()) / Number(cap.toSignificant())) * 100;
   }, [cap, totalRaised]);
 
-  const refreshBalance = async () => {
-    if (!address) return;
-
-    getBalance(wagmiConfig, {
-      token: usdcToken.address,
-      address: address as `0x${string}`,
-    }).then(token1Balance => {
-      const balance = +token1Balance.value.toString() / 10 ** usdcToken.decimals;
-      setUsdcBalance(+token1Balance.value.toString() > 1e2 ? balance : 0);
-    });
-  };
-
   const handleSupply = async () => {
     if (!supplyValue) return;
     setIsSupplying(true);
-    const amount = TokenAmount.fromHumanAmount(usdcToken, supplyValue as `${number}`);
+    const amount = TokenAmount.fromHumanAmount(saleToken, supplyValue as `${number}`);
 
-    const needApprove = await checkAllowance(SALE_CA, amount.amount, usdcToken);
+    const needApprove = await checkAllowance(SALE_CA, amount.amount, saleToken);
 
     if (needApprove) {
-      const promise = approve(SALE_CA, amount.amount, usdcToken) as Promise<void>;
+      const promise = approve(SALE_CA, amount.amount, saleToken) as Promise<void>;
 
-      createApproveToast(promise, usdcToken.symbol ?? '', amount.toSignificant(), false);
+      createApproveToast(promise, saleToken.symbol ?? '', amount.toSignificant(), false);
 
       await promise.catch(() => {
         setIsSupplying(false);
@@ -68,24 +51,19 @@ export function SaleClient() {
     const promise = supply(amount.amount)
       .then(() => {
         setSupplyValue('');
-        refreshBalance();
       })
       .finally(() => {
         setIsSupplying(false);
       });
 
     toast.promise(promise, {
-      pending: 'Supplying USDC...',
-      success: 'USDC supplied successfully',
-      error: 'Failed to supply USDC',
+      pending: `Supplying ${saleToken.symbol}...`,
+      success: `${saleToken.symbol} supplied successfully`,
+      error: `Failed to supply ${saleToken.symbol}`,
     });
   };
 
-  useEffect(() => {
-    if (!address) return;
-
-    refreshBalance();
-  }, [address]);
+  if (!saleToken) return null;
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-[800px] min-h-[600px] w-full mx-auto flex flex-col gap-8 justify-between py-8 px-4 md:px-8">
@@ -110,7 +88,7 @@ export function SaleClient() {
           <div className="flex flex-col gap-8 w-full">
             <div className="flex flex-col md:flex-row md:items-center justify-between border-b-2 border-border/40 pb-6 gap-4 md:gap-0">
               <div className="space-y-1">
-                <span className="text-h3 font-bold text-primary-default">Supply USDC</span>
+                <span className="text-h3 font-bold text-primary-default">Supply {saleToken.symbol}</span>
                 <p className="text-sm text-foreground-secondary">Participate in the active sale round</p>
               </div>
               <div className="flex flex-wrap gap-2">
@@ -137,7 +115,11 @@ export function SaleClient() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-4">
-                <InfoCard title="Price" value="1.00 USDC" gradientFrom="purple-600" isSaleActive={isSaleActive} />
+                <InfoCard title="Price" value={isSaleActive && saleTokenFull.price ? 
+                  <span>
+                    1.00 {saleToken.symbol}
+                  </span> : '-'
+                } gradientFrom="purple-600" isSaleActive={isSaleActive} />
 
                 <InfoCard
                   title="Cap"
@@ -145,7 +127,7 @@ export function SaleClient() {
                     <span>
                       {(+cap.toSignificant()).toLocaleString()} $BFD 
                       <span className="text-foreground-secondary text-sm ml-1 opacity-70">
-                        (${(+cap.toSignificant()).toLocaleString()} USDC)
+                        (${(+cap.toSignificant()).toLocaleString()} {saleToken.symbol})
                       </span>
                     </span> : '-'
                   }
@@ -159,7 +141,7 @@ export function SaleClient() {
                     <span>
                       {(+cap.sub(totalRaised).toSignificant()).toLocaleString()} $BFD 
                       <span className="text-foreground-secondary text-sm ml-1 opacity-70">
-                        (${(+cap.sub(totalRaised).toSignificant()).toLocaleString()} USDC)
+                        (${(+cap.sub(totalRaised).toSignificant()).toLocaleString()} {saleToken.symbol})
                       </span>
                     </span> : '-'
                   }
@@ -178,7 +160,7 @@ export function SaleClient() {
                     <span>
                       {(+allocation.toSignificant()).toLocaleString()} $BFD 
                       <span className="text-foreground-secondary text-sm ml-1 opacity-70">
-                        (${(+allocation.toSignificant()).toLocaleString()} USDC)
+                        (${(+allocation.toSignificant()).toLocaleString()} {saleToken.symbol})
                       </span>
                     </span> : '-'
                   }
@@ -192,31 +174,31 @@ export function SaleClient() {
                   <label className="text-sm font-medium text-foreground-secondary">Amount to supply</label>
                   <motion.div className="p-3 py-3 relative rounded-xl flex bg-surface/50 border border-border/40 transition-all duration-300 hover:border-border">
                     <input
-                      className="w-full bg-transparent border-none"
-                      placeholder="Enter USDC amount"
+                      className="w bg-transparent border-none"
+                      placeholder={`Enter ${saleToken.symbol} amount`}
                       value={supplyValue ?? ''}
                       onChange={e => setSupplyValue(e.target.value)}
                       type="number"
                     />
 
-                    <div className="flex items-center">
-                      <Divider className="h-8 mx-2 bg-border/40" orientation="vertical" />
-                      <span className="text-foreground-secondary font-medium flex gap-2 w-20 items-center">
-                        <Image src={getTokenImageUrl(usdcToken)} alt="usdc" width={24} height={24} />
-                        USDC
-                      </span>
+                    <div className="flex items-center gap-2">
+                      <Divider className="h-8 bg-border/40" orientation="vertical" />
+                      <div className="text-foreground-secondary font-medium flex gap-2 items-center">
+                        <Image src={getTokenImageUrl(saleToken)} alt={saleToken.symbol ?? ''} width={24} height={24} />
+                        {saleToken.symbol}
+                      </div>
                     </div>
                   </motion.div>
 
-                  <Button className="text-xs text-foreground-secondary bg-transparent border-2 border-border/40">Available balance: {usdcBalance} USDC</Button>
+                  <Button className="text-xs text-foreground-secondary bg-transparent border-2 border-border/40" onPress={() => setSupplyValue(saleTokenFull.balance.toSignificant(18))}>Available balance: {saleTokenFull.balance.toSignificant()} {saleToken.symbol}</Button>
                 </div>
                 <Button
-                  isDisabled={usdcBalance === 0 || !isSaleActive}
+                  isDisabled={saleTokenFull.balance.amount <= 0 || !isSaleActive}
                   isLoading={isSupplying}
                   onPress={handleSupply}
                   className="w-full font-bold bg-gradient-to-r from-primary-default to-primary-hover hover:opacity-90 transition-all duration-300 h-12 text-base shadow-xl shadow-primary-default/20 border-2 border-primary-default/40"
                 >
-                  Supply USDC
+                  Supply {saleToken.symbol}
                 </Button>
               </div>
             </div>

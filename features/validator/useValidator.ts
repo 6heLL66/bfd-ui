@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import { getValidator } from '@/shared/api/berachain';
-import { useAccount, useReadContract, useWriteContract } from 'wagmi';
-import { bgtToken, CHAIN_ID, INCENCIVE_DISTRIBUTOR_CA, provider } from '@/config/berachain';
+import { useAccount, useChainId, useReadContract, useWriteContract } from 'wagmi';
+import { bgtToken, INCENCIVE_DISTRIBUTOR_CA } from '@/config/berachain';
 import { bgtAbi } from '@/config/abi/bgt';
-import { getBalance, waitForTransactionReceipt } from 'wagmi/actions';
+import { getBalance, getBlockNumber, waitForTransactionReceipt } from 'wagmi/actions';
 import { wagmiConfig } from '@/config/wagmi';
 import { Token, TokenAmount } from '@berachain-foundation/berancer-sdk';
 import { 
@@ -32,10 +32,10 @@ type Incentive = {
 export const useCurrentBlock = () => {
   const { data: currentBlock } = useQuery({
     queryKey: ['currentBlock'],   
-    queryFn: () => provider.getBlockNumber(),
+    queryFn: () => getBlockNumber(wagmiConfig),
   });
 
-  return currentBlock ?? 0;
+  return Number(currentBlock?? 0);
 };
 
 export const useValidator = (id: string) => {
@@ -43,6 +43,7 @@ export const useValidator = (id: string) => {
   const { address } = useAccount();
   const { writeContractAsync } = useWriteContract();
   const [bgtBalance, setBgtBalance] = useState<TokenAmount>();
+  const chainId = useChainId();
 
   const { tokens, tokensMap, fetchTokens } = useTokens([bgtToken.address]);
 
@@ -60,11 +61,6 @@ export const useValidator = (id: string) => {
       });
     }
   }, [address]);
-
-  const { data: apr } = useQuery({
-    queryKey: ['validatorApr'],
-    queryFn: () => Requests.getValidatorsApr()
-  });
 
   const { data: rewards, refetch: refetchRewards } = useQuery({
     queryKey: ['validatorRewards', validator?.pubkey, address],
@@ -228,12 +224,11 @@ export const useValidator = (id: string) => {
     refetchRewards();
   };
 
-  const boostApr = apr?.find(period => period.validator === validator?.pubkey)?.apr ?? '0';
   const boostedAmount = TokenAmount.fromRawAmount(bgtToken, (boosted ?? 0) as bigint);
   const availableForBoost = bgtBalance?.sub(TokenAmount.fromRawAmount(bgtToken, (boosts ?? 0) as bigint));
   const availableForDropBoost = boostedAmount?.sub(TokenAmount.fromRawAmount(bgtToken, (dropBoostQueue as [number, bigint])?.[1] ?? BigInt(0)));
 
-  const boostAprRate = TokenAmount.fromHumanAmount(bgtToken, boostApr as `${number}`);
+  const boostAprRate = TokenAmount.fromHumanAmount(bgtToken, (validator?.dynamicData?.boostApr ?? '0') as `${number}`);
 
   const weeklybgtPerBgt = +boostAprRate.mulDownFixed(TokenAmount.fromHumanAmount(bgtToken, '1').amount).toSignificant() / WEEKS_IN_YEAR;
   const bgtFullToken = tokensMap[bgtToken.address];
@@ -241,7 +236,7 @@ export const useValidator = (id: string) => {
 
   const insencitives = validator?.rewardAllocationWeights.reduce((acc, incentives) => {
     return [...acc, ...incentives.receivingVault.activeIncentives.map((incentive) => {
-      const token = new Token(CHAIN_ID, incentive.token.address as `0x${string}`, incentive.token.decimals, incentive.token.symbol);
+      const token = new Token(chainId, incentive.token.address as `0x${string}`, incentive.token.decimals, incentive.token.symbol);
       return {
         token,
         rate: TokenAmount.fromHumanAmount(token, incentive.incentiveRate as `${number}`)
@@ -292,8 +287,10 @@ export const useValidator = (id: string) => {
     return createClaimAllRewardsToast(promise());
   }
 
+  console.log(validator?.dynamicData?.boostApr);
+
   return {
-    apr: boostApr,
+    apr: validator?.dynamicData?.boostApr,
     rewards: rewardsMemo,
     validator,
     weeklyUsdPerBgt,

@@ -5,9 +5,8 @@ import { getBalance, GetBalanceReturnType } from "wagmi/actions";
 import { getTokensPrice } from "../api/berachain";
 import { Prices } from "../api/types";
 import { getTokenImageUrl } from "../utils";
-import { CHAIN_ID } from "@/config/berachain";
 import { create } from 'zustand';
-import { useAccount } from "wagmi";
+import { useAccount, useChainId } from "wagmi";
 
 export type FullToken = {
     token: Token,
@@ -22,7 +21,7 @@ interface TokensState {
     setTokens: (tokens: FullToken[]) => void;
     loading: boolean;
     setLoading: (loading: boolean) => void;
-    fetchTokens: (addresses: string[], address?: string) => Promise<void>;
+    fetchTokens: (addresses: string[], chainId: number, address?: string,) => Promise<void>;
 }
 
 const useTokensStore = create<TokensState>((set) => ({
@@ -30,7 +29,7 @@ const useTokensStore = create<TokensState>((set) => ({
     setTokens: (tokens) => set({ tokens }),
     loading: false,
     setLoading: (loading) => set({ loading }),
-    fetchTokens: async (addresses, address) => {
+    fetchTokens: async (addresses, chainId, address) => {
         if (!addresses || addresses.length === 0) return;
         
         set({ loading: true });
@@ -47,8 +46,8 @@ const useTokensStore = create<TokensState>((set) => ({
 
             const tokens = addresses.map((address, index) => {
                 const balance = balances[index as keyof typeof balances] as GetBalanceReturnType;
-                const price = prices.find((price) => price.address === address) as Prices[0];
-                const token = new Token(CHAIN_ID, address as `0x${string}`, balance.decimals, balance.symbol);
+                const price = prices.find((price) => price.address === address.toLocaleLowerCase()) as Prices[0];
+                const token = new Token(chainId, address as `0x${string}`, balance.decimals, balance.symbol);
 
                 const balanceAmount = TokenAmount.fromRawAmount(token, balance.value);
                 const priceAmount = TokenAmount.fromHumanAmount(token, String(price.price) as `${number}`);
@@ -72,12 +71,13 @@ const useTokensStore = create<TokensState>((set) => ({
 export const useTokens = (addresses?: string[]) => {
     const { address } = useAccount();
     const { tokens, fetchTokens, loading } = useTokensStore();
+    const chainId = useChainId();
 
     useEffect(() => {
         if (addresses && addresses.length > 0) {
-            fetchTokens(addresses, address);
+            fetchTokens(addresses, chainId, address);
         }
-    }, [address]);
+    }, [address, chainId]);
 
     const tokensMap = useMemo(() => {
         return tokens.reduce((acc, token) => {
@@ -86,5 +86,5 @@ export const useTokens = (addresses?: string[]) => {
         }, {} as Record<string, FullToken>);
     }, [tokens]);
 
-    return { tokens, fetchTokens, loading, tokensMap };
+    return { tokens, fetchTokens: (addresses: string[], address?: string) => fetchTokens(addresses, chainId, address), loading, tokensMap };
 }

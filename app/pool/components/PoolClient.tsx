@@ -4,14 +4,14 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { useAccount } from 'wagmi';
+import { useAccount, useChainId } from 'wagmi';
 import { PoolCharts } from './PoolCharts';
 import { EarnApy } from './EarnApy';
 import { DepositModal } from './DepositModal';
 import { WithdrawModal } from './WithdrawModal';
 import { usePool } from '@/features/pool/usePool';
 import { getTokenImageUrl } from '@/shared/utils';
-import { CHAIN_ID, POOL_ID } from '@/config/berachain';
+import { POOL_ID } from '@/config/berachain';
 import { Token, TokenAmount } from '@berachain-foundation/berancer-sdk';
 import { formatCurrency } from '@/app/treasury/components/TokenDistributionChart';
 import { Button } from '@heroui/button';
@@ -21,6 +21,7 @@ export const PoolClient = () => {
   const { isConnected } = useAccount();
   const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
+  const chainId = useChainId();
   
   const { pool, lpTokens, k, tokens, historicalData } = usePool(POOL_ID);
 
@@ -238,7 +239,7 @@ export const PoolClient = () => {
                 <div key={index} className="flex items-center justify-between p-3 rounded-xl border border-border/40 hover:border-primary-default/30 transition-all">
                   <div className="flex items-center gap-3">
                     <Image 
-                      src={getTokenImageUrl(new Token(CHAIN_ID, token.address as `0x${string}`, token.decimals, token.symbol))} 
+                      src={getTokenImageUrl(new Token(chainId, token.address as `0x${string}`, token.decimals, token.symbol))} 
                       alt={token.symbol} 
                       width={36} 
                       height={36} 

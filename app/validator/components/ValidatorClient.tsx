@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { LightningBoltIcon } from '@radix-ui/react-icons';
 import { useValidator } from '@/features/validator/useValidator';
-import { bgtToken, honeyToken, VALIDATOR_ID, VAULT_CA } from '@/config/berachain';
+import { bgtToken, VALIDATOR_ID, VAULT_CA } from '@/config/berachain';
 import { formatCurrency } from '@/app/treasury/components/TokenDistributionChart';
 import { useVaultStacking } from '@/features/stacking/useVaultStacking';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
@@ -175,7 +175,7 @@ export const ValidatorClient = () => {
 
                 <div className="flex items-center mt-2 bg-surface/50 rounded-lg p-2 border border-border/30">
                   <div className="w-6 h-6 rounded-full overflow-hidden mr-2 bg-surface/80">
-                    <Image src={getTokenImageUrl(honeyToken)} alt="HONEY" width={24} height={24} />
+                    <Image src={'https://berascan.com/token/images/honeybera_32.png'} alt="HONEY" width={24} height={24} />
                   </div>
                   <div className="flex flex-col flex-1">
                     <div className="flex items-center justify-between">

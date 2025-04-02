@@ -4,8 +4,8 @@ import { useState, useCallback } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePool } from '@/features/pool/usePool';
-import { CHAIN_ID, POOL_ID, RPC_URL } from '@/config/berachain';
-import { AddLiquidityKind, TokenAmount, Token, AddLiquidityInput, AddLiquidityQueryOutput, Slippage, AddLiquidity } from '@berachain-foundation/berancer-sdk';
+import { POOL_ID } from '@/config/berachain';
+import { AddLiquidityKind, TokenAmount, Token, AddLiquidityInput, AddLiquidityQueryOutput, Slippage, AddLiquidity, PoolState } from '@berachain-foundation/berancer-sdk';
 import { getTokenImageUrl } from '@/shared/utils';
 import { useApprove } from '@/shared/hooks/useApprove';
 import { createApproveToast } from '@/app/swap/toasts';
@@ -14,6 +14,8 @@ import { debounce, upperFirst } from 'lodash';
 import { FullToken } from '@/shared/hooks/useTokens';
 import { Button } from '@heroui/button';
 import { createDepositToast } from './toasts';
+import { useConfig } from 'wagmi';
+import { useChainId } from 'wagmi';
 interface DepositModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -26,21 +28,26 @@ export const DepositModal = ({ isOpen, onClose }: DepositModalProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isQueryLoading, setIsQueryLoading] = useState<boolean>(false);
 
+  const chainId = useChainId();
+  const config = useConfig();
+
+  console.log('config', config);
+
   const [queryOutput, setQueryOutput] = useState<AddLiquidityQueryOutput | null>(null);
   const { slippage, setSlippage } = useSwapSettings();
 
   const queryLiquidity = useCallback(
     async (token: Token, tokenAmount: TokenAmount) => {
-      if (!poolState) return;
-
+      console.log('token', poolState);
+      if (!pool) return;
       setIsQueryLoading(true);
 
       const addLiquidity = new AddLiquidity();
 
       const addLiquidityInput = {
-        chainId: CHAIN_ID,
+        chainId,
         kind: AddLiquidityKind.Proportional,
-        rpcUrl: RPC_URL,
+        rpcUrl: config.chains[0].rpcUrls.default.http[0],
         referenceAmount: {
           address: token.address as `0x${string}`,
           decimals: token.decimals,
@@ -48,7 +55,7 @@ export const DepositModal = ({ isOpen, onClose }: DepositModalProps) => {
         },
       } as AddLiquidityInput;
 
-      const queryOutput = await addLiquidity.query(addLiquidityInput, { ...poolState, type: upperFirst(poolState.type.toLocaleLowerCase()) });
+      const queryOutput = await addLiquidity.query(addLiquidityInput, { ...(pool as PoolState), type: upperFirst(pool.type.toLocaleLowerCase()) });
       const otherToken = tokens.filter(_token => _token.token.symbol !== token.symbol)[0];
       const otherTokenIndex = tokens.indexOf(otherToken);
 
@@ -62,7 +69,7 @@ export const DepositModal = ({ isOpen, onClose }: DepositModalProps) => {
 
       return queryOutput;
     },
-    [poolState, tokens]
+    [pool, tokens, chainId, config]
   );
 
   const debouncedQueryLiquidity = useCallback(debounce(queryLiquidity, 300), [queryLiquidity]);

@@ -1,16 +1,19 @@
 import { useQuery } from "@tanstack/react-query";
 import { getRewardVault } from "@/shared/api/berachain";
 import { useAccount, useReadContract, useWriteContract } from "wagmi";
-import { beraHoneyLpToken, bgtToken, VAULT_CA } from "@/config/berachain";
+import { bgtToken, POOL_ID, VAULT_CA } from "@/config/berachain";
 import { BigintIsh, TokenAmount } from "@berachain-foundation/berancer-sdk";
 import { useCallback, useEffect } from "react";
 import { wagmiConfig } from "@/config/wagmi";
 import { waitForTransactionReceipt } from "wagmi/actions";
 import { vaultAbi } from "@/config/abi/vault";
+import { usePool } from "../pool/usePool";
 
 export const useVaultStacking = (id: string) => {
     const { address } = useAccount()
     const { writeContractAsync } = useWriteContract()
+
+    const { lpToken } = usePool(POOL_ID);
 
     const { data, isLoading, error } = useQuery({
         queryKey: ['vault-staking', id],
@@ -91,7 +94,7 @@ export const useVaultStacking = (id: string) => {
         claim,
         stake,
         unstake,
-        staked: TokenAmount.fromRawAmount(beraHoneyLpToken, (staked ?? 0) as BigintIsh),
+        staked: TokenAmount.fromRawAmount(lpToken, (staked ?? 0) as BigintIsh),
         rewards: TokenAmount.fromRawAmount(bgtToken, (rewards ?? 0) as BigintIsh)
     }
 }

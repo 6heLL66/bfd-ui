@@ -1,21 +1,13 @@
 import { saleAbi } from '@/config/abi/sale';
-import { SALE_CA, usdcToken } from '@/config/berachain';
+import { SALE_CA } from '@/config/berachain';
 import { wagmiConfig } from '@/config/wagmi';
+import { useTokens } from '@/shared/hooks/useTokens';
 import { TokenAmount } from '@berachain-foundation/berancer-sdk';
 import { useEffect } from 'react';
 import { useAccount, useReadContract, useWriteContract } from 'wagmi';
 import { waitForTransactionReceipt } from 'wagmi/actions';
 
-interface ReturnType {
-  isSaleActive: boolean;
-  cap: TokenAmount | undefined;
-  isPublicSale: boolean;
-  totalRaised: TokenAmount | undefined;
-  allocation: TokenAmount | undefined;
-  supply: (amount: bigint) => Promise<void>;
-}
-
-export const useSaleContract = (): ReturnType => {
+export const useSaleContract = () => {
   const { address } = useAccount();
 
   const { writeContractAsync } = useWriteContract();
@@ -25,6 +17,20 @@ export const useSaleContract = (): ReturnType => {
     abi: saleAbi,
     functionName: 'isSaleActive',
   });
+
+  const { data: saleTokenAddress } = useReadContract({
+    address: SALE_CA,
+    abi: saleAbi,
+    functionName: 'saleToken',
+  });
+
+  const { tokensMap, fetchTokens } = useTokens();
+
+  useEffect(() => {
+    if (saleTokenAddress && address) {
+      fetchTokens([saleTokenAddress as `0x${string}`], address);
+    }
+  }, [saleTokenAddress, address]);
 
   const { data: cap } = useReadContract({
     address: SALE_CA,
@@ -73,6 +79,7 @@ export const useSaleContract = (): ReturnType => {
     refetchIsPublicSale();
     refetchTotalRaised();
     refetchAllocation();
+    fetchTokens([saleTokenAddress as `0x${string}`], address);
   };
 
   useEffect(() => {
@@ -83,14 +90,18 @@ export const useSaleContract = (): ReturnType => {
     return () => clearInterval(interval);
   }, [address]);
 
-  console.log(address, isSaleActive, cap, isPublicSale, totalRaised, allocation);
+  const saleToken = tokensMap[(saleTokenAddress as `0x${string}`)?.toLowerCase()]?.token;
+
+  const saleTokenFull = tokensMap[(saleTokenAddress as `0x${string}`)?.toLowerCase()];
 
   return {
-    isSaleActive,
-    cap: cap !== undefined && TokenAmount.fromRawAmount(usdcToken, cap as bigint),
-    isPublicSale,
-    totalRaised: totalRaised !== undefined && TokenAmount.fromRawAmount(usdcToken, totalRaised as bigint),
-    allocation: allocation !== undefined && TokenAmount.fromRawAmount(usdcToken, allocation as bigint),
+    isSaleActive: Boolean(isSaleActive),
+    cap: cap !== undefined && saleToken && TokenAmount.fromRawAmount(saleToken, cap as bigint),
+    isPublicSale: Boolean(isPublicSale),
+    totalRaised: totalRaised !== undefined && saleToken && TokenAmount.fromRawAmount(saleToken, totalRaised as bigint),
+    allocation: allocation !== undefined && saleToken && TokenAmount.fromRawAmount(saleToken, allocation as bigint),
+    saleToken,
+    saleTokenFull,
     supply,
-  } as ReturnType;
+  };
 };
