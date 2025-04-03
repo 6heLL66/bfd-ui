@@ -107,7 +107,7 @@ export const InfoCard = ({ title, value, gradientFrom, isSaleActive, progressBar
             >
               {title}
             </span>
-            {progressBar && isSaleActive && (
+            {progressBar && progressBar.label && isSaleActive && (
               <motion.div
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
