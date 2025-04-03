@@ -9,7 +9,7 @@ import { Divider } from '@heroui/divider';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { useSaleContract } from '@/features/sale/useSaleContract';
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { TokenAmount } from '@berachain-foundation/berancer-sdk';
 import { toast } from 'react-toastify';
 import { useApprove } from '@/shared/hooks/useApprove';
@@ -22,12 +22,7 @@ export function SaleClient() {
   const { checkAllowance, approve } = useApprove();
   const [isSupplying, setIsSupplying] = useState<boolean>(false);
   const [supplyValue, setSupplyValue] = useState<string>();
-  const { isSaleActive, cap, isPublicSale, totalRaised, allocation, saleToken, saleTokenFull, supply } = useSaleContract();
-
-  const progress = useMemo(() => {
-    if (!cap || !totalRaised) return 0;
-    return (Number(totalRaised.toSignificant()) / Number(cap.toSignificant())) * 100;
-  }, [cap, totalRaised]);
+  const { isSaleActive, cap, isPublicSale, totalRaised, wlPrice, publicPrice, allocation, saleToken, saleTokenFull, supply } = useSaleContract();
 
   const handleSupply = async () => {
     if (!supplyValue) return;
@@ -102,7 +97,7 @@ export function SaleClient() {
                         : 'Only users with allocation can participate in this stage. Public sale will be available soon'
                     }
                   >
-                    <span className="text-xs font-medium px-3 py-1 rounded-full bg-success/20 text-success border-2 border-success/40 cursor-help flex items-center gap-1">
+                    <span className={`text-xs font-medium px-3 py-1 rounded-full ${isPublicSale ? 'bg-success/20' : 'bg-amber-600'} text-success border-2 border-success/40 cursor-help flex items-center gap-1`}>
                       {isPublicSale ? 'Public sale' : 'Whitelist sale'}
                       <InfoCircledIcon className="w-4 h-4" />
                     </span>
@@ -115,11 +110,11 @@ export function SaleClient() {
               <div className="space-y-4">
                 <InfoCard title="Price" value={isSaleActive && saleTokenFull.price ? 
                   <span>
-                    1.00 {saleToken?.symbol}
+                    {isPublicSale ? publicPrice.toSignificant(3) : wlPrice.toSignificant(3)} {saleToken?.symbol}
                   </span> : '-'
                 } gradientFrom="purple-600" isSaleActive={isSaleActive} />
 
-                <InfoCard
+                {!(!isSaleActive && isPublicSale) && <InfoCard
                   title="Cap"
                   value={isSaleActive && cap ? 
                     <span>
@@ -131,28 +126,25 @@ export function SaleClient() {
                   }
                   gradientFrom="indigo-600"
                   isSaleActive={isSaleActive}
-                />
+                />}
 
                 <InfoCard
-                  title="Remaining"
+                  title="Total raised"
                   value={isSaleActive && cap && totalRaised ? 
                     <span>
-                      {(+cap.sub(totalRaised).toSignificant()).toLocaleString()} $BFD 
-                      <span className="text-foreground-secondary text-sm ml-1 opacity-70">
-                        (${(+cap.sub(totalRaised).toSignificant()).toLocaleString()} {saleToken?.symbol})
-                      </span>
+                      {(totalRaised.toSignificant()).toLocaleString()} {totalRaised.token.symbol} 
                     </span> : '-'
                   }
                   gradientFrom="emerald-600"
                   isSaleActive={isSaleActive}
                   progressBar={{
-                    progress: 100 - progress,
-                    label: `${(100 - progress).toFixed(1)}% remaining`,
+                    progress: 100,
+                    label: '',
                     color: 'green',
                   }}
                 />
 
-                <InfoCard
+                {!isPublicSale && <InfoCard
                   title="Your allocation"
                   value={isSaleActive && allocation ? 
                     <span>
@@ -164,7 +156,7 @@ export function SaleClient() {
                   }
                   gradientFrom="amber-600"
                   isSaleActive={isSaleActive}
-                />
+                />}
               </div>
 
               <div className="flex flex-col gap-5">

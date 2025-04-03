@@ -2,7 +2,7 @@ import { saleAbi } from '@/config/abi/sale';
 import { SALE_CA } from '@/config/berachain';
 import { wagmiConfig } from '@/config/wagmi';
 import { useTokens } from '@/shared/hooks/useTokens';
-import { TokenAmount } from '@berachain-foundation/berancer-sdk';
+import { Token, TokenAmount } from '@berachain-foundation/berancer-sdk';
 import { useEffect } from 'react';
 import { useAccount, useReadContract, useWriteContract } from 'wagmi';
 import { waitForTransactionReceipt } from 'wagmi/actions';
@@ -32,8 +32,6 @@ export const useSaleContract = () => {
     }
   }, [saleTokenAddress, address]);
 
-  console.log(saleTokenAddress)
-
   const { data: cap } = useReadContract({
     address: SALE_CA,
     abi: saleAbi,
@@ -46,10 +44,28 @@ export const useSaleContract = () => {
     functionName: 'isPublicSale',
   });
 
-  const { data: totalRaised, refetch: refetchTotalRaised } = useReadContract({
+  const { data: wlRaised, refetch: refetchWlRaised } = useReadContract({
     address: SALE_CA,
     abi: saleAbi,
-    functionName: 'totalRaised',
+    functionName: 'wlRaised',
+  });
+
+  const { data: publicRaised, refetch: refetchPublicRaised } = useReadContract({
+    address: SALE_CA,
+    abi: saleAbi,
+    functionName: 'publicRaised',
+  });
+
+  const { data: wlPrice } = useReadContract({
+    address: SALE_CA,
+    abi: saleAbi,
+    functionName: 'wlPrice',
+  });
+
+  const { data: publicPrice } = useReadContract({
+    address: SALE_CA,
+    abi: saleAbi,
+    functionName: 'publicPrice',
   });
 
   const { data: allocation, refetch: refetchAllocation } = useReadContract({
@@ -79,7 +95,8 @@ export const useSaleContract = () => {
   const readAgain = () => {
     refetchIsSaleActive();
     refetchIsPublicSale();
-    refetchTotalRaised();
+    refetchWlRaised();
+    refetchPublicRaised();
     refetchAllocation();
     fetchTokens([saleTokenAddress as `0x${string}`], address);
   };
@@ -92,15 +109,23 @@ export const useSaleContract = () => {
     return () => clearInterval(interval);
   }, [address]);
 
-  const saleToken = tokensMap[(saleTokenAddress as `0x${string}`)?.toLowerCase()]?.token;
+  const usdcToken = new Token(1, '0x0000000000000000000000000000000000000000', 6, 'USDC', 'USD Coin');
+  const saleToken = tokensMap[(saleTokenAddress as `0x${string}`)?.toLowerCase()]?.token ?? usdcToken;
 
   const saleTokenFull = tokensMap[(saleTokenAddress as `0x${string}`)?.toLowerCase()];
+
+  const wlRaisedAmount = TokenAmount.fromRawAmount(saleToken, (wlRaised ?? 0) as bigint);
+  const publicRaisedAmount = TokenAmount.fromRawAmount(saleToken, (publicRaised ?? 0) as bigint);
+
+  const totalRaised = wlRaisedAmount.add(publicRaisedAmount);
 
   return {
     isSaleActive: Boolean(isSaleActive),
     cap: cap !== undefined && saleToken && TokenAmount.fromRawAmount(saleToken, cap as bigint),
     isPublicSale: Boolean(isPublicSale),
-    totalRaised: totalRaised !== undefined && saleToken && TokenAmount.fromRawAmount(saleToken, totalRaised as bigint),
+    totalRaised,
+    wlPrice: TokenAmount.fromRawAmount(saleToken, (wlPrice ?? 0) as bigint),
+    publicPrice: TokenAmount.fromRawAmount(saleToken, (publicPrice ?? 0) as bigint),
     allocation: allocation !== undefined && saleToken && TokenAmount.fromRawAmount(saleToken, allocation as bigint),
     saleToken,
     saleTokenFull,
