@@ -126,7 +126,7 @@ export const useSaleContract = () => {
     totalRaised,
     wlPrice: TokenAmount.fromRawAmount(saleToken, (wlPrice ?? 0) as bigint),
     publicPrice: TokenAmount.fromRawAmount(saleToken, (publicPrice ?? 0) as bigint),
-    allocation: allocation !== undefined && saleToken && TokenAmount.fromRawAmount(saleToken, allocation as bigint),
+    allocation: TokenAmount.fromRawAmount(saleToken, (allocation ?? 0) as bigint),
     saleToken,
     saleTokenFull,
     supply,

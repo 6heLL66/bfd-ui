@@ -17,6 +17,7 @@ import { InfoCard } from './InfoCard';
 import { Tooltip } from '@heroui/tooltip';
 import { InfoCircledIcon } from '@radix-ui/react-icons';
 import { createApproveToast } from '@/app/swap/toasts';
+import numeral from 'numeral';
 
 export function SaleClient() {
   const { checkAllowance, approve } = useApprove();
@@ -57,6 +58,7 @@ export function SaleClient() {
       error: `Failed to supply ${saleToken?.symbol}`,
     });
   };
+  console.log(wlPrice.amount, allocation?.amount)
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-[800px] min-h-[600px] w-full mx-auto flex flex-col gap-8 justify-between py-8 px-4 md:px-8">
@@ -86,7 +88,7 @@ export function SaleClient() {
               </div>
               <div className="flex flex-wrap gap-2">
                 {isSaleActive && (
-                  <span className="text-xs font-medium px-3 py-1 rounded-full bg-primary-default/20 text-primary-default border-2 border-primary-default/40">Active sale</span>
+                  <span className="text-xs font-medium px-3 py-1 rounded-full bg-success/20 text-success border-2 border-success/40">Active sale</span>
                 )}
                 {isSaleActive && (
                   <Tooltip
@@ -97,7 +99,7 @@ export function SaleClient() {
                         : 'Only users with allocation can participate in this stage. Public sale will be available soon'
                     }
                   >
-                    <span className={`text-xs font-medium px-3 py-1 rounded-full ${isPublicSale ? 'bg-success/20' : 'bg-amber-600'} text-success border-2 border-success/40 cursor-help flex items-center gap-1`}>
+                    <span className={`text-xs font-medium px-3 py-1 rounded-full ${isPublicSale ? 'bg-success/20 text-success border-success/40' : 'bg-amber-600/20 text-amber-600 border-amber-600/40'}  border-2  cursor-help flex items-center gap-1`}>
                       {isPublicSale ? 'Public sale' : 'Whitelist sale'}
                       <InfoCircledIcon className="w-4 h-4" />
                     </span>
@@ -108,20 +110,17 @@ export function SaleClient() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-4">
-                <InfoCard title="Price" value={isSaleActive && saleTokenFull.price ? 
+                <InfoCard title="Price" value={isSaleActive ? 
                   <span>
                     {isPublicSale ? publicPrice.toSignificant(3) : wlPrice.toSignificant(3)} {saleToken?.symbol}
                   </span> : '-'
                 } gradientFrom="purple-600" isSaleActive={isSaleActive} />
 
-                {!(!isSaleActive && isPublicSale) && <InfoCard
+                {isPublicSale && <InfoCard
                   title="Cap"
                   value={isSaleActive && cap ? 
                     <span>
-                      {(+cap.toSignificant()).toLocaleString()} $BFD 
-                      <span className="text-foreground-secondary text-sm ml-1 opacity-70">
-                        (${(+cap.toSignificant()).toLocaleString()} {saleToken?.symbol})
-                      </span>
+                      {numeral(+cap.toSignificant()).format('0.00a')} {saleToken?.symbol}
                     </span> : '-'
                   }
                   gradientFrom="indigo-600"
@@ -132,7 +131,7 @@ export function SaleClient() {
                   title="Total raised"
                   value={isSaleActive && cap && totalRaised ? 
                     <span>
-                      {(totalRaised.toSignificant()).toLocaleString()} {totalRaised.token.symbol} 
+                      {numeral(totalRaised.toSignificant()).format('0.00a')} {totalRaised.token.symbol} 
                     </span> : '-'
                   }
                   gradientFrom="emerald-600"
@@ -148,9 +147,9 @@ export function SaleClient() {
                   title="Your allocation"
                   value={isSaleActive && allocation ? 
                     <span>
-                      {(+allocation.toSignificant()).toLocaleString()} $BFD 
+                      {numeral(+allocation.mulUpFixed(wlPrice.scale18).toSignificant()).format('0.00a')} $BFD 
                       <span className="text-foreground-secondary text-sm ml-1 opacity-70">
-                        (${(+allocation.toSignificant()).toLocaleString()} {saleToken?.symbol})
+                        (${numeral(+allocation.toSignificant()).format('0.00a')} {saleToken?.symbol})
                       </span>
                     </span> : '-'
                   }
