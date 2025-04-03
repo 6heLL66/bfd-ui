@@ -23,7 +23,7 @@ export function SaleClient() {
   const { checkAllowance, approve } = useApprove();
   const [isSupplying, setIsSupplying] = useState<boolean>(false);
   const [supplyValue, setSupplyValue] = useState<string>();
-  const { isSaleActive, cap, isPublicSale, totalRaised, wlPrice, publicPrice, allocation, saleToken, saleTokenFull, supply } = useSaleContract();
+  const { isSaleActive, cap, isPublicSale, totalRaised, wlPrice, publicPrice, publicRaised, allocation, saleToken, saleTokenFull, supply } = useSaleContract();
 
   const handleSupply = async () => {
     if (!supplyValue) return;
@@ -58,7 +58,12 @@ export function SaleClient() {
       error: `Failed to supply ${saleToken?.symbol}`,
     });
   };
-  console.log(wlPrice.amount, allocation?.amount)
+
+  const handleMaxAllocation = () => {
+    if (allocation && !isPublicSale) {
+      setSupplyValue(allocation.toSignificant(18));
+    }
+  };
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-[800px] min-h-[600px] w-full mx-auto flex flex-col gap-8 justify-between py-8 px-4 md:px-8">
@@ -117,14 +122,19 @@ export function SaleClient() {
                 } gradientFrom="purple-600" isSaleActive={isSaleActive} />
 
                 {isPublicSale && <InfoCard
-                  title="Cap"
-                  value={isSaleActive && cap ? 
+                  title="Cap remaining"
+                  value={isSaleActive && cap ?
                     <span>
-                      {numeral(+cap.toSignificant()).format('0.00a')} {saleToken?.symbol}
+                      {numeral(+cap.sub(publicRaised).toSignificant()).format('0.00a')} {saleToken?.symbol}
                     </span> : '-'
                   }
                   gradientFrom="indigo-600"
                   isSaleActive={isSaleActive}
+                  progressBar={{
+                    progress: cap ? +cap.sub(publicRaised).divUpFixed(cap.scale18).toSignificant(4) * 100 : 100,
+                    label: '',
+                    color: 'green',
+                  }}
                 />}
 
                 <InfoCard
@@ -160,7 +170,20 @@ export function SaleClient() {
 
               <div className="flex flex-col gap-5">
                 <div className="space-y-3">
-                  <label className="text-sm font-medium text-foreground-secondary">Amount to supply</label>
+                  <label className="text-sm font-medium text-foreground-secondary flex items-center justify-between">
+                    <span>Amount to supply</span>
+                    {isSaleActive && !isPublicSale && allocation && (
+                      <button 
+                        className="text-xs font-medium flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary-default/10 text-primary-default hover:bg-primary-default/20 hover:text-primary-hover transition-all duration-300 cursor-pointer border border-primary-default/20 shadow-sm"
+                        onClick={handleMaxAllocation}
+                      >
+                        <span className="font-bold">Max:</span> 
+                        <span className="bg-gradient-to-r from-primary-default to-primary-hover bg-clip-text text-transparent font-bold">
+                          {allocation.toSignificant(6)} {saleToken?.symbol}
+                        </span>
+                      </button>
+                    )}
+                  </label>
                   <motion.div className="p-3 py-3 relative rounded-xl flex bg-surface/50 border border-border/40 transition-all duration-300 hover:border-border">
                     <input
                       className="w bg-transparent border-none"

@@ -124,6 +124,7 @@ export const useSaleContract = () => {
     cap: cap !== undefined && saleToken && TokenAmount.fromRawAmount(saleToken, cap as bigint),
     isPublicSale: Boolean(isPublicSale),
     totalRaised,
+    publicRaised: publicRaisedAmount,
     wlPrice: TokenAmount.fromRawAmount(saleToken, (wlPrice ?? 0) as bigint),
     publicPrice: TokenAmount.fromRawAmount(saleToken, (publicPrice ?? 0) as bigint),
     allocation: TokenAmount.fromRawAmount(saleToken, (allocation ?? 0) as bigint),
