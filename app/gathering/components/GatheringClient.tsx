@@ -1,0 +1,186 @@
+'use client';
+
+import { WalletGuard } from '@/shared/components/WalletGuard';
+import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { GatheringPhaseCard } from './GatheringPhaseCard';
+import { GatheringAnimation } from './GatheringAnimation';
+import { Alert } from '@heroui/alert';
+
+export function GatheringClient() {
+  const [activePhase, setActivePhase] = useState<'initial' | 'whitelist' | 'public'>('initial');
+
+  // Simulated data for the three gathering phases
+  const gatheringPhases = [
+    {
+      id: 'initial',
+      title: 'Initial Gathering',
+      description: 'For team members, validators, and advisors only.',
+      rate: '1:1',
+      price: '1 USDC per $1 of $BFD value',
+      eligibility: 'Team members, validators, advisors',
+      active: true,
+      comingSoon: false,
+      color: 'primary'
+    },
+    {
+      id: 'whitelist',
+      title: 'WL Gathering',
+      description: 'For users who pledge $BGT or have private deals with the team.',
+      rate: '1:1.03',
+      price: '1.03 USDC per $1 of $BFD value',
+      eligibility: '$BGT pledge or private deals',
+      active: false,
+      comingSoon: true,
+      color: 'violet'
+    },
+    {
+      id: 'public',
+      title: 'Public Gathering',
+      description: 'Open to all, used as a GTM strategy to attract attention and interest.',
+      rate: '1:1.06',
+      price: '1.06 USDC per $1 of $BFD value',
+      eligibility: 'Everyone',
+      active: false,
+      comingSoon: false,
+      color: 'emerald'
+    }
+  ];
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }} 
+      animate={{ opacity: 1, y: 0 }} 
+      className="w-full mx-auto flex flex-col gap-8 py-8 px-4 md:px-8"
+    >
+      <section className="max-w-7xl mx-auto mb-12">
+        <div className="flex flex-col lg:flex-row items-center gap-8">
+          <div className="flex-1 order-2 lg:order-1">
+            <motion.div 
+              initial={{ opacity: 0, x: -20 }} 
+              animate={{ opacity: 1, x: 0 }} 
+              transition={{ delay: 0.2 }}
+              className="space-y-6"
+            >
+              <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-white via-orange-400 to-orange-500 bg-clip-text text-transparent">
+                BeraFlowDao Gatherings
+              </h1>
+              
+              <p className="text-lg text-white/80 leading-relaxed">
+                BeraFlowDao gathers funds in the treasury and emits $1 worth of $BFD (the treasury token) for every 1 USDC received, with different rates based on the gathering phase.
+              </p>
+
+              <Alert
+                color="default"
+                className="dark backdrop-blur-sm bg-surface border-2 border-primary-default/30 shadow-xl"
+                title={<span className="text-body font-bold text-foreground-primary">Important Information</span>}
+                description={
+                  <span className="text-sm text-foreground-secondary">
+                    <ul className="list-disc pl-5 space-y-1 mt-2">
+                      <li>Only <strong>first sale</strong> is conducted on Ethereum mainnet, other sales will be conducted on Berachain</li>
+                      <li>Only USDC is accepted via smart contract</li>
+                      <li>Funds will be bridged to Berachain after the gathering ends</li>
+                      <li>Join our sale on the <a href="/sale" className="text-primary-default hover:underline">Sale Page</a></li>
+                      <li className="text-foreground-tertiary mt-1">Infomation about when sale available will be announced in our social media</li>
+                      <li className="text-foreground-tertiary mt-1">On first sale, sale contract will not be able to send $BFD emmidiately, it will be sent with script after 1-2 hours</li>
+                    </ul>
+                  </span>
+                }
+              />
+            </motion.div>
+          </div>
+          
+          <div className="flex-1 order-1 lg:order-2 min-h-[400px] relative">
+            <GatheringAnimation activePhase={activePhase} />
+          </div>
+        </div>
+      </section>
+
+      <WalletGuard>
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }} 
+          animate={{ opacity: 1, y: 0 }} 
+          transition={{ delay: 0.4 }}
+          className="max-w-7xl mx-auto"
+        >
+          <div className="bg-surface/40 backdrop-blur-xl rounded-2xl border-2 border-border/40 shadow-2xl shadow-primary-default/10 p-8 transition-all duration-300">
+            <div className="flex flex-col gap-8">
+              <div className="border-b-2 border-border/40 pb-6">
+                <h2 className="text-2xl font-bold text-primary-default">Gathering Phases</h2>
+                <p className="text-sm text-foreground-secondary mt-1">
+                  Different phases with varying benefits and requirements
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {gatheringPhases.map((phase) => (
+                  <GatheringPhaseCard 
+                    key={phase.id}
+                    phase={phase}
+                    isActive={activePhase === phase.id}
+                    onClick={() => setActivePhase(phase.id as 'initial' | 'whitelist' | 'public')}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      </WalletGuard>
+
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }} 
+        animate={{ opacity: 1, y: 0 }} 
+        transition={{ delay: 0.6 }}
+        className="max-w-7xl mx-auto mt-12"
+      >
+        <div className="bg-surface/30 backdrop-blur-md rounded-2xl border-2 border-border/40 p-8">
+          <h2 className="text-2xl font-bold mb-6 bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">
+            Gathering Process Flow
+          </h2>
+          
+          <div className="flex flex-row justify-between gap-4">
+            <div className="bg-surface/50 backdrop-blur-sm rounded-xl border border-border/40 p-4 hover:border-primary-default/40 transition-all duration-300 flex-1">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-8 h-8 rounded-full bg-primary-default/20 flex items-center justify-center text-primary-default font-bold text-sm">1</div>
+                <h3 className="text-base font-bold text-foreground-primary">Send USDC</h3>
+              </div>
+              <p className="text-xs text-foreground-secondary">
+                Send USDC to the gathering contract on Ethereum mainnet.
+              </p>
+            </div>
+            
+            <div className="bg-surface/50 backdrop-blur-sm rounded-xl border border-border/40 p-4 hover:border-primary-default/40 transition-all duration-300 flex-1">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-8 h-8 rounded-full bg-primary-default/20 flex items-center justify-center text-primary-default font-bold text-sm">2</div>
+                <h3 className="text-base font-bold text-foreground-primary">Treasury Receives</h3>
+              </div>
+              <p className="text-xs text-foreground-secondary">
+                The treasury receives USDC and mints $BFD tokens based on your rate.
+              </p>
+            </div>
+            
+            <div className="bg-surface/50 backdrop-blur-sm rounded-xl border border-border/40 p-4 hover:border-primary-default/40 transition-all duration-300 flex-1">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-8 h-8 rounded-full bg-primary-default/20 flex items-center justify-center text-primary-default font-bold text-sm">3</div>
+                <h3 className="text-base font-bold text-foreground-primary">Bridging to Berachain</h3>
+              </div>
+              <p className="text-xs text-foreground-secondary">
+                All collected funds will be bridged to support the BeraFlowDao ecosystem.
+              </p>
+            </div>
+            
+            <div className="bg-surface/50 backdrop-blur-sm rounded-xl border border-border/40 p-4 hover:border-primary-default/40 transition-all duration-300 flex-1">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-8 h-8 rounded-full bg-primary-default/20 flex items-center justify-center text-primary-default font-bold text-sm">4</div>
+                <h3 className="text-base font-bold text-foreground-primary">Mint BFD and Send</h3>
+              </div>
+              <p className="text-xs text-foreground-secondary">
+                Smart contract mints $BFD tokens and sends them to your wallet address.
+              </p>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+} 

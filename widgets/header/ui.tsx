@@ -56,6 +56,11 @@ export const Header = () => {
               <span className="flex items-center gap-1">
                 Sale              </span>
             </NavLink>
+            <NavLink href="/gathering">
+              <span className="flex items-center gap-1">
+                Gathering
+              </span>
+            </NavLink>
             {process.env.NEXT_PUBLIC_V2 === 'true' && <NavLink href="/swap">
               <span className="flex items-center gap-1">
                 Swap
@@ -181,6 +186,12 @@ export const Header = () => {
               <MobileNavLink href="/sale" onClick={toggleMobileMenu}>
                 <span className="flex items-center gap-2">
                   Sale
+                </span>
+              </MobileNavLink>
+
+              <MobileNavLink href="/gathering" onClick={toggleMobileMenu}>
+                <span className="flex items-center gap-2">
+                  Gathering
                 </span>
               </MobileNavLink>
 
