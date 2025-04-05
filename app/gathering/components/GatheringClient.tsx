@@ -81,8 +81,8 @@ export function GatheringClient() {
                       <li>Only USDC is accepted via smart contract</li>
                       <li>Funds will be bridged to Berachain after the gathering ends</li>
                       <li>Join our sale on the <a href="/sale" className="text-primary-default hover:underline">Sale Page</a></li>
-                      <li className="text-foreground-tertiary mt-1">Infomation about when sale available will be announced in our social media</li>
-                      <li className="text-foreground-tertiary mt-1">On first sale, sale contract will not be able to send $BFD emmidiately, it will be sent with script after 1-2 hours</li>
+                      <li className="text-foreground-tertiary mt-1">Information about when sale is available will be announced in our social media</li>
+                      <li className="text-foreground-tertiary mt-1">On first sale, sale contract will not be able to send $BFD immediately, it will be sent with script after 1-2 hours</li>
                     </ul>
                   </span>
                 }
