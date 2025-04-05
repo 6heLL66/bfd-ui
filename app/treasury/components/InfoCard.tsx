@@ -9,7 +9,7 @@ interface InfoCardProps {
 
 export const InfoCard = ({ title, value, gradient }: InfoCardProps) => {
   return (
-    <motion.div whileHover={{ scale: 1.02 }} transition={{ duration: 0.2 }} className="relative group">
+    <motion.div className="relative group">
       <div className={`absolute inset-0 opacity-20 blur-xl bg-gradient-to-br ${gradient} group-hover:opacity-30 transition-opacity duration-300`} />
       <Card className="relative overflow-hidden hover:shadow-xl border-2 border-border/40 rounded-xl transition-all duration-300 group-hover:border-border bg-surface/30 backdrop-blur-sm">
         <div className="p-6">
