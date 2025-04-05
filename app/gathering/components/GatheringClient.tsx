@@ -62,7 +62,7 @@ export function GatheringClient() {
               transition={{ delay: 0.2 }}
               className="space-y-4 sm:space-y-6"
             >
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold bg-gradient-to-r from-white via-orange-400 to-orange-500 bg-clip-text text-transparent">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-primary-default">
                 BeraFlowDao Gatherings
               </h1>
               
