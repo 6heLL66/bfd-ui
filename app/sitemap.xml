@@ -1,56 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-        <loc>https://beraflow.com/</loc>
+        <loc>https://beraflow.io/</loc>
         <lastmod>2025-03-05</lastmod>
         <changefreq>daily</changefreq>
         <priority>1.0</priority>
     </url>
     <url>
-        <loc>https://beraflow.com/swap</loc>
+        <loc>https://beraflow.io/swap</loc>
         <lastmod>2025-03-05</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.9</priority>
     </url>
     <url>
-        <loc>https://beraflow.com/sale</loc>
+        <loc>https://beraflow.io/sale</loc>
         <lastmod>2025-03-05</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
-        <loc>https://beraflow.com/treasury</loc>
+        <loc>https://beraflow.io/treasury</loc>
         <lastmod>2025-03-05</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.7</priority>
     </url>
     <url>
-        <loc>https://beraflow.com/staking</loc>
+        <loc>https://beraflow.io/staking</loc>
         <lastmod>2025-03-05</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.6</priority>
     </url>
     <url>
-        <loc>https://beraflow.com/terms</loc>
+        <loc>https://beraflow.io/terms</loc>
         <lastmod>2025-03-05</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.4</priority>
     </url>
     <url>
-        <loc>https://beraflow.com/privacy-notice</loc>
+        <loc>https://beraflow.io/privacy-notice</loc>
         <lastmod>2025-03-05</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.4</priority>
     </url>
     <url>
-        <loc>https://beraflow.com/pool</loc>
+        <loc>https://beraflow.io/pool</loc>
         <lastmod>2025-03-05</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
-        <loc>https://beraflow.com/validator</loc>
+        <loc>https://beraflow.io/validator</loc>
         <lastmod>2025-03-05</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://beraflow.io/gathering</loc>
+        <lastmod>2025-04-05</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.7</priority>
     </url>
