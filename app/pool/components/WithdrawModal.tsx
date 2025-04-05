@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { debounce, upperFirst } from 'lodash';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -47,7 +47,7 @@ export const WithdrawModal = ({ isOpen, onClose, lpTokensValue }: WithdrawModalP
     const removeLiquidityInput = {
       chainId,
       kind: RemoveLiquidityKind.Proportional,
-      rpcUrl: config.chains[chainId].rpcUrls.default.http[0],
+      rpcUrl: config.chains[0].rpcUrls.default.http[0],
       bptIn: {
           address: poolState.address as `0x${string}`,
           decimals: token.decimals,
@@ -65,7 +65,7 @@ export const WithdrawModal = ({ isOpen, onClose, lpTokensValue }: WithdrawModalP
     return queryOutput
   }, [poolState, tokens]);
 
-  const debouncedQueryLiquidity = useCallback(debounce(queryLiquidity, 100), [queryLiquidity]);
+  const debouncedQueryLiquidity = useMemo(() => debounce(queryLiquidity, 100), []);
 
   const handleWithdraw = async () => {
     try {

@@ -1,9 +1,9 @@
 import { getDefaultConfig } from '@rainbow-me/rainbowkit';
-import { mainnet, berachainBepolia } from 'viem/chains';
+import { berachain, berachainBepolia, mainnet } from 'viem/chains';
 
 export const wagmiConfig = getDefaultConfig({
   appName: 'BeraFlow DAO',
   projectId: '1dca7864-5a9d-4795-9630-275810877154',
-  chains: process.env.NEXT_PUBLIC_DEV === 'true' ? [berachainBepolia] : [mainnet],
+  chains: process.env.NEXT_PUBLIC_DEV === 'true' ? [berachainBepolia] : process.env.NEXT_PUBLIC_V2 === 'true' ? [berachain] : [mainnet],
   ssr: true, // If your dApp uses server side rendering (SSR)
 });

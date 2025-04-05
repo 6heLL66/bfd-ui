@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePool } from '@/features/pool/usePool';
@@ -13,9 +13,12 @@ import { useSwapSettings } from '@/features/swap/store/swapSettings';
 import { debounce, upperFirst } from 'lodash';
 import { FullToken } from '@/shared/hooks/useTokens';
 import { Button } from '@heroui/button';
+import { Tooltip } from '@heroui/tooltip';
+import { InfoCircledIcon } from '@radix-ui/react-icons';
 import { createDepositToast } from './toasts';
 import { useConfig } from 'wagmi';
 import { useChainId } from 'wagmi';
+import { Switch } from '@heroui/react';
 interface DepositModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -23,23 +26,21 @@ interface DepositModalProps {
 
 export const DepositModal = ({ isOpen, onClose }: DepositModalProps) => {
   const { approve, checkAllowance } = useApprove();
-  const { deposit, pool, lpVaultAddress, poolState, tokens } = usePool(POOL_ID);
+  const { deposit, pool, poolState, lpVaultAddress, tokens } = usePool(POOL_ID);
   const [amounts, setAmounts] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isQueryLoading, setIsQueryLoading] = useState<boolean>(false);
 
+  const [isProportional, setIsProportional] = useState<boolean>(false);
+
   const chainId = useChainId();
   const config = useConfig();
 
-  console.log('config', config);
-
-  const [queryOutput, setQueryOutput] = useState<AddLiquidityQueryOutput | null>(null);
   const { slippage, setSlippage } = useSwapSettings();
 
   const queryLiquidity = useCallback(
     async (token: Token, tokenAmount: TokenAmount) => {
-      console.log('token', poolState);
-      if (!pool) return;
+      if (!poolState) return;
       setIsQueryLoading(true);
 
       const addLiquidity = new AddLiquidity();
@@ -55,7 +56,7 @@ export const DepositModal = ({ isOpen, onClose }: DepositModalProps) => {
         },
       } as AddLiquidityInput;
 
-      const queryOutput = await addLiquidity.query(addLiquidityInput, { ...(pool as PoolState), type: upperFirst(pool.type.toLocaleLowerCase()) });
+      const queryOutput = await addLiquidity.query(addLiquidityInput, { ...(poolState as PoolState), type: upperFirst(poolState.type.toLocaleLowerCase()) });
       const otherToken = tokens.filter(_token => _token.token.symbol !== token.symbol)[0];
       const otherTokenIndex = tokens.indexOf(otherToken);
 
@@ -64,15 +65,37 @@ export const DepositModal = ({ isOpen, onClose }: DepositModalProps) => {
         [otherToken.token.symbol ?? '']: queryOutput.amountsIn[otherTokenIndex].toSignificant(18),
       }));
 
-      setQueryOutput(queryOutput);
       setIsQueryLoading(false);
 
       return queryOutput;
     },
-    [pool, tokens, chainId, config]
+    [pool, tokens]
   );
 
-  const debouncedQueryLiquidity = useCallback(debounce(queryLiquidity, 300), [queryLiquidity]);
+  const queryUnbalanced = useCallback(
+    async (amounts: TokenAmount[]) => {
+      if (!poolState) return;
+
+      const addLiquidity = new AddLiquidity();
+
+      const addLiquidityInput = {
+        chainId,
+        kind: AddLiquidityKind.Unbalanced,
+        amountsIn: amounts.map(amount => ({
+          address: amount.token.address as `0x${string}`,
+          decimals: amount.token.decimals,
+          rawAmount: amount.amount,
+        })),
+      } as AddLiquidityInput;
+
+      const queryOutput = await addLiquidity.query(addLiquidityInput, { ...(poolState as PoolState), type: upperFirst(poolState.type.toLocaleLowerCase()) });
+
+      return queryOutput;
+    },
+    [pool, tokens]
+  );
+
+  const debouncedQueryLiquidity = useMemo(() => debounce(queryLiquidity, 400), []);
 
   const handleAmountChange = (symbol: string, value: string) => {
     const token = tokens.find(token => token.token.symbol === symbol)!;
@@ -83,7 +106,10 @@ export const DepositModal = ({ isOpen, onClose }: DepositModalProps) => {
         [symbol]: value,
       }));
     }
-    debouncedQueryLiquidity(token.token, TokenAmount.fromHumanAmount(token.token, value as `${number}`));
+
+    if (isProportional) {
+      debouncedQueryLiquidity(token.token, TokenAmount.fromHumanAmount(token.token, value as `${number}`));
+    }
   };
 
   const handleMaxButtonClick = (token: FullToken) => {
@@ -99,7 +125,7 @@ export const DepositModal = ({ isOpen, onClose }: DepositModalProps) => {
 
   const handleDeposit = async () => {
     try {
-      if (!pool || !queryOutput) {
+      if (!pool) {
         return;
       }
       const _slippage = Slippage.fromPercentage(slippage as `${number}`);
@@ -107,13 +133,13 @@ export const DepositModal = ({ isOpen, onClose }: DepositModalProps) => {
       setIsLoading(true);
 
       const tokenAmountsApproval = tokens.map(token => {
-        return _slippage.applyTo(TokenAmount.fromHumanAmount(token.token, amounts[token.token.symbol ?? ''] as `${number}`).amount);
+        return _slippage.applyTo(TokenAmount.fromHumanAmount(token.token, (amounts[token.token.symbol ?? ''] ?? '0') as `${number}`).amount);
       });
 
       const token1 = tokens[0].token;
       const token2 = tokens[1].token;
 
-      const needApprove1 = await checkAllowance(lpVaultAddress as `0x${string}`, tokenAmountsApproval[0], token1);
+      const needApprove1 = tokenAmountsApproval[0] > 0 && (await checkAllowance(lpVaultAddress as `0x${string}`, tokenAmountsApproval[0], token1));
 
       if (needApprove1) {
         const promise = approve(lpVaultAddress as `0x${string}`, tokenAmountsApproval[0], token1) as Promise<void>;
@@ -127,7 +153,7 @@ export const DepositModal = ({ isOpen, onClose }: DepositModalProps) => {
         });
       }
 
-      const needApprove2 = await checkAllowance(lpVaultAddress as `0x${string}`, tokenAmountsApproval[1], token2);
+      const needApprove2 = tokenAmountsApproval[1] > 0 && (await checkAllowance(lpVaultAddress as `0x${string}`, tokenAmountsApproval[1], token2));
 
       if (needApprove2) {
         const promise = approve(lpVaultAddress as `0x${string}`, tokenAmountsApproval[1], token2) as Promise<void>;
@@ -141,11 +167,16 @@ export const DepositModal = ({ isOpen, onClose }: DepositModalProps) => {
         });
       }
 
-      const _queryOutput = await queryLiquidity(token1, TokenAmount.fromHumanAmount(token1, amounts[token1.symbol!] as `${number}`));
+      const _queryOutput = isProportional
+        ? await queryLiquidity(token1, TokenAmount.fromHumanAmount(token1, amounts[token1.symbol!] as `${number}`))
+        : await queryUnbalanced([
+            TokenAmount.fromHumanAmount(token1, (amounts[token1.symbol!] ?? '0') as `${number}`),
+            TokenAmount.fromHumanAmount(token2, (amounts[token2.symbol!] ?? '0') as `${number}`),
+          ]);
 
       const promise = deposit(_queryOutput as AddLiquidityQueryOutput);
 
-      createDepositToast(promise, token1.symbol ?? '', amounts[token1.symbol!] as `${number}`, token2.symbol ?? '', amounts[token2.symbol!] as `${number}`);
+      createDepositToast(promise, token1.symbol ?? '', (amounts[token1.symbol!] ?? '0') as `${number}`, token2.symbol ?? '', (amounts[token2.symbol!] ?? '0') as `${number}`);
 
       await promise;
       onClose();
@@ -159,8 +190,10 @@ export const DepositModal = ({ isOpen, onClose }: DepositModalProps) => {
   const _slippage = Slippage.fromPercentage(slippage as `${number}`);
 
   const isError = (index: number) =>
-    TokenAmount.fromRawAmount(tokens[index]?.token, _slippage.applyTo(tokens[index]?.balance.amount ?? 0, -1)).amount <
-    TokenAmount.fromHumanAmount(tokens[index]?.token, (amounts[tokens[index]?.token.symbol ?? ''] ?? '0') as `${number}`).amount;
+    tokens.length
+      ? TokenAmount.fromRawAmount(tokens[index]?.token, _slippage.applyTo(tokens[index]?.balance.amount ?? 0, -1)).amount <
+        TokenAmount.fromHumanAmount(tokens[index]?.token, (amounts[tokens[index]?.token.symbol ?? ''] ?? '0') as `${number}`).amount
+      : false;
 
   if (!isOpen) return null;
 
@@ -199,6 +232,23 @@ export const DepositModal = ({ isOpen, onClose }: DepositModalProps) => {
               </div>
 
               <div className="space-y-4">
+                <div className="bg-surface/50 rounded-lg p-4 py-3 border border-border/30">
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm">Keep Amounts Proportional</span>
+                      <Tooltip
+                        className="dark max-w-[300px]"
+                        content="When enabled, the amounts of tokens will be automatically balanced according to the pool's ratio, helping to minimize slippage"
+                      >
+                        <span className="cursor-help">
+                          <InfoCircledIcon className="w-4 h-4 text-foreground-secondary" />
+                        </span>
+                      </Tooltip>
+                    </div>
+                    <Switch color="primary" size="sm" isSelected={isProportional} onValueChange={setIsProportional} />
+                  </div>
+                </div>
+
                 {tokens?.map((token, index) => (
                   <div key={token.token.symbol} className="bg-surface/50 rounded-lg p-4 border border-border/30">
                     <div className="flex justify-between items-center mb-2">
@@ -262,7 +312,7 @@ export const DepositModal = ({ isOpen, onClose }: DepositModalProps) => {
                 <Button
                   className={`w-full px-4 py-3 rounded-lg font-medium border-none font-bold text-white bg-primary-default hover:bg-primary-hover transition-colors`}
                   onPress={handleDeposit}
-                  size='lg'
+                  size="lg"
                   isLoading={isLoading || isQueryLoading}
                   isDisabled={isError(0) || isError(1)}
                 >

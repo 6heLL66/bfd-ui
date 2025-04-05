@@ -6,16 +6,20 @@ export default {
     './shared/**/*.{js,ts,jsx,tsx,mdx}',
     './widgets/**/*.{js,ts,jsx,tsx,mdx}',
     './app/**/*.{js,ts,jsx,tsx,mdx}',
-    './node_modules/@heroui/theme/dist/components/(alert|button|card|divider|input|link|spinner|ripple|form).js',
+    "./node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {
       colors: {
         bg: '#030405',
         surface: '#0A0C10',
-        border: '#5A5D65', // Made even brighter from #4A4D55
+        border: '#5A5D65',
+        default: {
+          200: '#4A4D55',
+        },
         primary: {
           default: '#FF9F5B', // Более мягкий оранжевый
+          foreground: '#FFA573', // Светлее при наведении
           hover: '#FFA573', // Светлее при наведении
         },
         secondary: '#7EE7D2', // Более мягкий бирюзовый

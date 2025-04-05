@@ -7,44 +7,46 @@ import { Prices } from "../api/types";
 import { getTokenImageUrl } from "../utils";
 import { create } from 'zustand';
 import { useAccount, useChainId } from "wagmi";
+import { debounce, DebouncedFunc } from "lodash";
 
 export type FullToken = {
     token: Token,
     balance: TokenAmount,
     balanceUSD: TokenAmount,
     price: TokenAmount,
+    updatedAt: number,
     logo: string
 }
 
 interface TokensState {
     tokens: FullToken[];
     setTokens: (tokens: FullToken[]) => void;
-    loading: boolean;
-    setLoading: (loading: boolean) => void;
+    addressesToLoad: string[];
+    loadTokens: DebouncedFunc<(chainId: number, address?: string) => Promise<void>>;
     fetchTokens: (addresses: string[], chainId: number, address?: string,) => Promise<void>;
 }
 
-const useTokensStore = create<TokensState>((set) => ({
+const useTokensStore = create<TokensState>((set, get) => ({
     tokens: [],
     setTokens: (tokens) => set({ tokens }),
-    loading: false,
-    setLoading: (loading) => set({ loading }),
-    fetchTokens: async (addresses, chainId, address) => {
-        if (!addresses || addresses.length === 0) return;
+    addressesToLoad: [],
+    loadTokens: debounce(async (chainId: number, address: string) => {
+        const { addressesToLoad } = get();
+
+        if (!addressesToLoad || addressesToLoad.length === 0) return;
         
-        set({ loading: true });
         try {
             const [balances, prices] = await Promise.all([
-                Promise.all(addresses.map((_address) => getBalance(wagmiConfig, {
+                Promise.all(addressesToLoad.map((_address) => getBalance(wagmiConfig, {
                     address: address as `0x${string}`,
                     token: _address as `0x${string}`
                 }).catch(() => ({ value: 0, decimals: 18, symbol: '' })))), 
-                getTokensPrice(addresses)
+                getTokensPrice(addressesToLoad)
             ]);
 
             if (!balances || !prices) return;
 
-            const tokens = addresses.map((address, index) => {
+            const tokens = addressesToLoad.map((address, index) => {
                 const balance = balances[index as keyof typeof balances] as GetBalanceReturnType;
                 const price = prices.find((price) => price.address === address.toLocaleLowerCase()) as Prices[0];
                 const token = new Token(chainId, address as `0x${string}`, balance.decimals, balance.symbol);
@@ -57,20 +59,26 @@ const useTokensStore = create<TokensState>((set) => ({
                     balance: balanceAmount,
                     price: priceAmount,
                     balanceUSD: balanceAmount.mulUpFixed(priceAmount.amount),
+                    updatedAt: Date.now(),
                     logo: getTokenImageUrl(token)
                 }
             });
             set((prev) => ({ ...prev, tokens: [...tokens, ...prev.tokens.filter(token => !tokens.find(t => t.token.address === token.token.address))], loading: false }));
         } catch (error) {
             console.error("Error fetching tokens:", error);
-            set({ loading: false });
         }
+    }, 250),
+    fetchTokens: async (addresses, chainId, address) => {
+        if (!addresses || addresses.length === 0) return;
+
+        set({ addressesToLoad: Array.from(new Set([...get().addressesToLoad, ...addresses])) });
+        get().loadTokens(chainId, address);
     }
 }));
 
 export const useTokens = (addresses?: string[]) => {
     const { address } = useAccount();
-    const { tokens, fetchTokens, loading } = useTokensStore();
+    const { tokens, fetchTokens } = useTokensStore();
     const chainId = useChainId();
 
     useEffect(() => {
@@ -86,5 +94,5 @@ export const useTokens = (addresses?: string[]) => {
         }, {} as Record<string, FullToken>);
     }, [tokens]);
 
-    return { tokens, fetchTokens: (addresses: string[], address?: string) => fetchTokens(addresses, chainId, address), loading, tokensMap };
+    return { tokens, fetchTokens: (addresses: string[], address?: string) => fetchTokens(addresses, chainId, address), tokensMap };
 }
