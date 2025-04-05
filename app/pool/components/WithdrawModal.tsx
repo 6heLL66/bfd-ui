@@ -36,7 +36,7 @@ export const WithdrawModal = ({ isOpen, onClose, lpTokensValue }: WithdrawModalP
   const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setWithdrawPercentage(Number(e.target.value));
 
-    debouncedQueryLiquidity(lpToken, TokenAmount.fromHumanAmount(lpToken, String((Number(e.target.value) / 100) * Number(lpTokens.toSignificant())) as `${number}`))
+    debouncedQueryLiquidity(lpToken, TokenAmount.fromHumanAmount(lpToken, String((Number(e.target.value) / 100) * Number(lpTokens.toSignificant(18))) as `${number}`))
   };
 
   const queryLiquidity = useCallback(async (token: Token, tokenAmount: TokenAmount) => {
@@ -74,7 +74,7 @@ export const WithdrawModal = ({ isOpen, onClose, lpTokensValue }: WithdrawModalP
         return;
       }
 
-      const _queryOutput = await queryLiquidity(lpToken, TokenAmount.fromHumanAmount(lpToken, String((Number(withdrawPercentage) / 100) * Number(lpTokens.toSignificant())) as `${number}`))
+      const _queryOutput = await queryLiquidity(lpToken, TokenAmount.fromHumanAmount(lpToken, String((Number(withdrawPercentage) / 100) * Number(lpTokens.toSignificant(18))) as `${number}`))
 
       const promise = withdraw(_queryOutput as RemoveLiquidityQueryOutput);
 
