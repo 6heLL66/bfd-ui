@@ -1,14 +1,11 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { useState } from 'react';
 import { GatheringPhaseCard } from './GatheringPhaseCard';
 import { GatheringAnimation } from './GatheringAnimation';
 import { Alert } from '@heroui/alert';
 
 export function GatheringClient() {
-  const [activePhase, setActivePhase] = useState<'initial' | 'whitelist' | 'public'>('initial');
-
   // Simulated data for the three gathering phases
   const gatheringPhases = [
     {
@@ -90,7 +87,7 @@ export function GatheringClient() {
           </div>
           
           <div className="flex-1 order-1 lg:order-2 min-h-[250px] sm:min-h-[300px] md:min-h-[400px] relative w-full">
-            <GatheringAnimation activePhase={activePhase} />
+            <GatheringAnimation />
           </div>
         </div>
       </section>
@@ -112,8 +109,6 @@ export function GatheringClient() {
                   <GatheringPhaseCard 
                     key={phase.id}
                     phase={phase}
-                    isActive={activePhase === phase.id}
-                    onClick={() => setActivePhase(phase.id as 'initial' | 'whitelist' | 'public')}
                   />
                 ))}
               </div>

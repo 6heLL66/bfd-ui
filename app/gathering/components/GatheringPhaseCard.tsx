@@ -16,8 +16,6 @@ type GatheringPhase = {
 
 type GatheringPhaseCardProps = {
   phase: GatheringPhase;
-  isActive: boolean;
-  onClick: () => void;
 };
 
 const getGradientClasses = (color: string) => {
@@ -51,13 +49,12 @@ const getGradientClasses = (color: string) => {
   return colorMap[color as keyof typeof colorMap] || colorMap.primary;
 };
 
-export const GatheringPhaseCard = ({ phase, isActive, onClick }: GatheringPhaseCardProps) => {
+export const GatheringPhaseCard = ({ phase }: GatheringPhaseCardProps) => {
   const colors = getGradientClasses(phase.color);
 
   return (
     <motion.div
-      onClick={onClick}
-      className={`relative rounded-xl overflow-hidden bg-gradient-to-br ${colors.background} backdrop-blur-sm border-2 ${isActive ? colors.activeBorder : colors.border} transition-all duration-300 p-6 cursor-pointer`}
+      className={`relative rounded-xl overflow-hidden bg-gradient-to-br ${colors.background} backdrop-blur-sm border-2 ${colors.border} transition-all duration-300 p-6 cursor-pointer`}
     >
       {/* Status indicator */}
       <div className="absolute top-4 right-4 flex items-center gap-2">

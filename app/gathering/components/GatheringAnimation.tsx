@@ -4,10 +4,6 @@ import { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 
-interface GatheringAnimationProps {
-  activePhase: 'initial' | 'whitelist' | 'public';
-}
-
 // Animation variants for the flow lines
 const flowVariants = {
   initial: {
@@ -39,20 +35,9 @@ const chainIconVariants = {
   }
 };
 
-// Phase color mapping
-const getPhaseColor = (phase: 'initial' | 'whitelist' | 'public') => {
-  const colorMap = {
-    initial: '#6C5ED3', // primary color
-    whitelist: '#8B5CF6', // violet color
-    public: '#10B981', // emerald color
-  };
-  
-  return colorMap[phase];
-};
-
-export function GatheringAnimation({ activePhase }: GatheringAnimationProps) {
+export function GatheringAnimation() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const phaseColor = getPhaseColor(activePhase);
+  const phaseColor = '#6C5ED3';
   
   // Initialize the blockchain network particle effect
   useEffect(() => {
@@ -184,7 +169,7 @@ export function GatheringAnimation({ activePhase }: GatheringAnimationProps) {
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, [phaseColor]);
+  }, []);
   
   return (
     <div className="relative w-full h-full min-h-[400px] md:min-h-[500px] lg:min-h-[600px] flex items-center justify-center overflow-hidden">
