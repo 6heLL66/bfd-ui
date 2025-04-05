@@ -15,20 +15,20 @@ export function GatheringClient() {
     {
       id: 'initial',
       title: 'Initial Gathering',
-      description: 'Team members, validators, and advisors.',
+      description: 'Team members, validators, and advisors',
       rate: '1:1',
-      price: '1 USDC per $1 of $BFD value',
+      price: '1 USDC per 1 $BFD',
       eligibility: 'Team',
-      active: true,
+      active: false,
       comingSoon: false,
       color: 'primary'
     },
     {
       id: 'whitelist',
       title: 'WL Gathering',
-      description: '$BGT pledgers or private deals.',
+      description: '$BGT pledgers or private deals',
       rate: '1:1.03',
-      price: '1.03 USDC per $1 of $BFD value',
+      price: '1.03 USDC per 1 $BFD',
       eligibility: 'Whitelist',
       active: false,
       comingSoon: true,
@@ -37,12 +37,12 @@ export function GatheringClient() {
     {
       id: 'public',
       title: 'Public Gathering',
-      description: 'Everyone.',
+      description: 'Everyone',
       rate: '1:1.06',
-      price: '1.06 USDC per $1 of $BFD value',
+      price: '1.06 USDC per 1 $BFD',
       eligibility: 'Public',
       active: false,
-      comingSoon: false,
+      comingSoon: true,
       color: 'emerald'
     }
   ];
@@ -149,7 +149,7 @@ export function GatheringClient() {
             <div className="bg-surface/50 backdrop-blur-sm rounded-xl border border-border/40 p-4 hover:border-primary-default/40 transition-all duration-300 flex-1">
               <div className="flex items-center gap-2 mb-2">
                 <div className="w-8 h-8 rounded-full bg-primary-default/20 flex items-center justify-center text-primary-default font-bold text-sm">2</div>
-                <h3 className="text-base font-bold text-foreground-primary">Bridging to Berachain</h3>
+                <h3 className="text-base font-bold text-foreground-primary">Bridge to Berachain</h3>
               </div>
               <p className="text-sm text-foreground-secondary">
                 All collected funds will be bridged to support the BeraFlowDao ecosystem.

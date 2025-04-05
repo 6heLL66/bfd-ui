@@ -223,13 +223,11 @@ export function GatheringAnimation({ activePhase }: GatheringAnimationProps) {
             animate="animate"
             transition={{ delay: 0.3 }}
           >
-            <div className="w-[46px] h-[46px] md:w-[56px] md:h-[56px] bg-gradient-to-br from-[#627EEA] to-[#3b5fe9] rounded-full flex items-center justify-center filter drop-shadow-md">
-              <span className="text-white font-bold text-sm md:text-base">ETH</span>
-            </div>
+            <Image src="/images/eth.png" alt="ETH" width={42} height={42} />
             <div className="absolute -bottom-7 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
-              <span className="text-xs font-medium text-white/90 px-2 py-0.5 rounded-md bg-[#627EEA]/10 backdrop-blur-sm">First Sale</span>
+              <span className="text-xs font-medium text-white/90 px-2 py-0.5 rounded-md bg-[#627EEA]/10 backdrop-blur-sm">First Gathering</span>
             </div>
-            <div className="absolute -top-7 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
+            <div className="absolute -top-9 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
               <motion.span 
                 className="text-xs font-bold text-white bg-[#627EEA]/30 px-3 py-1 rounded-md shadow-sm" 
                 initial={{ opacity: 0 }}
@@ -249,13 +247,11 @@ export function GatheringAnimation({ activePhase }: GatheringAnimationProps) {
             animate="animate"
             transition={{ delay: 0.4 }}
           >
-            <div className="w-[46px] h-[46px] md:w-[56px] md:h-[56px] bg-gradient-to-br from-[#FFD580] to-[#F9BC64] rounded-full flex items-center justify-center filter drop-shadow-md">
-              <span className="text-black font-bold text-sm md:text-base">BERA</span>
-            </div>
+            <Image src="/images/bera.png" alt="BERA" width={42} height={42} />
             <div className="absolute -bottom-7 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
-              <span className="text-xs font-medium text-white/90 px-2 py-0.5 rounded-md bg-[#FFD580]/10 backdrop-blur-sm">Future Sales</span>
+              <span className="text-xs font-medium text-white/90 px-2 py-0.5 rounded-md bg-[#FFD580]/10 backdrop-blur-sm">Future Gatherings</span>
             </div>
-            <div className="absolute -top-7 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
+            <div className="absolute -top-9 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
               <motion.span 
                 className="text-xs font-bold text-black bg-[#FFD580]/70 px-3 py-1 rounded-md shadow-sm" 
                 initial={{ opacity: 0 }}
