@@ -119,10 +119,6 @@ export const GatheringPhaseCard = ({ phase, isActive, onClick }: GatheringPhaseC
         </p>
         
         <div className="space-y-4 flex-grow mb-6">
-          <div className="flex justify-between items-center">
-            <span className="text-xs text-foreground-secondary">Exchange Rate</span>
-            <span className="text-sm font-bold text-foreground-primary">{phase.rate}</span>
-          </div>
           
           <div className="flex justify-between items-center">
             <span className="text-xs text-foreground-secondary">Price</span>
@@ -130,27 +126,9 @@ export const GatheringPhaseCard = ({ phase, isActive, onClick }: GatheringPhaseC
           </div>
           
           <div className="flex justify-between items-center">
-            <span className="text-xs text-foreground-secondary">Eligibility</span>
+            <span className="text-xs text-foreground-secondary">Phase</span>
             <span className="text-sm font-bold text-foreground-primary">{phase.eligibility}</span>
           </div>
-
-          {phase.id === 'initial' && (
-            <div className="mt-2 pt-2 border-t border-border/30">
-              <span className="text-xs text-foreground-tertiary block mb-1">Only approved participants can acquire $BFD at this rate.</span>
-            </div>
-          )}
-
-          {phase.id === 'whitelist' && (
-            <div className="mt-2 pt-2 border-t border-border/30">
-              <span className="text-xs text-foreground-tertiary block mb-1">Get WL via $BGT pledge or private deals with the team.</span>
-            </div>
-          )}
-
-          {phase.id === 'public' && (
-            <div className="mt-2 pt-2 border-t border-border/30">
-              <span className="text-xs text-foreground-tertiary block mb-1">Part of the GTM strategy to attract attention and interest.</span>
-            </div>
-          )}
         </div>
         
         {!phase.active && <Button
@@ -164,8 +142,8 @@ export const GatheringPhaseCard = ({ phase, isActive, onClick }: GatheringPhaseC
             </>
           ) : (
             <>
-              <span className="text-white font-medium">{phase.comingSoon ? 'Coming Soon' : 'Locked'}</span>
-              <LockClosedIcon className="ml-2 w-4 h-4" />
+              <span className="text-white font-bold">Coming Soon</span>
+              <LockClosedIcon className="ml-2 w-5 h-5 text-white" />
             </>
           )}
         </Button>}

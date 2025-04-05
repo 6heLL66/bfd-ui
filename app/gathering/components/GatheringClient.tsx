@@ -15,10 +15,10 @@ export function GatheringClient() {
     {
       id: 'initial',
       title: 'Initial Gathering',
-      description: 'For team members, validators, and advisors only.',
+      description: 'Team members, validators, and advisors.',
       rate: '1:1',
       price: '1 USDC per $1 of $BFD value',
-      eligibility: 'Team members, validators, advisors',
+      eligibility: 'Team',
       active: true,
       comingSoon: false,
       color: 'primary'
@@ -26,10 +26,10 @@ export function GatheringClient() {
     {
       id: 'whitelist',
       title: 'WL Gathering',
-      description: 'For users who pledge $BGT or have private deals with the team.',
+      description: '$BGT pledgers or private deals.',
       rate: '1:1.03',
       price: '1.03 USDC per $1 of $BFD value',
-      eligibility: '$BGT pledge or private deals',
+      eligibility: 'Whitelist',
       active: false,
       comingSoon: true,
       color: 'violet'
@@ -37,10 +37,10 @@ export function GatheringClient() {
     {
       id: 'public',
       title: 'Public Gathering',
-      description: 'Open to all, used as a GTM strategy to attract attention and interest.',
+      description: 'Everyone.',
       rate: '1:1.06',
       price: '1.06 USDC per $1 of $BFD value',
-      eligibility: 'Everyone',
+      eligibility: 'Public',
       active: false,
       comingSoon: false,
       color: 'emerald'
@@ -66,8 +66,8 @@ export function GatheringClient() {
                 BeraFlowDao Gatherings
               </h1>
               
-              <p className="text-lg text-white/80 leading-relaxed">
-                BeraFlowDao gathers funds in the treasury and emits $1 worth of $BFD (the treasury token) for every 1 USDC received, with different rates based on the gathering phase.
+              <p className="text-[20px] text-white/80 leading-relaxed">
+                BeraFlowDao gathers funds in the treasury and emits $BFD with different rates based on the gathering phase for every 1 USDC received.
               </p>
 
               <Alert
@@ -101,15 +101,12 @@ export function GatheringClient() {
           initial={{ opacity: 0, y: 20 }} 
           animate={{ opacity: 1, y: 0 }} 
           transition={{ delay: 0.4 }}
-          className="max-w-7xl mx-auto"
+          className="max-w-7xl mx-auto w-full"
         >
           <div className="bg-surface/40 backdrop-blur-xl rounded-2xl border-2 border-border/40 shadow-2xl shadow-primary-default/10 p-8 transition-all duration-300">
             <div className="flex flex-col gap-8">
               <div className="border-b-2 border-border/40 pb-6">
                 <h2 className="text-2xl font-bold text-primary-default">Gathering Phases</h2>
-                <p className="text-sm text-foreground-secondary mt-1">
-                  Different phases with varying benefits and requirements
-                </p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -142,9 +139,9 @@ export function GatheringClient() {
             <div className="bg-surface/50 backdrop-blur-sm rounded-xl border border-border/40 p-4 hover:border-primary-default/40 transition-all duration-300 flex-1">
               <div className="flex items-center gap-2 mb-2">
                 <div className="w-8 h-8 rounded-full bg-primary-default/20 flex items-center justify-center text-primary-default font-bold text-sm">1</div>
-                <h3 className="text-base font-bold text-foreground-primary">Send USDC</h3>
+                <h3 className="text-base font-bold text-foreground-primary">Gather USDC</h3>
               </div>
-              <p className="text-xs text-foreground-secondary">
+              <p className="text-sm text-foreground-secondary">
                 Send USDC to the gathering contract on Ethereum mainnet.
               </p>
             </div>
@@ -152,29 +149,19 @@ export function GatheringClient() {
             <div className="bg-surface/50 backdrop-blur-sm rounded-xl border border-border/40 p-4 hover:border-primary-default/40 transition-all duration-300 flex-1">
               <div className="flex items-center gap-2 mb-2">
                 <div className="w-8 h-8 rounded-full bg-primary-default/20 flex items-center justify-center text-primary-default font-bold text-sm">2</div>
-                <h3 className="text-base font-bold text-foreground-primary">Treasury Receives</h3>
-              </div>
-              <p className="text-xs text-foreground-secondary">
-                The treasury receives USDC and mints $BFD tokens based on your rate.
-              </p>
-            </div>
-            
-            <div className="bg-surface/50 backdrop-blur-sm rounded-xl border border-border/40 p-4 hover:border-primary-default/40 transition-all duration-300 flex-1">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="w-8 h-8 rounded-full bg-primary-default/20 flex items-center justify-center text-primary-default font-bold text-sm">3</div>
                 <h3 className="text-base font-bold text-foreground-primary">Bridging to Berachain</h3>
               </div>
-              <p className="text-xs text-foreground-secondary">
+              <p className="text-sm text-foreground-secondary">
                 All collected funds will be bridged to support the BeraFlowDao ecosystem.
               </p>
             </div>
             
             <div className="bg-surface/50 backdrop-blur-sm rounded-xl border border-border/40 p-4 hover:border-primary-default/40 transition-all duration-300 flex-1">
               <div className="flex items-center gap-2 mb-2">
-                <div className="w-8 h-8 rounded-full bg-primary-default/20 flex items-center justify-center text-primary-default font-bold text-sm">4</div>
-                <h3 className="text-base font-bold text-foreground-primary">Mint BFD and Send</h3>
+                <div className="w-8 h-8 rounded-full bg-primary-default/20 flex items-center justify-center text-primary-default font-bold text-sm">3</div>
+                <h3 className="text-base font-bold text-foreground-primary">$BFD distribution</h3>
               </div>
-              <p className="text-xs text-foreground-secondary">
+              <p className="text-sm text-foreground-secondary">
                 Smart contract mints $BFD tokens and sends them to your wallet address.
               </p>
             </div>

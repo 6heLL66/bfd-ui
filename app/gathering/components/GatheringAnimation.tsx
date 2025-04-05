@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 
 interface GatheringAnimationProps {
   activePhase: 'initial' | 'whitelist' | 'public';
@@ -447,7 +448,7 @@ export function GatheringAnimation({ activePhase }: GatheringAnimationProps) {
 
           {/* USDC input - Enhanced version */}
           <motion.div
-            className="absolute top-[20px] left-0 right-0 mx-auto w-[65px] h-[65px] md:w-[80px] md:h-[80px] lg:w-[90px] lg:h-[90px] bg-surface/80 backdrop-blur-sm rounded-full border-2 border-blue-400/30 p-2 md:p-3 flex items-center justify-center shadow-lg"
+            className="absolute top-[40px] left-0 right-0 mx-auto w-[55px] h-[55px] md:w-[70px] md:h-[70px] lg:w-[80px] lg:h-[80px] bg-surface/80 backdrop-blur-sm rounded-full border-2 border-blue-400/30 p-2 md:p-3 flex items-center justify-center shadow-lg"
             style={{ boxShadow: `0 5px 20px 0 rgba(59, 130, 246, 0.2)` }}
             initial={{ opacity: 0, y: -20, scale: 0 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -455,17 +456,7 @@ export function GatheringAnimation({ activePhase }: GatheringAnimationProps) {
           >
             <div className="relative w-full h-full flex items-center justify-center">
               <div className="absolute inset-0 bg-blue-500/20 rounded-full animate-ping" />
-              <div className="relative z-10 bg-gradient-to-b from-blue-400 to-blue-600 rounded-full w-[47px] h-[47px] md:w-[60px] md:h-[60px] lg:w-[70px] lg:h-[70px] flex items-center justify-center shadow-md">
-                <motion.span 
-                  className="text-white font-bold text-sm md:text-base lg:text-lg"
-                  animate={{ 
-                    textShadow: ['0 0 5px rgba(255,255,255,0.3)', '0 0 10px rgba(255,255,255,0.5)', '0 0 5px rgba(255,255,255,0.3)'] 
-                  }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                >
-                  USDC
-                </motion.span>
-              </div>
+              <Image src="/images/usdc.png" alt="USDC" width={42} height={42} />
             </div>
             <motion.div 
               className="absolute -top-6 left-1/2 transform -translate-x-1/2 whitespace-nowrap"
@@ -490,20 +481,10 @@ export function GatheringAnimation({ activePhase }: GatheringAnimationProps) {
                 className="absolute inset-0 rounded-full animate-ping"
                 style={{ backgroundColor: `${phaseColor}20` }}
               />
-              <div 
-                className="relative z-10 rounded-full w-[47px] h-[47px] md:w-[60px] md:h-[60px] lg:w-[70px] lg:h-[70px] flex items-center justify-center shadow-md"
-                style={{ background: `linear-gradient(to bottom, ${phaseColor}, ${adjustColorBrightness(phaseColor, -20)})` }}
-              >
-                <motion.span 
-                  className="text-white font-bold text-sm md:text-base lg:text-lg"
-                  animate={{ 
-                    textShadow: ['0 0 5px rgba(255,255,255,0.3)', '0 0 10px rgba(255,255,255,0.5)', '0 0 5px rgba(255,255,255,0.3)'] 
-                  }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                >
-                  $BFD
-                </motion.span>
+              <div className="p-1.5 bg-black rounded-full border-2 border-primary-default/80">
+                <Image src="/images/bear-paw.png" alt="USDC" width={32} height={32} />
               </div>
+              
             </div>
             <motion.div 
               className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 whitespace-nowrap"
@@ -600,15 +581,3 @@ function hexToRgb(hex: string) {
     b: parseInt(result[3], 16)
   } : null;
 }
-
-// Helper function to adjust color brightness
-function adjustColorBrightness(hex: string, percent: number) {
-  const rgb = hexToRgb(hex);
-  if (!rgb) return hex;
-  
-  const adjustColor = (value: number) => {
-    return Math.max(0, Math.min(255, Math.round(value + (value * (percent / 100)))));
-  }
-  
-  return `rgb(${adjustColor(rgb.r)}, ${adjustColor(rgb.g)}, ${adjustColor(rgb.b)})`;
-} 
