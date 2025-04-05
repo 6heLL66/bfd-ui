@@ -5,7 +5,7 @@ import { useAccount } from 'wagmi';
 import Link from 'next/link';
 import Image from 'next/image';
 import { DOCS_LINK } from '@/config/links';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 export const Logo = () => {
   return (
@@ -22,6 +22,10 @@ export const Logo = () => {
 
 export const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [activeSaleDropdown, setActiveSaleDropdown] = useState(false);
+  const [activeStakingDropdown, setActiveStakingDropdown] = useState(false);
+  const saleDropdownRef = useRef<HTMLDivElement>(null);
+  const stakingDropdownRef = useRef<HTMLDivElement>(null);
   const { isConnected } = useAccount();
 
   const toggleMobileMenu = () => {
@@ -33,6 +37,28 @@ export const Header = () => {
       document.body.style.overflow = 'auto';
     }
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        saleDropdownRef.current && 
+        !saleDropdownRef.current.contains(event.target as Node)
+      ) {
+        setActiveSaleDropdown(false);
+      }
+      if (
+        stakingDropdownRef.current && 
+        !stakingDropdownRef.current.contains(event.target as Node)
+      ) {
+        setActiveStakingDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   return (
     <>
@@ -52,30 +78,98 @@ export const Header = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-6">
-            <NavLink href="/sale">
-              <span className="flex items-center gap-1">
-                Sale              </span>
-            </NavLink>
-            <NavLink href="/gathering">
-              <span className="flex items-center gap-1">
+            <div ref={saleDropdownRef} className="relative">
+              <button 
+                onClick={() => setActiveSaleDropdown(!activeSaleDropdown)}
+                className="relative font-display text-text text-white/80 hover:text-primary-default transition-colors py-2 flex items-center gap-1"
+              >
                 Gathering
-              </span>
-            </NavLink>
+                <svg 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  width="14" 
+                  height="14" 
+                  viewBox="0 0 24 24" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  strokeWidth="2" 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round"
+                  className={`transition-transform duration-200 ${activeSaleDropdown ? 'rotate-180' : ''}`}
+                >
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </button>
+              
+              {activeSaleDropdown && (
+                <div className="absolute top-full left-0 mt-1 bg-black/90 backdrop-blur-md border border-white/10 rounded-md overflow-hidden shadow-lg z-50 min-w-[140px]">
+                  <Link 
+                    href="/sale" 
+                    className="block px-4 py-2 text-white/80 hover:text-primary-default hover:bg-white/5 transition-colors"
+                    onClick={() => setActiveSaleDropdown(false)}
+                  >
+                    Sale
+                  </Link>
+                  <Link 
+                    href="/gathering" 
+                    className="block px-4 py-2 text-white/80 hover:text-primary-default hover:bg-white/5 transition-colors"
+                    onClick={() => setActiveSaleDropdown(false)}
+                  >
+                    Gathering
+                  </Link>
+                </div>
+              )}
+            </div>
+            
+            {process.env.NEXT_PUBLIC_V2 === 'true' && (
+              <div ref={stakingDropdownRef} className="relative">
+                <button 
+                  onClick={() => setActiveStakingDropdown(!activeStakingDropdown)}
+                  className="relative font-display text-text text-white/80 hover:text-primary-default transition-colors py-2 flex items-center gap-1"
+                >
+                  Liquidity
+                  <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    width="14" 
+                    height="14" 
+                    viewBox="0 0 24 24" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    strokeWidth="2" 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round"
+                    className={`transition-transform duration-200 ${activeStakingDropdown ? 'rotate-180' : ''}`}
+                  >
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </button>
+                
+                {activeStakingDropdown && (
+                  <div className="absolute top-full left-0 mt-1 bg-black/90 backdrop-blur-md border border-white/10 rounded-md overflow-hidden shadow-lg z-50 min-w-[140px]">
+                    <Link 
+                      href="/pool" 
+                      className="block px-4 py-2 text-white/80 hover:text-primary-default hover:bg-white/5 transition-colors"
+                      onClick={() => setActiveStakingDropdown(false)}
+                    >
+                      Pool
+                    </Link>
+                    <Link 
+                      href="/staking/bfd" 
+                      className="block px-4 py-2 text-white/80 hover:text-primary-default hover:bg-white/5 transition-colors"
+                      onClick={() => setActiveStakingDropdown(false)}
+                    >
+                      Staking
+                    </Link>
+                  </div>
+                )}
+              </div>
+            )}
+
             {process.env.NEXT_PUBLIC_V2 === 'true' && <NavLink href="/swap">
               <span className="flex items-center gap-1">
                 Swap
               </span>
             </NavLink>}
-            {process.env.NEXT_PUBLIC_V2 === 'true' && <NavLink href="/staking/bfd">
-              <span className="flex items-center gap-1">
-                Staking
-              </span>
-            </NavLink>}
-            {process.env.NEXT_PUBLIC_V2 === 'true' && <NavLink href="/pool">
-              <span className="flex items-center gap-1">
-                Liquidity
-              </span>
-            </NavLink>}
+            
             {process.env.NEXT_PUBLIC_V2 === 'true' && <NavLink href="/validator">
               <span className="flex items-center gap-1">
                 Validator
@@ -180,20 +274,48 @@ export const Header = () => {
             </button>
           </div>
 
-          {/* Navigation Links Container */}
+          {/* Mobile Navigation Links Container */}
           <div className="flex-1 container mx-auto px-3 flex flex-col justify-center items-center -mt-14">
             <nav className="flex flex-col items-center gap-6">
-              <MobileNavLink href="/sale" onClick={toggleMobileMenu}>
-                <span className="flex items-center gap-2">
-                  Sale
-                </span>
-              </MobileNavLink>
-
-              <MobileNavLink href="/gathering" onClick={toggleMobileMenu}>
-                <span className="flex items-center gap-2">
-                  Gathering
-                </span>
-              </MobileNavLink>
+              <div className="flex flex-col items-center">
+                <MobileNavLink href="#" onClick={(e?: React.MouseEvent<HTMLAnchorElement>) => {
+                  if (e) e.preventDefault();
+                  document.getElementById('mobile-sale-dropdown')?.classList.toggle('hidden');
+                }}>
+                  <span className="flex items-center gap-2">
+                    Sale & Gathering
+                    <svg 
+                      xmlns="http://www.w3.org/2000/svg" 
+                      width="20" 
+                      height="20" 
+                      viewBox="0 0 24 24" 
+                      fill="none" 
+                      stroke="currentColor" 
+                      strokeWidth="2" 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round"
+                    >
+                      <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                  </span>
+                </MobileNavLink>
+                <div id="mobile-sale-dropdown" className="hidden flex flex-col items-center mt-2 mb-2 space-y-4">
+                  <Link 
+                    href="/sale" 
+                    className="text-[22px] text-white/70 hover:text-primary-default transition-all duration-300"
+                    onClick={toggleMobileMenu}
+                  >
+                    Sale
+                  </Link>
+                  <Link 
+                    href="/gathering" 
+                    className="text-[22px] text-white/70 hover:text-primary-default transition-all duration-300"
+                    onClick={toggleMobileMenu}
+                  >
+                    Gathering
+                  </Link>
+                </div>
+              </div>
 
               {process.env.NEXT_PUBLIC_V2 === 'true' && <MobileNavLink href="/swap" onClick={toggleMobileMenu}>
                 <span className="flex items-center gap-2">
@@ -201,26 +323,54 @@ export const Header = () => {
                 </span>
               </MobileNavLink>}
 
-              {process.env.NEXT_PUBLIC_V2 === 'true' && <MobileNavLink href="/staking/bfd" onClick={toggleMobileMenu}>
-                <span className="flex items-center gap-2">
-                  Staking
-                </span>
-              </MobileNavLink>}
-
-              {process.env.NEXT_PUBLIC_V2 === 'true' && <MobileNavLink href="/pool" onClick={toggleMobileMenu}>
-                <span className="flex items-center gap-2">
-                  Liquidity
-                </span>
-              </MobileNavLink>}
+              {process.env.NEXT_PUBLIC_V2 === 'true' && (
+                <div className="flex flex-col items-center">
+                  <MobileNavLink href="#" onClick={(e?: React.MouseEvent<HTMLAnchorElement>) => {
+                    if (e) e.preventDefault();
+                    document.getElementById('mobile-staking-dropdown')?.classList.toggle('hidden');
+                  }}>
+                    <span className="flex items-center gap-2">
+                      Staking & Liquidity
+                      <svg 
+                        xmlns="http://www.w3.org/2000/svg" 
+                        width="20" 
+                        height="20" 
+                        viewBox="0 0 24 24" 
+                        fill="none" 
+                        stroke="currentColor" 
+                        strokeWidth="2" 
+                        strokeLinecap="round" 
+                        strokeLinejoin="round"
+                      >
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                      </svg>
+                    </span>
+                  </MobileNavLink>
+                  <div id="mobile-staking-dropdown" className="hidden flex flex-col items-center mt-2 mb-2 space-y-4">
+                    <Link 
+                      href="/staking/bfd" 
+                      className="text-[22px] text-white/70 hover:text-primary-default transition-all duration-300"
+                      onClick={toggleMobileMenu}
+                    >
+                      Staking
+                    </Link>
+                    <Link 
+                      href="/pool" 
+                      className="text-[22px] text-white/70 hover:text-primary-default transition-all duration-300"
+                      onClick={toggleMobileMenu}
+                    >
+                      Liquidity
+                    </Link>
+                  </div>
+                </div>
+              )}
 
               {process.env.NEXT_PUBLIC_V2 === 'true' && <MobileNavLink href="/validator" onClick={toggleMobileMenu}>
                 <span className="flex items-center gap-2">
                   Validator
                 </span>
               </MobileNavLink>}
-              
-              
-
+                
               <MobileNavLink href="/treasury" onClick={toggleMobileMenu}>Treasury</MobileNavLink>
               <MobileNavLink href={DOCS_LINK} external onClick={toggleMobileMenu}>
                 Docs
@@ -318,7 +468,7 @@ const MobileNavLink = ({
   href: string; 
   children: React.ReactNode; 
   external?: boolean;
-  onClick?: () => void;
+  onClick?: (e?: React.MouseEvent<HTMLAnchorElement>) => void;
   disabled?: boolean;
 }) => {
   const baseStyles = 'relative font-display text-[32px] text-white hover:text-primary-default transition-all duration-300 py-3 group';
