@@ -39,23 +39,6 @@ const chainIconVariants = {
   }
 };
 
-// Enhanced flow particles variants
-const flowParticleVariants = {
-  initial: {
-    opacity: 0,
-    scale: 0,
-  },
-  animate: {
-    opacity: [0.7, 0.9, 0.7],
-    scale: [0.8, 1.2, 0.8],
-    transition: {
-      duration: 2,
-      repeat: Infinity,
-      ease: "easeInOut",
-    }
-  }
-};
-
 // Phase color mapping
 const getPhaseColor = (phase: 'initial' | 'whitelist' | 'public') => {
   const colorMap = {
@@ -217,7 +200,7 @@ export function GatheringAnimation({ activePhase }: GatheringAnimationProps) {
         >
           {/* Ethereum Network - Left Side */}
           <motion.div
-            className="absolute top-[50%] left-0 transform -translate-y-1/2 -translate-x-1/3 bg-surface/60 backdrop-blur-md rounded-full p-3 md:p-4 shadow-lg shadow-[#627EEA]/10 border border-[#627EEA]/20"
+            className="absolute top-[45%] left-1 transform -translate-y-1/2 -translate-x-1/3 bg-surface/60 backdrop-blur-md rounded-full p-3 md:p-4 shadow-lg shadow-[#627EEA]/10 border border-[#627EEA]/20"
             variants={chainIconVariants}
             initial="initial"
             animate="animate"
@@ -241,7 +224,7 @@ export function GatheringAnimation({ activePhase }: GatheringAnimationProps) {
 
           {/* Berachain Network - Right Side */}
           <motion.div
-            className="absolute top-[50%] right-0 transform -translate-y-1/2 translate-x-1/3 bg-surface/60 backdrop-blur-md rounded-full p-3 md:p-4 shadow-lg shadow-[#FFD580]/10 border border-[#FFD580]/20"
+            className="absolute top-[40%] right-1 transform -translate-y-1/2 translate-x-1/3 bg-surface/60 backdrop-blur-md rounded-full p-3 md:p-4 shadow-lg shadow-[#FFD580]/10 border border-[#FFD580]/20"
             variants={chainIconVariants}
             initial="initial"
             animate="animate"
@@ -275,31 +258,6 @@ export function GatheringAnimation({ activePhase }: GatheringAnimationProps) {
               animate="animate"
               transition={{ delay: 0.5, duration: 1.8 }}
             />
-            {/* Animated particles along the bridge path */}
-            <motion.circle
-              cx="130" cy="240" r="4"
-              fill="#627EEA"
-              variants={flowParticleVariants}
-              initial="initial"
-              animate="animate"
-              transition={{ delay: 0.8, duration: 2 }}
-            />
-            <motion.circle
-              cx="260" cy="270" r="4"
-              fill="#9E77ED"
-              variants={flowParticleVariants}
-              initial="initial"
-              animate="animate"
-              transition={{ delay: 1.3, duration: 2 }}
-            />
-            <motion.circle
-              cx="390" cy="240" r="4"
-              fill="#FFD580"
-              variants={flowParticleVariants}
-              initial="initial"
-              animate="animate"
-              transition={{ delay: 1.8, duration: 2 }}
-            />
             <defs>
               <linearGradient id="bridgeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
                 <stop offset="0%" stopColor="#627EEA" />
@@ -328,13 +286,6 @@ export function GatheringAnimation({ activePhase }: GatheringAnimationProps) {
               ease: "easeInOut",
             }}
           >
-            {/* Outer decorative rings */}
-            <motion.div 
-              className="absolute -inset-3 rounded-full border-2 border-dashed opacity-30"
-              style={{ borderColor: phaseColor }}
-              animate={{ rotate: 360 }}
-              transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
-            />
             
             {/* Outer glow effect */}
             <motion.div 
@@ -364,38 +315,6 @@ export function GatheringAnimation({ activePhase }: GatheringAnimationProps) {
             
             {/* Main treasury container */}
             <div className="absolute inset-3 md:inset-4 rounded-full bg-surface/90 backdrop-blur-md flex items-center justify-center border border-white/20 shadow-inner">
-              {/* Small decorative orbs floating around treasury */}
-              <motion.div 
-                className="absolute w-3 h-3 rounded-full"
-                style={{ background: phaseColor, filter: 'blur(1px)' }}
-                animate={{ 
-                  x: [10, -10, 10], 
-                  y: [10, 20, 10],
-                  opacity: [0.4, 0.8, 0.4]
-                }}
-                transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-              />
-              <motion.div 
-                className="absolute w-2 h-2 rounded-full"
-                style={{ background: '#3B82F6', filter: 'blur(1px)' }}
-                animate={{ 
-                  x: [-15, 10, -15], 
-                  y: [-15, -5, -15],
-                  opacity: [0.3, 0.7, 0.3]
-                }}
-                transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-              />
-              <motion.div 
-                className="absolute w-2 h-2 rounded-full"
-                style={{ background: 'white', filter: 'blur(1px)' }}
-                animate={{ 
-                  x: [15, 0, 15], 
-                  y: [-5, -15, -5],
-                  opacity: [0.2, 0.5, 0.2]
-                }}
-                transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-              />
-              
               {/* Content */}
               <motion.div 
                 className="text-center px-3 relative z-10" 
@@ -416,31 +335,9 @@ export function GatheringAnimation({ activePhase }: GatheringAnimationProps) {
                 >
                   Treasury
                 </motion.h3>
-                <p className="text-xs md:text-sm font-bold text-white/70 mt-1">$BFD Minting</p>
               </motion.div>
             </div>
           </motion.div>
-
-          {/* Enhanced rotating rings with gradients */}
-          <motion.div 
-            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[210px] h-[210px] md:w-[260px] md:h-[260px] lg:w-[300px] lg:h-[300px] rounded-full border"
-            style={{ borderColor: `${phaseColor}15` }}
-            animate={{ rotate: 360 }}
-            transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-          />
-          
-          <motion.div 
-            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[240px] h-[240px] md:w-[290px] md:h-[290px] lg:w-[340px] lg:h-[340px] rounded-full border border-white/5"
-            animate={{ rotate: -360 }}
-            transition={{ duration: 50, repeat: Infinity, ease: "linear" }}
-          />
-          
-          <motion.div 
-            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[270px] h-[270px] md:w-[320px] md:h-[320px] lg:w-[380px] lg:h-[380px] rounded-full border"
-            style={{ borderColor: `${phaseColor}08` }}
-            animate={{ rotate: 180 }}
-            transition={{ duration: 70, repeat: Infinity, ease: "linear" }}
-          />
 
           {/* USDC input - Enhanced version */}
           <motion.div
@@ -494,27 +391,6 @@ export function GatheringAnimation({ activePhase }: GatheringAnimationProps) {
 
           {/* Flow lines with animated particles */}
           <svg className="absolute inset-0 w-full h-full" viewBox="0 0 520 520" fill="none" xmlns="http://www.w3.org/2000/svg">
-            {/* USDC to Treasury flow */}
-            <motion.path
-              d="M260 90 C260 90, 260 120, 260 150"
-              stroke="url(#usdcGradient)"
-              strokeWidth="3"
-              strokeDasharray="6 4"
-              initial="initial"
-              animate="animate"
-              variants={flowVariants}
-            />
-            
-            {/* Treasury to BFD flow */}
-            <motion.path
-              d="M260 310 C260 310, 260 340, 260 430"
-              stroke={`url(#bfdGradient-${activePhase})`}
-              strokeWidth="3"
-              strokeDasharray="6 4"
-              initial="initial"
-              animate="animate"
-              variants={flowVariants}
-            />
             
             {/* Animated particles on USDC flow */}
             <motion.circle 
@@ -549,18 +425,6 @@ export function GatheringAnimation({ activePhase }: GatheringAnimationProps) {
                 delay: 2
               }}
             />
-            
-            <defs>
-              <linearGradient id="usdcGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#3B82F6" />
-                <stop offset="100%" stopColor="#60A5FA" stopOpacity="0.5" />
-              </linearGradient>
-              
-              <linearGradient id={`bfdGradient-${activePhase}`} x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor={phaseColor} />
-                <stop offset="100%" stopColor={`${phaseColor}80`} />
-              </linearGradient>
-            </defs>
           </svg>
         </motion.div>
       </div>

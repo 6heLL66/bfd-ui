@@ -1,6 +1,5 @@
 'use client';
 
-import { WalletGuard } from '@/shared/components/WalletGuard';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { GatheringPhaseCard } from './GatheringPhaseCard';
@@ -96,7 +95,6 @@ export function GatheringClient() {
         </div>
       </section>
 
-      <WalletGuard>
         <motion.div 
           initial={{ opacity: 0, y: 20 }} 
           animate={{ opacity: 1, y: 0 }} 
@@ -122,7 +120,6 @@ export function GatheringClient() {
             </div>
           </div>
         </motion.div>
-      </WalletGuard>
 
       <motion.div 
         initial={{ opacity: 0, y: 20 }} 

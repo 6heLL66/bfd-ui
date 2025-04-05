@@ -14,7 +14,7 @@ const PrivacyNoticePage = () => {
         <section>
           <h2 className="text-2xl font-semibold mb-4">Introduction</h2>
           <p className="text-foreground-secondary leading-relaxed">
-            BeraFlow DAO (`we,` `us,` or `our`) is committed to protecting your privacy and ensuring the security of your personal information. This Privacy Notice explains how we
+            BeraFlowDao (`we,` `us,` or `our`) is committed to protecting your privacy and ensuring the security of your personal information. This Privacy Notice explains how we
             collect, use, and protect your data when you use our decentralized finance (DeFi) platform.
           </p>
         </section>

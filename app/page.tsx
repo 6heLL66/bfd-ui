@@ -114,7 +114,7 @@ export default function Home() {
 
           <div className="flex-1 flex flex-col gap-8 max-w-[628px] mx-auto px-4 lg:px-0">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-sans text-center lg:text-left bg-gradient-to-r from-white via-orange-400 to-orange-500 bg-clip-text text-transparent font-bold">
-              BeraFlow DAO
+              BeraFlowDao
             </h1>
 
             <div className="space-y-4 md:space-y-6">

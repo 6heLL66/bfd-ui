@@ -70,7 +70,7 @@ export const Header = () => {
 
               <span className="text-xl md:text-h3bold font-display">
                 <span className="">
-                  BeraFlow DAO
+                  BeraFlowDao
                 </span>
               </span>
             </Link>
@@ -247,7 +247,7 @@ export const Header = () => {
               <Logo />
               <span className="text-xl font-display">
                 <span className="bg-gradient-to-r from-white via-primary-default to-primary-hover bg-clip-text text-transparent">
-                  BeraFlow DAO
+                  BeraFlowDao
                 </span>
               </span>
             </Link>

@@ -19,7 +19,7 @@ import Script from 'next/script';
     "beraflow dao",
     "beraflow",
     // Additional alternative names with typos and spaces
-    "Beraflw DAO", "BeraFlow DAO", "Bera Flow DAO", "BearaFlow DAO",
+    "Beraflw DAO", "BeraFlowDao", "Bera Flow DAO", "BearaFlow DAO",
     "BeraflowD AO", "Beraflow D A O", "BeraflowDOA", "Beraflow DOA",
     "BearaflowDAO", "Baraflow DAO", "Beraflwo DAO", "Beraflo DAO",
     "Beraflw", "Bera flo", "Bera-flow", "Bera-Flow-DAO",
@@ -41,17 +41,17 @@ import Script from 'next/script';
     "BFD DAO", "BFD", "BFDP", "BFD P", "B.F.D.P.",
     "Beraflow DaO", "BeraFlow dAo", "BeraFlow dAO", "BeraFLOW dao",
     "Beraflow daO", "BeraFlow DA0", "BeraFlow DA0", "BeraFlow D4O",
-    "Beraflow D40", "BeraFlow DAO Protocol", "BeraFlow DAO Protocol",
+    "Beraflow D40", "BeraFlowDao Protocol", "BeraFlowDao Protocol",
     "Bera Flow DAO Protocol", "Bera-Flow-DAO-Protocol", "Bera.Flow.DAO.Protocol"
   ];
 
 export const metadata: Metadata = {
-  title: 'BeraFlow DAO',
-  description: 'BeraFlow DAO is a DAO forged through the innovative Proof-of-Liquidity (POL) mechanism of Berachain.',
+  title: 'BeraFlowDao',
+  description: 'BeraFlowDao is a DAO forged through the innovative Proof-of-Liquidity (POL) mechanism of Berachain.',
   openGraph: {
-    title: 'BeraFlow DAO',
-    description: 'BeraFlow DAO is a DAO forged through the innovative Proof-of-Liquidity (POL) mechanism of Berachain.',
-    siteName: 'BeraFlow DAO',
+    title: 'BeraFlowDao',
+    description: 'BeraFlowDao is a DAO forged through the innovative Proof-of-Liquidity (POL) mechanism of Berachain.',
+    siteName: 'BeraFlowDao',
     type: 'website',
     locale: 'en_US',
     images: [
@@ -102,11 +102,11 @@ export default function RootLayout({
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "Organization",
-              "name": "BeraFlow DAO",
+              "name": "BeraFlowDao",
               "alternateName": alternativeNames,
               "url": "https://beraflow.io",
               "logo": "https://beraflow.io/images/logo.jpg",
-              "description": "BeraFlow DAO is a DAO forged through the innovative Proof-of-Liquidity (POL) mechanism of Berachain."
+              "description": "BeraFlowDao is a DAO forged through the innovative Proof-of-Liquidity (POL) mechanism of Berachain."
             })
           }}
         />

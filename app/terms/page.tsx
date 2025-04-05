@@ -23,7 +23,7 @@ const TermsOfService = () => {
           <div>
             <h3 className="text-lg font-semibold text-foreground-primary mb-2">Important Notice</h3>
             <p className="text-foreground-secondary">
-              BeraFlow DAO is a DAO forged through the innovative Proof-of-Liquidity (POL) mechanism of Berachain. By using our services, you acknowledge the risks associated with
+              BeraFlowDao is a DAO forged through the innovative Proof-of-Liquidity (POL) mechanism of Berachain. By using our services, you acknowledge the risks associated with
               DeFi protocols and blockchain technology.
             </p>
           </div>
@@ -37,7 +37,7 @@ const TermsOfService = () => {
           <section>
             <h2 className="text-xl font-semibold text-foreground-primary mb-4">1. Acceptance of Terms</h2>
             <p className="leading-relaxed">
-              By accessing and using this website and BeraFlow DAO services, you accept and agree to be bound by the terms and provision of this agreement. This includes all DeFi
+              By accessing and using this website and BeraFlowDao services, you accept and agree to be bound by the terms and provision of this agreement. This includes all DeFi
               functionalities such as staking, swapping, and treasury participation.
             </p>
           </section>
@@ -45,7 +45,7 @@ const TermsOfService = () => {
           <section>
             <h2 className="text-xl font-semibold text-foreground-primary mb-4">2. Platform Services</h2>
             <div className="space-y-4">
-              <p className="leading-relaxed">BeraFlow DAO provides the following core services:</p>
+              <p className="leading-relaxed">BeraFlowDao provides the following core services:</p>
               <ul className="list-disc pl-6 space-y-2">
                 <li>Staking of BGT tokens for rewards and governance participation</li>
                 <li>Token swapping functionality through Berachain`s infrastructure</li>
@@ -71,7 +71,7 @@ const TermsOfService = () => {
           <section>
             <h2 className="text-xl font-semibold text-foreground-primary mb-4">4. Limitations</h2>
             <p className="leading-relaxed">
-              In no event shall BeraFlow DAO or our suppliers be liable for any damages (including, without limitation, damages for loss of data or profit, or due to business
+              In no event shall BeraFlowDao or our suppliers be liable for any damages (including, without limitation, damages for loss of data or profit, or due to business
               interruption) arising out of the use or inability to use the materials or services on our platform. This includes any failures in the Berachain network or related
               smart contracts.
             </p>
@@ -80,7 +80,7 @@ const TermsOfService = () => {
           <section>
             <h2 className="text-xl font-semibold text-foreground-primary mb-4">5. User Obligations</h2>
             <div className="space-y-4">
-              <p className="leading-relaxed">As a user of BeraFlow DAO, you agree to:</p>
+              <p className="leading-relaxed">As a user of BeraFlowDao, you agree to:</p>
               <ul className="list-disc pl-6 space-y-2">
                 <li>Maintain the security of your wallet and private keys</li>
                 <li>Conduct due diligence before participating in any platform activities</li>
@@ -93,7 +93,7 @@ const TermsOfService = () => {
           <section>
             <h2 className="text-xl font-semibold text-foreground-primary mb-4">6. Governance</h2>
             <p className="leading-relaxed">
-              BeraFlow DAO operates through a decentralized governance model. Token holders may participate in governance decisions according to the established voting mechanisms
+              BeraFlowDao operates through a decentralized governance model. Token holders may participate in governance decisions according to the established voting mechanisms
               and protocols.
             </p>
           </section>
