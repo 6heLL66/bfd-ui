@@ -14,7 +14,7 @@ export function GatheringClient() {
   const gatheringPhases = [
     {
       id: 'initial',
-      title: 'Initial Gathering',
+      title: 'Team Gathering',
       description: 'Team members, validators, and advisors',
       rate: '1:1',
       price: '1 USDC per 1 $BFD',
@@ -25,7 +25,7 @@ export function GatheringClient() {
     },
     {
       id: 'whitelist',
-      title: 'WL Gathering',
+      title: 'Whitelist Gathering',
       description: '$BGT pledgers or private deals',
       rate: '1:1.03',
       price: '1.03 USDC per 1 $BFD',
