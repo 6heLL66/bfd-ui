@@ -182,7 +182,7 @@ export const Header = () => {
           </nav>
 
           <div className="flex items-center gap-1.5 md:gap-4">
-            <div className={`scale-[0.85] md:scale-100 min-w-[230px] flex justify-end origin-right ${isConnected ? 'hidden md:block' : ''}`}>
+            <div className={`scale-[0.80] md:scale-100 md:min-w-[230px] flex justify-end origin-right ${isConnected ? 'hidden md:block' : ''}`}>
               <ConnectButton />
             </div>
             {/* Mobile Menu Button */}
