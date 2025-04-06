@@ -63,7 +63,7 @@ export const Header = () => {
   return (
     <>
       <header className="backdrop-blur-md bg-black/30 border-b border-white/10 relative z-50">
-        <div className="mx-auto h-14 md:h-20 flex justify-between items-center px-3 md:px-8 px-2">
+        <div className="mx-auto h-14 md:h-20 flex justify-between items-center px-3 md:px-8 px-2 relative">
           <div className="flex items-center">
             <Link href="/" className="group/link flex items-center gap-2 md:gap-4 transition-all duration-300">
               <Logo />
@@ -77,7 +77,7 @@ export const Header = () => {
           </div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-6">
+          <nav className="hidden md:flex items-center gap-6 absolute w-full left-0 justify-center">
             <div ref={saleDropdownRef} className="relative">
               <button 
                 onClick={() => setActiveSaleDropdown(!activeSaleDropdown)}
