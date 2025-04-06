@@ -215,7 +215,7 @@ export function GatheringAnimation() {
             animate="animate"
             transition={{ delay: 0.4 }}
           >
-            <Image src="/images/bera.png" alt="BERA" width={42} height={42} />
+            <Image src="/images/berachain.png" className='rounded-[100%]' alt="BERA" width={42} height={42} />
             <div className="absolute -bottom-7 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
               <span className="text-xs font-medium text-white/90 px-2 py-0.5 rounded-md bg-[#FFD580]/10 backdrop-blur-sm">Future Gatherings</span>
             </div>
